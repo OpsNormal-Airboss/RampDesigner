@@ -303,6 +303,7 @@ void RampScene::recomputeClearance() {
         m_lastViolations.clear();
         emit violationCountChanged(0);
         emit violationsChanged();
+        emit aircraftCountChanged(0);
         return;
     }
 
@@ -360,6 +361,7 @@ void RampScene::recomputeClearance() {
 
     emit violationCountChanged(violationPairs);
     emit violationsChanged();
+    emit aircraftCountChanged(static_cast<int>(visible.size()));
 }
 
 // ---------------------------------------------------------------------------
@@ -386,6 +388,7 @@ void RampScene::clearScene() {
     // is never left in DrawBoundary mode where every click adds a vertex instead of
     // moving an existing handle.
     setEditMode(EditMode::Select);
+    emit aircraftCountChanged(0);
 }
 
 arld::core::ProjectData RampScene::toProjectData() const {
@@ -497,6 +500,7 @@ void RampScene::loadProjectData(
         m_aircraft.push_back(aircraft);
     }
 
+    emit aircraftCountChanged(static_cast<int>(m_aircraft.size()));
     recomputeClearance();
 }
 

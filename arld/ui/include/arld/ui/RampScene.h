@@ -91,6 +91,8 @@ signals:
     void violationCountChanged(int count);
     // Emitted whenever violations change (Sprint 1-2-1).
     void violationsChanged();
+    // Emitted after each clearance evaluation; count = number of visible placed aircraft.
+    void aircraftCountChanged(int count);
     // Emitted whenever the scene is dirtied (aircraft moved, placed, boundary edited, etc.).
     void sceneModified();
 

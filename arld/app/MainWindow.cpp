@@ -304,6 +304,11 @@ void MainWindow::setupStatusBar() {
     statusBar()->addWidget(m_violationLabel);
     updateViolationLabel(0);
 
+    m_aircraftCountLabel = new QLabel(this);
+    m_aircraftCountLabel->setMinimumWidth(120);
+    statusBar()->addWidget(m_aircraftCountLabel);
+    updateAircraftCountLabel(0);
+
     m_unitLabel = new QLabel(this);
     statusBar()->addPermanentWidget(m_unitLabel);
     m_unitLabel->setText(tr("Units: %1").arg(arld::core::UnitConverter::instance().suffix()));
@@ -312,8 +317,9 @@ void MainWindow::setupStatusBar() {
     statusBar()->addPermanentWidget(m_scaleLabel);
     updateScaleLabel(m_view->scaleDenominator());
 
-    connect(m_view,  &RampView::scaleChanged,           this, &MainWindow::updateScaleLabel);
+    connect(m_view,  &RampView::scaleChanged,            this, &MainWindow::updateScaleLabel);
     connect(m_scene, &RampScene::violationCountChanged,  this, &MainWindow::updateViolationLabel);
+    connect(m_scene, &RampScene::aircraftCountChanged,   this, &MainWindow::updateAircraftCountLabel);
 }
 
 void MainWindow::updateUndoRedoActions() {
@@ -487,6 +493,10 @@ void MainWindow::updateViolationLabel(int count) {
             .arg(count).arg(count == 1 ? "" : "s"));
         m_violationLabel->setStyleSheet("color: #CC2222; font-weight: bold;");
     }
+}
+
+void MainWindow::updateAircraftCountLabel(int count) {
+    m_aircraftCountLabel->setText(tr("%1 aircraft").arg(count));
 }
 
 void MainWindow::updateWindowTitle() {

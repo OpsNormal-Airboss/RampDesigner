@@ -40,6 +40,7 @@ private:
     void updateUndoRedoActions();
     void updateScaleLabel(double denominator);
     void updateViolationLabel(int count);
+    void updateAircraftCountLabel(int count);
     void updateWindowTitle();
 
     // File menu slots
@@ -87,6 +88,7 @@ private:
     QLabel*  m_scaleLabel          = nullptr;
     QLabel*  m_unitLabel           = nullptr;
     QLabel*  m_violationLabel      = nullptr;
+    QLabel*  m_aircraftCountLabel  = nullptr;
     QMenu*   m_recentFilesMenu     = nullptr;
 
     QTimer   m_autoSaveTimer;
