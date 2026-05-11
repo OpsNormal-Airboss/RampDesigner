@@ -14,8 +14,10 @@
   "silhouette_svg": "vought-f4u-4.svg",
   "data_sources": [
     "NAVAIR 01-45HA-1 Pilot's Handbook F4U-4",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Bent-Wing Bird: The F4U Corsair, Tommy Thomason, 2012"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 26.0,
+  "has_retractable_gear": true
 }

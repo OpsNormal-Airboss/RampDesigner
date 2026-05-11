@@ -13,8 +13,9 @@
   "silhouette_svg": "north-american-f86-e.svg",
   "data_sources": [
     "USAF T.O. 1F-86E-1 Pilot's Operating Instructions F-86E",
-    "Jane's All the World's Aircraft 1952–53",
+    "Jane's All the World's Aircraft 1952\u201353",
     "Sabre: Biography of a Fighter, J.T. Shepherd, 1996"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

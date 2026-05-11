@@ -13,8 +13,9 @@
   "silhouette_svg": "mikoyan-mig21-bis.svg",
   "data_sources": [
     "Soviet VVS MiG-21bis Pilot's Manual",
-    "Jane's All the World's Aircraft 1989–90",
+    "Jane's All the World's Aircraft 1989\u201390",
     "MiG-21, Robert Bingham, 1996"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

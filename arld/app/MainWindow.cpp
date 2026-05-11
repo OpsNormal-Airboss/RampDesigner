@@ -60,6 +60,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     updateUndoRedoActions();
     updateWindowTitle();
 
+    // Keyboard navigation (1-4-8): Tab order follows visual left→right/top→bottom layout.
+    if (m_libraryPanel->focusProxy() && m_propertiesPanel->focusProxy())
+        QWidget::setTabOrder(m_libraryPanel->focusProxy(), m_propertiesPanel->focusProxy());
+    if (m_propertiesPanel->focusProxy() && m_violationsPanel->focusProxy())
+        QWidget::setTabOrder(m_propertiesPanel->focusProxy(), m_violationsPanel->focusProxy());
+
     // --- Story 1-1-4: Auto-save ---
     m_autoSavePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
                      + "/arld_autosave.arld";

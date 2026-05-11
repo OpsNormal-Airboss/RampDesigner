@@ -14,8 +14,9 @@
   "silhouette_svg": "boeing-b29.svg",
   "data_sources": [
     "USAAF T.O. 01-20EJ-1 Pilot's Operating Instructions B-29",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "B-29 Superfortress in Detail, Frederick Johnsen, 1997"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

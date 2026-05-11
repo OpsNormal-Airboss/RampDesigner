@@ -13,8 +13,9 @@
   "silhouette_svg": "boeing-b52-h.svg",
   "data_sources": [
     "USAF T.O. 1B-52H-1 Flight Manual B-52H",
-    "Jane's All the World's Aircraft 1985–86",
+    "Jane's All the World's Aircraft 1985\u201386",
     "Boeing B-52 Stratofortress, Alwyn Lloyd, Ian Allan, 1987"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

@@ -2,6 +2,8 @@
 #include <arld/ui/ClearanceZoneItem.h>
 #include <arld/core/ICommand.h>
 #include <arld/core/ClearanceEngine.h>
+#include <arld/core/Config.h>
+#include <arld/core/GeomTypes.h>
 #include <arld/core/ProjectFile.h>
 #include <QGuiApplication>
 #include <QGraphicsScene>
@@ -10,6 +12,8 @@
 #include <QSvgRenderer>
 #include <QCursor>
 #include <QPolygonF>
+#include <QPen>
+#include <QBrush>
 #include <cmath>
 
 namespace arld::ui {
@@ -131,44 +135,116 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     m_localCenter = br.center();
     setTransformOriginPoint(m_localCenter);
 
+    // Tail-swing arc — rendered below clearance zone.
+    m_tailSwingItem = new QGraphicsPolygonItem(this);
+    m_tailSwingItem->setZValue(-0.6);
+    m_tailSwingItem->setAcceptedMouseButtons(Qt::NoButton);
+    m_tailSwingItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+    m_tailSwingItem->setFlag(QGraphicsItem::ItemIsMovable, false);
+    {
+        const QColor tailSwingFill(0xDD, 0xAA, 0x00,
+                                   static_cast<int>(0.20f * 255));
+        const QColor tailSwingOutline(0xBB, 0x88, 0x00, 200);
+        m_tailSwingItem->setBrush(QBrush(tailSwingFill));
+        m_tailSwingItem->setPen(QPen(tailSwingOutline, 0.5, Qt::DashLine));
+    }
+    // Only visible when minTurnRadiusFt is set.
+    m_tailSwingItem->setVisible(m_entry.minTurnRadiusFt.has_value());
+
     // Clearance zone — rendered behind the silhouette.
     m_clearanceItem = new ClearanceZoneItem(this);
+    m_clearanceItem->setDisplayType(m_displayType);
     rebuildClearancePolygon();
 
     // Rotation handle — hidden until selected.
     auto* handle = new RotationHandle(this);
     handle->setVisible(false);
     Q_UNUSED(handle);
+
+    // Accessibility: set tool tip as accessible name.
+    updateAccessibleName();
 }
 
 void AircraftItem::rebuildClearancePolygon() {
     if (!m_clearanceItem) return;
 
-    const double margin = static_cast<double>(
+    const double baseMargin = static_cast<double>(
         arld::core::ClearanceEngine::requiredClearanceFt(m_displayType, m_entry.propArcFt));
+    const double gearBonus  = m_gearExtended
+        ? static_cast<double>(arld::core::kGearExtendedAdditionFt)
+        : 0.0;
+    const double margin = baseMargin + gearBonus;
 
-    const double hw = m_entry.wingspanFt / 2.0 + margin;
-    const double hh = m_entry.lengthFt   / 2.0 + margin;
     const double cx = m_localCenter.x();
     const double cy = m_localCenter.y();
 
+    // --- Display-type-specific visual shapes ---
     QPolygonF poly;
-    poly << QPointF(cx - hw, cy - hh)
-         << QPointF(cx + hw, cy - hh)
-         << QPointF(cx + hw, cy + hh)
-         << QPointF(cx - hw, cy + hh);
+    if (m_displayType == arld::core::DisplayType::TaxiOnly) {
+        // Taxi-Only corridor: elongated along rotation axis, narrower on sides.
+        const double hw = m_entry.wingspanFt / 2.0 + 10.0;
+        const double hh = m_entry.lengthFt   / 2.0 + 50.0;
+        poly << QPointF(cx - hw, cy - hh)
+             << QPointF(cx + hw, cy - hh)
+             << QPointF(cx + hw, cy + hh)
+             << QPointF(cx - hw, cy + hh);
+    } else {
+        // Standard rectangle (all other display types).
+        double hw = m_entry.wingspanFt / 2.0 + margin;
+        double hh = m_entry.lengthFt   / 2.0 + margin;
+        // If tail-swing extends further than normal envelope rear, expand.
+        if (m_entry.minTurnRadiusFt.has_value()) {
+            const double tailR = static_cast<double>(*m_entry.minTurnRadiusFt);
+            if (tailR > hh) hh = tailR;
+        }
+        poly << QPointF(cx - hw, cy - hh)
+             << QPointF(cx + hw, cy - hh)
+             << QPointF(cx + hw, cy + hh)
+             << QPointF(cx - hw, cy + hh);
+    }
 
     m_clearanceItem->setPolygon(poly);
+    m_clearanceItem->setDisplayType(m_displayType);
+
+    // --- Tail-swing arc polygon ---
+    if (m_tailSwingItem) {
+        if (m_entry.minTurnRadiusFt.has_value()) {
+            // Build the tail-swing polygon using the engine.
+            const auto state = toAircraftState();
+            const auto cgalPoly = arld::core::ClearanceEngine::tailSwingPolygon(state);
+
+            if (cgalPoly.size() > 0) {
+                // Convert from scene coordinates to local item coordinates.
+                const QPointF scenePos = this->pos();
+                QPolygonF localPoly;
+                localPoly.reserve(static_cast<qsizetype>(cgalPoly.size()));
+                for (std::size_t i = 0; i < cgalPoly.size(); ++i) {
+                    const double sx = CGAL::to_double(cgalPoly.vertex(i).x());
+                    const double sy = CGAL::to_double(cgalPoly.vertex(i).y());
+                    // Map scene → local by subtracting item position.
+                    localPoly << QPointF(sx - scenePos.x(), sy - scenePos.y());
+                }
+                m_tailSwingItem->setPolygon(localPoly);
+                m_tailSwingItem->setVisible(true);
+            } else {
+                m_tailSwingItem->setVisible(false);
+            }
+        } else {
+            m_tailSwingItem->setVisible(false);
+        }
+    }
 }
 
 arld::core::AircraftState AircraftItem::toAircraftState() const {
     arld::core::AircraftState s;
-    s.id          = m_placementId;   // use placement ID so pairs are unique
-    s.wingspanFt  = m_entry.wingspanFt;
-    s.lengthFt    = m_entry.lengthFt;
-    s.rotationDeg = static_cast<float>(rotation());
-    s.displayType = m_displayType;
-    s.propArcFt   = m_entry.propArcFt;
+    s.id              = m_placementId;   // use placement ID so pairs are unique
+    s.wingspanFt      = m_entry.wingspanFt;
+    s.lengthFt        = m_entry.lengthFt;
+    s.rotationDeg     = static_cast<float>(rotation());
+    s.displayType     = m_displayType;
+    s.propArcFt       = m_entry.propArcFt;
+    s.minTurnRadiusFt = m_entry.minTurnRadiusFt;
+    s.gearExtended    = m_gearExtended;
 
     // Aircraft centre in scene coordinates.
     const QPointF sceneCentre = mapToScene(m_localCenter);
@@ -213,6 +289,24 @@ void AircraftItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 void AircraftItem::setDisplayType(arld::core::DisplayType dt) {
     m_displayType = dt;
     rebuildClearancePolygon();
+    updateAccessibleName();
+    update();
+}
+
+void AircraftItem::setTailNumber(const std::string& s) {
+    m_tailNumber = s;
+    updateAccessibleName();
+}
+
+void AircraftItem::setOwner(const std::string& s) {
+    m_owner = s;
+    updateAccessibleName();
+}
+
+void AircraftItem::setGearExtended(bool v) {
+    if (m_gearExtended == v) return;
+    m_gearExtended = v;
+    rebuildClearancePolygon();
     update();
 }
 
@@ -239,6 +333,34 @@ void AircraftItem::setHazmat(bool v) {
         }
     }
     update();
+}
+
+void AircraftItem::updateAccessibleName() {
+    // Build a human-readable accessible name for screen readers and VoiceOver.
+    // Format: "TAIL_NUMBER (DisplayType)" or "DisplayName (DisplayType)" if no tail.
+    auto dtToStr = [](arld::core::DisplayType dt) -> QString {
+        using DT = arld::core::DisplayType;
+        switch (dt) {
+            case DT::StaticDisplay:      return QStringLiteral("Static Display");
+            case DT::WarbirdHeritage:    return QStringLiteral("Warbird/Heritage");
+            case DT::TaxiOnly:           return QStringLiteral("Taxi Only");
+            case DT::MilitaryStatic:     return QStringLiteral("Military Static");
+            case DT::HotRamp:            return QStringLiteral("Hot Ramp");
+            case DT::MediaPhotoPlatform: return QStringLiteral("Media/Photo Platform");
+            case DT::RampShow:           return QStringLiteral("Ramp Show");
+        }
+        return QStringLiteral("Unknown");
+    };
+
+    const QString typeStr = dtToStr(m_displayType);
+    const QString tail = QString::fromStdString(m_tailNumber);
+    const QString name = tail.isEmpty()
+        ? QStringLiteral("%1 (%2)").arg(
+              QString::fromStdString(m_entry.displayName), typeStr)
+        : QStringLiteral("%1 (%2)").arg(tail, typeStr);
+
+    // Qt QGraphicsItem uses toolTip for accessibility on macOS VoiceOver.
+    setToolTip(name);
 }
 
 void AircraftItem::applyRotation(double angleDeg) {

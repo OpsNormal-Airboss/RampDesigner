@@ -2,6 +2,7 @@
 #include <arld/core/AircraftLibraryEntry.h>
 #include <arld/core/ClearanceEngine.h>
 #include <QGraphicsItemGroup>
+#include <QGraphicsPolygonItem>
 #include <QGraphicsTextItem>
 #include <functional>
 #include <memory>
@@ -46,16 +47,20 @@ public:
 
     // Per-aircraft metadata (Sprint 1-2-5 / 1-2-7)
     const std::string& tailNumber() const { return m_tailNumber; }
-    void setTailNumber(const std::string& s) { m_tailNumber = s; }
+    void setTailNumber(const std::string& s);
 
     const std::string& owner() const { return m_owner; }
-    void setOwner(const std::string& s) { m_owner = s; }
+    void setOwner(const std::string& s);
 
     const std::string& fuelType() const { return m_fuelType; }
     void setFuelType(const std::string& s) { m_fuelType = s; }
 
     bool hasHazmat() const { return m_hasHazmat; }
     void setHazmat(bool v);
+
+    // Gear state (Sprint 1-4-2)
+    bool gearExtended() const { return m_gearExtended; }
+    void setGearExtended(bool v);
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
@@ -64,20 +69,25 @@ protected:
 
 private:
     void rebuildClearancePolygon();
+    void updateAccessibleName();
 
     arld::core::AircraftLibraryEntry m_entry;
     arld::core::DisplayType m_displayType;
     std::string m_placementId;
     QPointF m_localCenter;     // bounding rect centre in local item coords
     QPointF m_dragStartPos;
-    ClearanceZoneItem*  m_clearanceItem = nullptr;
-    QGraphicsTextItem*  m_hazmatIcon    = nullptr;
+    ClearanceZoneItem*       m_clearanceItem  = nullptr;
+    QGraphicsPolygonItem*    m_tailSwingItem  = nullptr;
+    QGraphicsTextItem*       m_hazmatIcon     = nullptr;
 
     // Per-aircraft metadata
     std::string m_tailNumber;
     std::string m_owner;
     std::string m_fuelType;
-    bool        m_hasHazmat = false;
+    bool        m_hasHazmat    = false;
+
+    // Gear state (Sprint 1-4-2)
+    bool        m_gearExtended = true;
 
     friend class RotationHandle;
     void applyRotation(double angleDeg);

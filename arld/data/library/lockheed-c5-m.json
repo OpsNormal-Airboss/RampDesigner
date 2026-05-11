@@ -13,8 +13,9 @@
   "silhouette_svg": "lockheed-c5-m.svg",
   "data_sources": [
     "USAF Fact Sheet C-5M Super Galaxy",
-    "Jane's All the World's Aircraft 2010–11",
+    "Jane's All the World's Aircraft 2010\u201311",
     "C-5 Galaxy in Action, David Menard, 1987"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

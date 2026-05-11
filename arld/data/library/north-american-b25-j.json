@@ -14,8 +14,10 @@
   "silhouette_svg": "north-american-b25-j.svg",
   "data_sources": [
     "USAAF T.O. 01-60GF-1 Pilot's Flight Operating Instructions B-25J",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "North American B-25 Mitchell, Jerry Scutts, Osprey, 1993"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 35.0,
+  "has_retractable_gear": true
 }

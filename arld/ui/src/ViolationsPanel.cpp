@@ -49,6 +49,9 @@ ViolationsPanel::ViolationsPanel(RampScene* scene, RampView* view, QWidget* pare
 
     setWidget(container);
 
+    // Keyboard navigation (1-4-8): focus proxy on violations table.
+    setFocusProxy(m_table);
+
     connect(m_table, &QTableWidget::cellClicked,
             this, &ViolationsPanel::onRowClicked);
     connect(m_table->selectionModel(), &QItemSelectionModel::selectionChanged,

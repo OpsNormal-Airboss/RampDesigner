@@ -20,6 +20,8 @@ struct AircraftState {
     float rotationDeg = 0.0f;    // clockwise-positive (Qt convention)
     DisplayType displayType = DisplayType::StaticDisplay;
     std::optional<float> propArcFt;
+    std::optional<float> minTurnRadiusFt; // populated from entry if set (tail-draggers)
+    bool gearExtended = true;             // true = gear down; adds kGearExtendedAdditionFt
 };
 
 // One result per aircraft pair that is not fully clear.
@@ -51,6 +53,10 @@ public:
     static std::vector<ViolationResult> detectViolations(
         const std::vector<AircraftState>& aircraft,
         const ClearanceRuleSet& rules = ClearanceRuleSet::faaCoW());
+
+    // Returns a 16-sided polygon approximating the tail-swing circle at the rear of
+    // the aircraft. Returns an empty polygon if minTurnRadiusFt is not set.
+    static Polygon2 tailSwingPolygon(const AircraftState& s);
 
 private:
     // Minimum gap between two convex polygons (negative if overlapping).

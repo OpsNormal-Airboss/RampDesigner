@@ -13,8 +13,9 @@
   "silhouette_svg": "dassault-rafale-c.svg",
   "data_sources": [
     "Dassault Aviation Rafale C Product Specification",
-    "Jane's All the World's Aircraft 2010–11",
+    "Jane's All the World's Aircraft 2010\u201311",
     "Rafale, Pierre Gaillard, 2005"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

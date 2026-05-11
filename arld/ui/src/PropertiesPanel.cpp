@@ -43,6 +43,15 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
     m_displayTypeCombo->addItem(tr("Ramp Show"));
     form->addRow(tr("Display Type:"), m_displayTypeCombo);
 
+    // Gear state (1-4-2): only visible for aircraft with retractable gear.
+    m_gearCombo = new QComboBox(m_content);
+    m_gearCombo->addItem(tr("Gear Extended (Down)"));
+    m_gearCombo->addItem(tr("Gear Retracted (Up)"));
+    m_gearLabel = new QLabel(tr("Gear State:"), m_content);
+    form->addRow(m_gearLabel, m_gearCombo);
+    m_gearCombo->setVisible(false);
+    m_gearLabel->setVisible(false);
+
     m_tailNumberEdit = new QLineEdit(m_content);
     m_tailNumberEdit->setPlaceholderText(tr("e.g. NX71JB"));
     form->addRow(tr("Tail Number:"), m_tailNumberEdit);
@@ -89,6 +98,9 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
     // Default: show placeholder
     stack->setCurrentIndex(0);
 
+    // Keyboard navigation (1-4-8): focus proxy on display type combo.
+    setFocusProxy(m_displayTypeCombo);
+
     // Wire signals
     connect(m_displayTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &PropertiesPanel::onDisplayTypeChanged);
@@ -104,6 +116,8 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
             this, &PropertiesPanel::onHeadingChanged);
     connect(m_snapHeadingBtn, &QPushButton::clicked,
             this, &PropertiesPanel::onSnapHeading);
+    connect(m_gearCombo, qOverload<int>(&QComboBox::currentIndexChanged),
+            this, &PropertiesPanel::onGearStateChanged);
 }
 
 void PropertiesPanel::setAircraft(AircraftItem* item) {
@@ -124,6 +138,7 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_fuelTypeEdit->blockSignals(true);
     m_hazmatCheck->blockSignals(true);
     m_headingEdit->blockSignals(true);
+    m_gearCombo->blockSignals(true);
 
     m_nameLabel->setText(QString::fromStdString(item->entry().displayName));
     m_displayTypeCombo->setCurrentIndex(
@@ -134,12 +149,21 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_hazmatCheck->setChecked(item->hasHazmat());
     m_headingEdit->setValue(static_cast<int>(std::round(item->rotation())));
 
+    // Gear state: only show for aircraft with retractable gear.
+    const bool hasGear = item->entry().hasRetractableGear;
+    m_gearCombo->setVisible(hasGear);
+    m_gearLabel->setVisible(hasGear);
+    if (hasGear) {
+        m_gearCombo->setCurrentIndex(item->gearExtended() ? 0 : 1);
+    }
+
     m_displayTypeCombo->blockSignals(false);
     m_tailNumberEdit->blockSignals(false);
     m_ownerEdit->blockSignals(false);
     m_fuelTypeEdit->blockSignals(false);
     m_hazmatCheck->blockSignals(false);
     m_headingEdit->blockSignals(false);
+    m_gearCombo->blockSignals(false);
 
     stack->setCurrentIndex(1);  // show content
 }
@@ -177,6 +201,11 @@ void PropertiesPanel::onHeadingChanged(int degrees) {
     if (std::abs(toDeg - fromDeg) < 0.01) return;
     m_current->setRotation(toDeg);
     m_current->commitRotation(fromDeg, toDeg);
+}
+
+void PropertiesPanel::onGearStateChanged(int idx) {
+    if (!m_current) return;
+    m_current->setGearExtended(idx == 0);
 }
 
 void PropertiesPanel::onSnapHeading() {

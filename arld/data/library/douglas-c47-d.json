@@ -14,8 +14,9 @@
   "silhouette_svg": "douglas-c47-d.svg",
   "data_sources": [
     "USAAF T.O. 01-40NC-1 Pilot's Operating Instructions C-47",
-    "Jane's All the World's Aircraft 1944–45",
+    "Jane's All the World's Aircraft 1944\u201345",
     "Douglas C-47 Skytrain in Action, Larry Davis, 1995"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

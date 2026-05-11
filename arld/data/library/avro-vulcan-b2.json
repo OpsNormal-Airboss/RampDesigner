@@ -13,8 +13,9 @@
   "silhouette_svg": "avro-vulcan-b2.svg",
   "data_sources": [
     "RAF AP 4226 Vulcan B.2 Aircrew Manual",
-    "Jane's All the World's Aircraft 1960–61",
+    "Jane's All the World's Aircraft 1960\u201361",
     "Avro Vulcan: Britain's Famous Delta-Wing V-Bomber, Peter Caygill, 2007"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

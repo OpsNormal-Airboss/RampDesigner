@@ -13,8 +13,9 @@
   "silhouette_svg": "northrop-t38-a.svg",
   "data_sources": [
     "USAF T.O. 1T-38A-1 Pilot's Operating Instructions T-38A",
-    "Jane's All the World's Aircraft 1966–67",
+    "Jane's All the World's Aircraft 1966\u201367",
     "T-38 Talon: USAF's Supersonic Trainer, Jenkins, 2000"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

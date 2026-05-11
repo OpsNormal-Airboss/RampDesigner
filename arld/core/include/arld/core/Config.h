@@ -30,6 +30,10 @@ inline constexpr int   kMaxAircraftFullFps       = 200;
 inline constexpr float kAdvisoryZoneOpacity      = 0.25f;
 inline constexpr float kViolationZoneOpacity     = 0.40f;
 
+// Gear-state clearance addition
+inline constexpr float kGearExtendedAdditionFt   = 8.0f;  // extra clearance when gear down
+inline constexpr float kTailSwingAdvisoryFactor   = 1.2f; // advisory within 20% of tail-swing zone
+
 // Metric conversion — applied at render time only; never stored in project files
 inline constexpr double kFeetToMeters            = 0.3048;
 

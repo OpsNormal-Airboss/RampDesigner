@@ -13,8 +13,9 @@
   "silhouette_svg": "mcdonnell-douglas-f4-e.svg",
   "data_sources": [
     "USAF T.O. 1F-4E-1 Flight Manual F-4E",
-    "Jane's All the World's Aircraft 1972–73",
+    "Jane's All the World's Aircraft 1972\u201373",
     "McDonnell Douglas F-4 Phantom, Jon Lake, Aerospace Publishing, 1992"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

@@ -14,8 +14,10 @@
   "silhouette_svg": "republic-p47-d.svg",
   "data_sources": [
     "USAAF T.O. 01-65BC-1 Pilot's Operating Instructions P-47D",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Republic P-47 Thunderbolt, Roger Freeman, Jane's, 1982"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 28.0,
+  "has_retractable_gear": true
 }

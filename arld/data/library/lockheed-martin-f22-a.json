@@ -13,8 +13,9 @@
   "silhouette_svg": "lockheed-martin-f22-a.svg",
   "data_sources": [
     "USAF T.O. 1F-22A-1 Flight Manual F-22A",
-    "Jane's All the World's Aircraft 2005–06",
+    "Jane's All the World's Aircraft 2005\u201306",
     "Lockheed Martin F-22 Raptor, Doug Richardson, Airlife, 2001"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

@@ -14,8 +14,10 @@
   "silhouette_svg": "north-american-t6-g.svg",
   "data_sources": [
     "USAAF T.O. 01-60GGA-1 Pilot's Operating Instructions T-6G",
-    "Jane's All the World's Aircraft 1944–45",
+    "Jane's All the World's Aircraft 1944\u201345",
     "The Harvard, AT-6 Texan and SNJ, Peter Caygill, 2005"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 20.0,
+  "has_retractable_gear": true
 }

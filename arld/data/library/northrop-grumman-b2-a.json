@@ -13,8 +13,9 @@
   "silhouette_svg": "northrop-grumman-b2-a.svg",
   "data_sources": [
     "USAF T.O. 1B-2A-1 Flight Manual B-2A",
-    "Jane's All the World's Aircraft 2000–01",
+    "Jane's All the World's Aircraft 2000\u201301",
     "B-2 Spirit: The Stealth Bomber, Steve Pace, Motorbooks, 1999"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

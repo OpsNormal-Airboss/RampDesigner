@@ -13,8 +13,9 @@
   "silhouette_svg": "boeing-c17-a.svg",
   "data_sources": [
     "USAF T.O. 1C-17A-1 Flight Manual C-17A",
-    "Jane's All the World's Aircraft 2000–01",
+    "Jane's All the World's Aircraft 2000\u201301",
     "Boeing C-17 Globemaster III, Robert Dorr, Osprey, 1995"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

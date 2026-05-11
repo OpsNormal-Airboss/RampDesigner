@@ -10,6 +10,7 @@
   "length_ft": 24.42,
   "tail_height_ft": 9.0,
   "prop_arc_ft": 8.5,
+  "min_turn_radius_ft": 18.0,
   "default_display_type": "WARBIRD_HERITAGE",
   "silhouette_svg": "boeing-pt17.svg",
   "data_sources": [

@@ -14,8 +14,10 @@
   "silhouette_svg": "douglas-a26-c.svg",
   "data_sources": [
     "USAAF T.O. 01-40AJ-1 Pilot's Flight Operating Instructions A-26C",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Douglas A-26 Invader, Scott Libis, Specialty Press, 1999"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 32.0,
+  "has_retractable_gear": true
 }

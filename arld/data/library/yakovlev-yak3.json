@@ -14,8 +14,10 @@
   "silhouette_svg": "yakovlev-yak3.svg",
   "data_sources": [
     "Soviet VVS Technical Manual Yak-3",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Yak Fighters, Hans-Heiri Stapfer, 1997"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 20.0,
+  "has_retractable_gear": true
 }

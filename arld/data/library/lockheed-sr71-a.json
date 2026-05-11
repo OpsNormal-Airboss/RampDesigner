@@ -11,6 +11,11 @@
   "tail_height_ft": 18.5,
   "default_display_type": "MILITARY_STATIC",
   "silhouette_svg": "lockheed-sr71-a.svg",
-  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
-  "verified_date": "2026-05-11"
+  "data_sources": [
+    "Jane's All the World's Aircraft",
+    "manufacturer specifications",
+    "NASM/USAF Museum data"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
 }

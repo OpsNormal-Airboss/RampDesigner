@@ -49,6 +49,9 @@ AircraftLibraryEntry AircraftLibraryParser::parseEntry(const std::string& jsonCo
         e.propArcFt = j.at("prop_arc_ft").get<float>();
     if (j.contains("rotor_diameter_ft"))
         e.rotorDiameterFt = j.at("rotor_diameter_ft").get<float>();
+    if (j.contains("min_turn_radius_ft"))
+        e.minTurnRadiusFt = j.at("min_turn_radius_ft").get<float>();
+    e.hasRetractableGear = j.value("has_retractable_gear", false);
     e.defaultDisplayType = displayTypeFromString(j.at("default_display_type").get<std::string>());
     e.silhouetteSvg    = j.at("silhouette_svg").get<std::string>();
     e.dataSources      = j.at("data_sources").get<std::vector<std::string>>();

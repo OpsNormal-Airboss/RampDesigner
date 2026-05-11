@@ -13,8 +13,9 @@
   "silhouette_svg": "douglas-a4-f.svg",
   "data_sources": [
     "NAVAIR 01-40AVF-1 NATOPS Flight Manual A-4F",
-    "Jane's All the World's Aircraft 1970–71",
+    "Jane's All the World's Aircraft 1970\u201371",
     "Skyhawk: Douglas A-4 Skyhawk, Rene Francillon, 1988"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

@@ -28,11 +28,14 @@ private slots:
     void onHazmatToggled(bool checked);
     void onHeadingChanged(int degrees);
     void onSnapHeading();
+    void onGearStateChanged(int index);
 
 private:
     AircraftItem* m_current = nullptr;
     QLabel*    m_nameLabel;
     QComboBox* m_displayTypeCombo;
+    QComboBox* m_gearCombo        = nullptr;  // gear state: extended / retracted
+    QLabel*    m_gearLabel        = nullptr;  // label row for gear combo
     QLineEdit* m_tailNumberEdit;
     QLineEdit* m_ownerEdit;
     QLineEdit* m_fuelTypeEdit;

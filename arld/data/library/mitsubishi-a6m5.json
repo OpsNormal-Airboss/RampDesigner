@@ -14,8 +14,10 @@
   "silhouette_svg": "mitsubishi-a6m5.svg",
   "data_sources": [
     "IJNAF Technical Manual A6M5",
-    "Jane's All the World's Aircraft 1944–45",
+    "Jane's All the World's Aircraft 1944\u201345",
     "Zero: The Story of Japan's Air War in the Pacific, Martin Caidin, 2012"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 22.0,
+  "has_retractable_gear": true
 }

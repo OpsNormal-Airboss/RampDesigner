@@ -13,8 +13,9 @@
   "silhouette_svg": "bae-hawk-t1.svg",
   "data_sources": [
     "BAE Systems Hawk T.1 Aircraft Specification",
-    "Jane's All the World's Aircraft 1990–91",
+    "Jane's All the World's Aircraft 1990\u201391",
     "BAe Hawk, Peter Foster, 1996"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

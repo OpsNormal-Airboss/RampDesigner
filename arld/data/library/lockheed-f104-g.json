@@ -13,8 +13,9 @@
   "silhouette_svg": "lockheed-f104-g.svg",
   "data_sources": [
     "USAF T.O. 1F-104G-1 Pilot's Operating Instructions F-104G",
-    "Jane's All the World's Aircraft 1963–64",
+    "Jane's All the World's Aircraft 1963\u201364",
     "Starfighter, Rene Francillon, 1988"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

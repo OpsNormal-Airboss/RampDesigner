@@ -151,6 +151,9 @@ LibraryPanel::LibraryPanel(QWidget* parent)
     setWidget(container);
     setMinimumWidth(220);
 
+    // Keyboard navigation (1-4-8): focus proxy so Tab reaches the list.
+    setFocusProxy(m_list);
+
     // Connect filter signals
     connect(m_searchEdit, &QLineEdit::textChanged,
             this, &LibraryPanel::onFilterChanged);

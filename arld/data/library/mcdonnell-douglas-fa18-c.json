@@ -13,8 +13,9 @@
   "silhouette_svg": "mcdonnell-douglas-fa18-c.svg",
   "data_sources": [
     "NAVAIR 01-F18AAA-1 NATOPS Flight Manual F/A-18A/B/C/D",
-    "Jane's All the World's Aircraft 1990–91",
+    "Jane's All the World's Aircraft 1990\u201391",
     "McDonnell Douglas F/A-18 Hornet, Randy Jolly & George Hall, Osprey, 1990"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

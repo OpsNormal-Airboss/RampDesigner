@@ -13,8 +13,9 @@
   "silhouette_svg": "boeing-kc135-r.svg",
   "data_sources": [
     "USAF Fact Sheet KC-135R Stratotanker",
-    "Jane's All the World's Aircraft 2000–01",
+    "Jane's All the World's Aircraft 2000\u201301",
     "Boeing KC-135 Stratotanker, Robert Hopkins, 1997"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

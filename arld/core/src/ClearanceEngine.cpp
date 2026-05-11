@@ -3,6 +3,7 @@
 #include <CGAL/squared_distance_2.h>
 #include <cmath>
 #include <limits>
+#include <numbers>
 
 namespace arld::core {
 
@@ -71,14 +72,61 @@ Polygon2 ClearanceEngine::aircraftFootprint(const AircraftState& s) {
 
 Polygon2 ClearanceEngine::clearanceEnvelope(const AircraftState& s,
                                              const ClearanceRuleSet& rules) {
-    const double margin = static_cast<double>(
+    double margin = static_cast<double>(
         requiredClearanceFt(s.displayType, s.propArcFt, rules));
+
+    // Add gear-extended clearance bonus when gear is down.
+    if (s.gearExtended) {
+        margin += static_cast<double>(kGearExtendedAdditionFt);
+    }
+
+    double halfW = static_cast<double>(s.wingspanFt) / 2.0 + margin;
+    double halfH = static_cast<double>(s.lengthFt) / 2.0 + margin;
+
+    // If tail-swing radius is larger than the rear half of the envelope,
+    // extend the rear half to accommodate the full tail-swing arc.
+    // The "rear" is at +halfH along the local Y axis (Y-down = behind at rot=0).
+    if (s.minTurnRadiusFt.has_value()) {
+        const double tailSwingR = static_cast<double>(*s.minTurnRadiusFt);
+        if (tailSwingR > halfH) {
+            halfH = tailSwingR;
+        }
+    }
+
     return makeRotatedRect(
         static_cast<double>(s.centerX),
         static_cast<double>(s.centerY),
-        static_cast<double>(s.wingspanFt) / 2.0 + margin,
-        static_cast<double>(s.lengthFt) / 2.0 + margin,
+        halfW,
+        halfH,
         static_cast<double>(s.rotationDeg));
+}
+
+Polygon2 ClearanceEngine::tailSwingPolygon(const AircraftState& s) {
+    if (!s.minTurnRadiusFt.has_value()) {
+        return Polygon2{};  // empty polygon — no tail-swing arc
+    }
+
+    const double radius = static_cast<double>(*s.minTurnRadiusFt);
+    const double angleRad = static_cast<double>(s.rotationDeg) * std::numbers::pi / 180.0;
+    const double cosA = std::cos(angleRad);
+    const double sinA = std::sin(angleRad);
+
+    // Centre of the tail-swing circle = rear of aircraft.
+    // Rear is at local (0, +lengthFt/2) rotated into scene space.
+    const double rearLocalY = static_cast<double>(s.lengthFt) / 2.0;
+    // Qt clockwise rotation: scene_x = local_x*cos - local_y*sin; scene_y = local_x*sin + local_y*cos
+    const double circleCx = static_cast<double>(s.centerX) + (-rearLocalY * sinA);
+    const double circleCy = static_cast<double>(s.centerY) + ( rearLocalY * cosA);
+
+    // Approximate the circle with 16 vertices.
+    constexpr int kPoints = 16;
+    Polygon2 poly;
+    for (int i = 0; i < kPoints; ++i) {
+        const double theta = 2.0 * std::numbers::pi * static_cast<double>(i) / static_cast<double>(kPoints);
+        poly.push_back(Point2(circleCx + radius * std::cos(theta),
+                              circleCy + radius * std::sin(theta)));
+    }
+    return poly;
 }
 
 // Minimum signed gap between two convex polygons.

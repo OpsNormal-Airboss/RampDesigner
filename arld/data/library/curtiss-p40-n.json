@@ -14,8 +14,10 @@
   "silhouette_svg": "curtiss-p40-n.svg",
   "data_sources": [
     "USAAF T.O. 01-25CN-1 Pilot's Operating Instructions P-40N",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Curtiss P-40 in Action, Ernest McDowell, Squadron/Signal Publications, 1976"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 25.0,
+  "has_retractable_gear": true
 }

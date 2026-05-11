@@ -25,7 +25,9 @@ struct PlacedAircraft {
     std::string tailNumber;
     std::string owner;
     std::string fuelType;
-    bool        hasHazmat = false;
+    bool        hasHazmat    = false;
+    // Gear state (Sprint 1-4-2); safe default = gear down
+    bool        gearExtended = true;
 };
 
 struct RampBoundaryData {

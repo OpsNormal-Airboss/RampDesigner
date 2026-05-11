@@ -14,8 +14,10 @@
   "silhouette_svg": "supermarine-spitfire-ixc.svg",
   "data_sources": [
     "Air Ministry Pilot's Notes: Spitfire IX, XI and XVI, AP 1565J/K/N-P.N.",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Spitfire: The History, Eric Morgan & Edward Shacklady, 2000"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 24.0,
+  "has_retractable_gear": true
 }

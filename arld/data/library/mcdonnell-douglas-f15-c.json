@@ -13,8 +13,9 @@
   "silhouette_svg": "mcdonnell-douglas-f15-c.svg",
   "data_sources": [
     "USAF Fact Sheet F-15C Eagle",
-    "Jane's All the World's Aircraft 1994–95",
+    "Jane's All the World's Aircraft 1994\u201395",
     "McDonnell Douglas F-15 Eagle, Steve Davies, 2002"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

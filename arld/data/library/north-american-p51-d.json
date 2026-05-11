@@ -10,6 +10,8 @@
   "length_ft": 32.3,
   "tail_height_ft": 13.8,
   "prop_arc_ft": 11.2,
+  "min_turn_radius_ft": 27.0,
+  "has_retractable_gear": true,
   "default_display_type": "WARBIRD_HERITAGE",
   "silhouette_svg": "north-american-p51-d.svg",
   "data_sources": [

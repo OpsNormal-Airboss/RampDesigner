@@ -14,8 +14,10 @@
   "silhouette_svg": "grumman-f6f-5.svg",
   "data_sources": [
     "Naval Air Training and Operating Procedures Standardization (NATOPS) F6F-5 Pilot's Handbook",
-    "Jane's All the World's Aircraft 1945–46",
+    "Jane's All the World's Aircraft 1945\u201346",
     "Hellcat: The F6F in World War II, Barrett Tillman, 1979"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 28.0,
+  "has_retractable_gear": true
 }

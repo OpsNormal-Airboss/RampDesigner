@@ -13,8 +13,9 @@
   "silhouette_svg": "lockheed-martin-f35-a.svg",
   "data_sources": [
     "USAF T.O. 1F-35A-1 Flight Manual F-35A",
-    "Jane's All the World's Aircraft 2015–16",
+    "Jane's All the World's Aircraft 2015\u201316",
     "F-35 Lightning II: Design and Development, Steve Davies, Osprey, 2011"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "has_retractable_gear": true
 }

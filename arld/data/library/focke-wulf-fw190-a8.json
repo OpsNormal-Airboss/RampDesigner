@@ -12,6 +12,12 @@
   "prop_arc_ft": 9.8,
   "default_display_type": "STATIC_DISPLAY",
   "silhouette_svg": "focke-wulf-fw190-a8.svg",
-  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
-  "verified_date": "2026-05-11"
+  "data_sources": [
+    "Jane's All the World's Aircraft",
+    "manufacturer specifications",
+    "NASM/USAF Museum data"
+  ],
+  "verified_date": "2026-05-11",
+  "min_turn_radius_ft": 22.0,
+  "has_retractable_gear": true
 }

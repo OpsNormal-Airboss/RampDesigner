@@ -133,6 +133,8 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
         if (!ac.owner.empty())      acj["owner"]       = ac.owner;
         if (!ac.fuelType.empty())   acj["fuel_type"]   = ac.fuelType;
         if (ac.hasHazmat)           acj["has_hazmat"]  = true;
+        // Gear state (default true = gear down; only write when retracted to keep files clean)
+        if (!ac.gearExtended)       acj["gear_extended"] = false;
         aircraft.push_back(std::move(acj));
     }
     j["aircraft"] = aircraft;
@@ -221,10 +223,11 @@ ProjectData ProjectFile::load(const std::string& path) {
             pa.displayType  = displayTypeFromString(
                 ac.value("display_type", std::string("static_display")));
             // Per-aircraft metadata (v2; use defaults for v1 migration)
-            pa.tailNumber   = ac.value("tail_number", std::string(""));
-            pa.owner        = ac.value("owner",       std::string(""));
-            pa.fuelType     = ac.value("fuel_type",   std::string(""));
-            pa.hasHazmat    = ac.value("has_hazmat",  false);
+            pa.tailNumber   = ac.value("tail_number",  std::string(""));
+            pa.owner        = ac.value("owner",        std::string(""));
+            pa.fuelType     = ac.value("fuel_type",    std::string(""));
+            pa.hasHazmat    = ac.value("has_hazmat",   false);
+            pa.gearExtended = ac.value("gear_extended", true); // safe default: gear down
             data.aircraft.push_back(std::move(pa));
         }
     }

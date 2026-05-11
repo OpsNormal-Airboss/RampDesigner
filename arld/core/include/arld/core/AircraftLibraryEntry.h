@@ -38,6 +38,8 @@ struct AircraftLibraryEntry {
     float tailHeightFt               = 0.0f;
     std::optional<float> propArcFt;       // only for piston/turboprop aircraft
     std::optional<float> rotorDiameterFt; // only for helicopters
+    std::optional<float> minTurnRadiusFt; // tail-draggers only; drives tail-swing arc
+    bool hasRetractableGear = false;      // determines whether gear state selector appears
     DisplayType defaultDisplayType   = DisplayType::StaticDisplay;
     std::string silhouetteSvg;            // filename only, e.g. "north-american-p51-d.svg"
     std::vector<std::string> dataSources;

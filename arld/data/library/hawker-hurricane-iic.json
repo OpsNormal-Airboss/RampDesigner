@@ -14,8 +14,10 @@
   "silhouette_svg": "hawker-hurricane-iic.svg",
   "data_sources": [
     "RAF AP 1564B Hurricane II Pilot's Notes",
-    "Jane's All the World's Aircraft 1942–43",
+    "Jane's All the World's Aircraft 1942\u201343",
     "Hawker Hurricane, Francis Mason, 1990"
   ],
-  "verified_date": "2026-05-10"
+  "verified_date": "2026-05-10",
+  "min_turn_radius_ft": 23.0,
+  "has_retractable_gear": true
 }
