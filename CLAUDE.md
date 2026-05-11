@@ -57,7 +57,6 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
 | 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat; schema migration | ✅ Complete |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Up next |
-| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Planned |
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ⬜ Planned |
 | 1-5 | Satellite underlay; grid overlay; undo/redo improvements | ⬜ Planned |
 | 1-6 | PDF export (libharu); PNG/JPEG export (stb); print dialog | ⬜ Planned |
