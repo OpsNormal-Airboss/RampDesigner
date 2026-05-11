@@ -10,7 +10,9 @@
 #include <arld/core/ClearanceRuleSet.h>
 #include <arld/core/ProjectFile.h>
 #include <QApplication>
+#include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QPen>
 #include <cmath>
 #include <unordered_map>
 
@@ -281,6 +283,9 @@ QPointF RampScene::aircraftSceneCenter(const std::string& id) const {
 }
 
 void RampScene::recomputeClearance() {
+    // Delta mode: suppress clearance re-evaluation while comparing versions.
+    if (m_deltaMode) return;
+
     // Collect states for all visible (placed and not undone) aircraft.
     std::vector<arld::core::AircraftState> states;
     states.reserve(m_aircraft.size());
@@ -484,6 +489,94 @@ void RampScene::loadProjectData(
     }
 
     recomputeClearance();
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-2: delta overlay
+// ---------------------------------------------------------------------------
+
+void RampScene::showDelta(const arld::core::DeltaResult& delta) {
+    clearDelta();
+    m_deltaMode = true;
+
+    // Build a lookup from placement id to AircraftItem*
+    std::unordered_map<std::string, AircraftItem*> itemMap;
+    for (auto* item : m_aircraft)
+        itemMap[item->placementId()] = item;
+
+    for (const auto& d : delta.deltas) {
+        switch (d.change) {
+            case arld::core::DeltaChange::Unchanged:
+                // No tint needed
+                break;
+
+            case arld::core::DeltaChange::Added: {
+                // Solid green outline on existing item
+                if (auto it = itemMap.find(d.aircraft.placementId); it != itemMap.end()) {
+                    auto* ghost = new QGraphicsRectItem(it->second->mapToScene(
+                        it->second->childrenBoundingRect()).boundingRect());
+                    ghost->setPen(QPen(QColor(0, 200, 80), 3));
+                    ghost->setBrush(QColor(0, 200, 80, 50));
+                    ghost->setZValue(10.0);
+                    addItem(ghost);
+                    m_deltaGhosts.push_back(ghost);
+                }
+                break;
+            }
+
+            case arld::core::DeltaChange::Removed: {
+                // Translucent red ghost rectangle at original position
+                const float hw = d.aircraft.wingspanFt / 2.0f;
+                const float hl = d.aircraft.lengthFt   / 2.0f;
+                auto* ghost = new QGraphicsRectItem(
+                    d.aircraft.centerX - hw,
+                    d.aircraft.centerY - hl,
+                    d.aircraft.wingspanFt,
+                    d.aircraft.lengthFt);
+                ghost->setPen(QPen(QColor(200, 40, 40), 2));
+                ghost->setBrush(QColor(200, 40, 40, 80));
+                ghost->setZValue(10.0);
+                addItem(ghost);
+                m_deltaGhosts.push_back(ghost);
+                break;
+            }
+
+            case arld::core::DeltaChange::Moved: {
+                // Amber semi-transparent overlay on the current item
+                if (auto it = itemMap.find(d.aircraft.placementId); it != itemMap.end()) {
+                    auto* ghost = new QGraphicsRectItem(it->second->mapToScene(
+                        it->second->childrenBoundingRect()).boundingRect());
+                    ghost->setPen(QPen(QColor(220, 160, 0), 2));
+                    ghost->setBrush(QColor(220, 160, 0, 80));
+                    ghost->setZValue(10.0);
+                    addItem(ghost);
+                    m_deltaGhosts.push_back(ghost);
+                }
+                break;
+            }
+        }
+    }
+}
+
+void RampScene::clearDelta() {
+    for (auto* ghost : m_deltaGhosts) {
+        removeItem(ghost);
+        delete ghost;
+    }
+    m_deltaGhosts.clear();
+    m_deltaMode = false;
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-2: setBoundary
+// ---------------------------------------------------------------------------
+
+void RampScene::setBoundary(const arld::core::RampBoundaryData& boundary) {
+    m_boundaryItem->clearBoundary();
+    for (const auto& [x, y] : boundary.vertices)
+        m_boundaryItem->addPoint(QPointF(static_cast<double>(x), static_cast<double>(y)));
+    if (boundary.closed && m_boundaryItem->pointCount() >= 3)
+        m_boundaryItem->closePolygon();
 }
 
 } // namespace arld::ui

@@ -90,12 +90,45 @@ std::string ProjectFile::currentUtcTimestamp() {
 }
 
 // ---------------------------------------------------------------------------
-// Save (schema version 2)
+// Helper: serialize a single aircraft to JSON
+// ---------------------------------------------------------------------------
+static json serializeAircraft(const arld::core::PlacedAircraft& ac) {
+    json acj = {
+        {"placement_id",  ac.placementId},
+        {"library_id",    ac.libraryId},
+        {"display_name",  ac.displayName},
+        {"center_x",      ac.centerX},
+        {"center_y",      ac.centerY},
+        {"rotation_deg",  ac.rotationDeg},
+        {"wingspan_ft",   ac.wingspanFt},
+        {"length_ft",     ac.lengthFt},
+        {"display_type",  arld::core::displayTypeToString(ac.displayType)}
+    };
+    if (!ac.tailNumber.empty()) acj["tail_number"] = ac.tailNumber;
+    if (!ac.owner.empty())      acj["owner"]       = ac.owner;
+    if (!ac.fuelType.empty())   acj["fuel_type"]   = ac.fuelType;
+    if (ac.hasHazmat)           acj["has_hazmat"]  = true;
+    if (!ac.gearExtended)       acj["gear_extended"] = false;
+    return acj;
+}
+
+// Helper: serialize boundary to JSON
+static json serializeBoundary(const arld::core::RampBoundaryData& boundary) {
+    json vertices = json::array();
+    for (const auto& [x, y] : boundary.vertices)
+        vertices.push_back({{"x", x}, {"y", y}});
+    return json{{"vertices", vertices}, {"closed", boundary.closed}};
+}
+
+// ---------------------------------------------------------------------------
+// Save (schema version 2 or 3)
 // ---------------------------------------------------------------------------
 void ProjectFile::save(const std::string& path, const ProjectData& data) {
     json j;
-    j["arld_version"]  = "1.1.0";
-    j["schema_version"] = 2;
+    // Use schema_version 3 when versions are non-empty; otherwise keep 2 for back-compat.
+    const int sv = data.versions.empty() ? 2 : 3;
+    j["arld_version"]  = "2.0.0";
+    j["schema_version"] = sv;
 
     json meta = {
         {"title",        data.metadata.title},
@@ -110,37 +143,12 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
     j["metadata"] = meta;
 
     // Boundary
-    json vertices = json::array();
-    for (const auto& [x, y] : data.boundary.vertices)
-        vertices.push_back({{"x", x}, {"y", y}});
-    j["ramp_boundary"] = {
-        {"vertices", vertices},
-        {"closed",   data.boundary.closed}
-    };
+    j["ramp_boundary"] = serializeBoundary(data.boundary);
 
     // Aircraft
     json aircraft = json::array();
-    for (const auto& ac : data.aircraft) {
-        json acj = {
-            {"placement_id",  ac.placementId},
-            {"library_id",    ac.libraryId},
-            {"display_name",  ac.displayName},
-            {"center_x",      ac.centerX},
-            {"center_y",      ac.centerY},
-            {"rotation_deg",  ac.rotationDeg},
-            {"wingspan_ft",   ac.wingspanFt},
-            {"length_ft",     ac.lengthFt},
-            {"display_type",  displayTypeToString(ac.displayType)}
-        };
-        // Per-aircraft metadata fields (omit empty strings to keep files clean)
-        if (!ac.tailNumber.empty()) acj["tail_number"] = ac.tailNumber;
-        if (!ac.owner.empty())      acj["owner"]       = ac.owner;
-        if (!ac.fuelType.empty())   acj["fuel_type"]   = ac.fuelType;
-        if (ac.hasHazmat)           acj["has_hazmat"]  = true;
-        // Gear state (default true = gear down; only write when retracted to keep files clean)
-        if (!ac.gearExtended)       acj["gear_extended"] = false;
-        aircraft.push_back(std::move(acj));
-    }
+    for (const auto& ac : data.aircraft)
+        aircraft.push_back(serializeAircraft(ac));
     j["aircraft"] = aircraft;
 
     // Overrides
@@ -155,6 +163,24 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
         });
     }
     j["overrides"] = overrides;
+
+    // Named layout versions (schema_version 3, Sprint 2-2)
+    if (!data.versions.empty()) {
+        json versions = json::array();
+        for (const auto& ver : data.versions) {
+            json vj;
+            vj["id"]          = ver.id;
+            vj["name"]        = ver.name;
+            vj["created_utc"] = ver.createdUtc;
+            vj["ramp_boundary"] = serializeBoundary(ver.boundary);
+            json vacList = json::array();
+            for (const auto& ac : ver.aircraft)
+                vacList.push_back(serializeAircraft(ac));
+            vj["aircraft"] = vacList;
+            versions.push_back(std::move(vj));
+        }
+        j["versions"] = versions;
+    }
 
     std::ofstream ofs(path);
     if (!ofs.is_open())
@@ -183,7 +209,7 @@ ProjectData ProjectFile::load(const std::string& path) {
         throw std::runtime_error("ProjectFile::load: missing or invalid schema_version");
 
     int sv = j.value("schema_version", 0);
-    if (sv < 1 || sv > 2)
+    if (sv < 1 || sv > 3)
         throw std::runtime_error("ProjectFile::load: unsupported schema_version: "
                                  + std::to_string(sv));
 
@@ -248,6 +274,51 @@ ProjectData ProjectFile::load(const std::string& path) {
             co.username      = ov.value("username",       "");
             co.timestampUtc  = ov.value("timestamp_utc",  "");
             data.overrides.push_back(std::move(co));
+        }
+    }
+
+    // Named layout versions (sv=3 only; empty for sv=1/2)
+    if (sv >= 3 && j.contains("versions") && j["versions"].is_array()) {
+        for (const auto& vj : j["versions"]) {
+            LayoutVersion ver;
+            ver.id          = vj.value("id",          "");
+            ver.name        = vj.value("name",         "");
+            ver.createdUtc  = vj.value("created_utc",  "");
+
+            // Boundary
+            if (vj.contains("ramp_boundary") && vj["ramp_boundary"].is_object()) {
+                const auto& rb = vj["ramp_boundary"];
+                ver.boundary.closed = rb.value("closed", false);
+                if (rb.contains("vertices") && rb["vertices"].is_array()) {
+                    for (const auto& v : rb["vertices"])
+                        ver.boundary.vertices.emplace_back(v.value("x", 0.0f), v.value("y", 0.0f));
+                }
+            }
+
+            // Aircraft
+            if (vj.contains("aircraft") && vj["aircraft"].is_array()) {
+                for (const auto& ac : vj["aircraft"]) {
+                    PlacedAircraft pa;
+                    pa.placementId  = ac.value("placement_id", "");
+                    pa.libraryId    = ac.value("library_id",   "");
+                    pa.displayName  = ac.value("display_name", "");
+                    pa.centerX      = ac.value("center_x",     0.0f);
+                    pa.centerY      = ac.value("center_y",     0.0f);
+                    pa.rotationDeg  = ac.value("rotation_deg", 0.0f);
+                    pa.wingspanFt   = ac.value("wingspan_ft",  0.0f);
+                    pa.lengthFt     = ac.value("length_ft",    0.0f);
+                    pa.displayType  = displayTypeFromString(
+                        ac.value("display_type", std::string("static_display")));
+                    pa.tailNumber   = ac.value("tail_number",  std::string(""));
+                    pa.owner        = ac.value("owner",        std::string(""));
+                    pa.fuelType     = ac.value("fuel_type",    std::string(""));
+                    pa.hasHazmat    = ac.value("has_hazmat",   false);
+                    pa.gearExtended = ac.value("gear_extended", true);
+                    ver.aircraft.push_back(std::move(pa));
+                }
+            }
+
+            data.versions.push_back(std::move(ver));
         }
     }
 

@@ -1,11 +1,17 @@
 #include "MainWindow.h"
 #include <arld/ui/ClearanceRuleDialog.h>
 #include <arld/ui/LibraryPanel.h>
+#include <arld/ui/MinimapWidget.h>
 #include <arld/ui/PropertiesPanel.h>
 #include <arld/ui/RampScene.h>
 #include <arld/ui/RampView.h>
+#include <arld/ui/SatelliteUnderlayItem.h>
+#include <arld/ui/UndoHistoryPanel.h>
+#include <arld/ui/VersionsPanel.h>
 #include <arld/ui/ViolationsPanel.h>
 #include <arld/ui/AircraftItem.h>
+#include <arld/core/BoundaryImporter.h>
+#include <arld/core/LayoutDiffer.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UnitConverter.h>
 #include <arld/export/AircraftManifestExporter.h>
@@ -20,6 +26,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDir>
+#include <QDockWidget>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -31,6 +38,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
 #include <QSlider>
@@ -43,9 +51,12 @@
 
 using arld::ui::EditMode;
 using arld::ui::LibraryPanel;
+using arld::ui::MinimapWidget;
 using arld::ui::PropertiesPanel;
 using arld::ui::RampScene;
 using arld::ui::RampView;
+using arld::ui::UndoHistoryPanel;
+using arld::ui::VersionsPanel;
 using arld::ui::ViolationsPanel;
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -202,8 +213,9 @@ void MainWindow::setupMenuBar() {
     addSpacing(tr("50 ft"),  50);
     addSpacing(tr("100 ft"), 100);
 
-    // Satellite underlay controls (1-5-6)
+    // Satellite underlay controls (1-5-6 / 2-2)
     viewMenu->addSeparator();
+    viewMenu->addAction(tr("Satellite &Tiles..."), this, &MainWindow::showSatelliteTilesDialog);
     viewMenu->addAction(tr("Load &Satellite Image..."), this, [this] {
         const QString path = QFileDialog::getOpenFileName(
             this, tr("Load Satellite Image"), QString(),
@@ -261,6 +273,8 @@ void MainWindow::setupFileActions() {
     fm->addSeparator();
     fm->addAction(tr("Export &Violations Report..."), this, &MainWindow::exportViolationsReport);
     fm->addAction(tr("Export Aircraft &Manifest CSV..."), this, &MainWindow::exportAircraftManifest);
+    fm->addSeparator();
+    fm->addAction(tr("Import &Boundary from KML/GeoJSON..."), this, &MainWindow::importBoundary);
     fm->addSeparator();
     m_recentFilesMenu = fm->addMenu(tr("&Recent Projects"));
     updateRecentFilesMenu();
@@ -344,6 +358,110 @@ void MainWindow::setupPanels() {
 
     connect(m_scene, &RampScene::violationsChanged, this, [this] {
         m_violationsPanel->refresh(m_scene->lastViolations());
+    });
+
+    // --- Sprint 2-2 panels ---
+
+    // Versions panel (right dock, tabified with properties)
+    m_versionsPanel = new VersionsPanel(this);
+    addDockWidget(Qt::RightDockWidgetArea, m_versionsPanel);
+    tabifyDockWidget(m_propertiesPanel, m_versionsPanel);
+
+    connect(m_versionsPanel, &VersionsPanel::versionSaveRequested,
+            this, [this](const QString& name) {
+        // Snapshot current scene into a LayoutVersion and push onto m_currentData.versions
+        auto snapshot = m_scene->toProjectData();
+        arld::core::LayoutVersion ver;
+        ver.id         = arld::core::ProjectFile::generateUuid();
+        ver.name       = name.toStdString();
+        ver.createdUtc = arld::core::ProjectFile::currentUtcTimestamp();
+        ver.boundary   = snapshot.boundary;
+        ver.aircraft   = snapshot.aircraft;
+        m_currentData.versions.push_back(ver);
+        m_versionsPanel->setProjectData(m_currentData);
+        m_dirty = true;
+        updateWindowTitle();
+    });
+
+    connect(m_versionsPanel, &VersionsPanel::versionSwitchRequested,
+            this, [this](const QString& id) {
+        const std::string sid = id.toStdString();
+        for (const auto& ver : m_currentData.versions) {
+            if (ver.id == sid) {
+                arld::core::ProjectData vdata;
+                vdata.boundary = ver.boundary;
+                vdata.aircraft = ver.aircraft;
+                auto lookup = [this](const std::string& libId)
+                    -> const arld::core::AircraftLibraryEntry* {
+                    return m_libraryPanel->entryById(libId);
+                };
+                m_scene->clearDelta();
+                m_scene->loadProjectData(vdata, lookup);
+                m_dirty = true;
+                updateWindowTitle();
+                return;
+            }
+        }
+    });
+
+    connect(m_versionsPanel, &VersionsPanel::versionExportRequested,
+            this, [this](const QString& id) {
+        const std::string sid = id.toStdString();
+        for (const auto& ver : m_currentData.versions) {
+            if (ver.id == sid) {
+                const QString path = QFileDialog::getSaveFileName(
+                    this, tr("Export Layout Version"), QString(),
+                    tr("ARLD Project Files (*.arld);;All Files (*)"));
+                if (path.isEmpty()) return;
+                arld::core::ProjectData vdata;
+                vdata.metadata = m_projectMetadata;
+                vdata.metadata.title = ver.name;
+                vdata.boundary = ver.boundary;
+                vdata.aircraft = ver.aircraft;
+                try {
+                    arld::core::ProjectFile::save(path.toStdString(), vdata);
+                } catch (const std::exception& e) {
+                    QMessageBox::critical(this, tr("Export Failed"),
+                                          tr("Could not export version:\n%1").arg(e.what()));
+                }
+                return;
+            }
+        }
+    });
+
+    connect(m_versionsPanel, &VersionsPanel::versionDeltaRequested,
+            this, [this](const QString& idA, const QString& idB) {
+        const std::string sidA = idA.toStdString();
+        const std::string sidB = idB.toStdString();
+        const arld::core::LayoutVersion* verA = nullptr;
+        const arld::core::LayoutVersion* verB = nullptr;
+        for (const auto& ver : m_currentData.versions) {
+            if (ver.id == sidA) verA = &ver;
+            if (ver.id == sidB) verB = &ver;
+        }
+        if (!verA || !verB) return;
+        const auto delta = arld::core::LayoutDiffer::diff(verA->aircraft, verB->aircraft);
+        m_scene->showDelta(delta);
+    });
+
+    // Undo history panel (right dock, tabified with versions)
+    m_undoHistoryPanel = new UndoHistoryPanel(m_scene, this);
+    addDockWidget(Qt::RightDockWidgetArea, m_undoHistoryPanel);
+    tabifyDockWidget(m_versionsPanel, m_undoHistoryPanel);
+
+    // Minimap widget (bottom dock, tabified with violations)
+    auto* minimapDock = new QDockWidget(tr("Minimap"), this);
+    minimapDock->setObjectName(QStringLiteral("MinimapDock"));
+    m_minimapWidget = new MinimapWidget(this);
+    m_minimapWidget->setScene(m_scene);
+    m_minimapWidget->setView(m_view);
+    minimapDock->setWidget(m_minimapWidget);
+    addDockWidget(Qt::BottomDockWidgetArea, minimapDock);
+    tabifyDockWidget(m_violationsPanel, minimapDock);
+
+    connect(m_minimapWidget, &MinimapWidget::minimapClicked,
+            this, [this](QPointF scenePos) {
+        m_view->centerOn(scenePos);
     });
 }
 
@@ -432,6 +550,8 @@ void MainWindow::openProject() {
         };
         m_scene->loadProjectData(data, lookup);
         m_projectMetadata = data.metadata;
+        m_currentData = data;
+        if (m_versionsPanel) m_versionsPanel->setProjectData(m_currentData);
 
         m_currentFilePath = path;
         m_dirty = false;
@@ -457,7 +577,10 @@ void MainWindow::saveProject() {
             data.metadata.title = QFileInfo(m_currentFilePath).baseName().toStdString();
         if (data.metadata.createdUtc.empty())
             data.metadata.createdUtc = arld::core::ProjectFile::currentUtcTimestamp();
+        // Preserve named versions
+        data.versions = m_currentData.versions;
         arld::core::ProjectFile::save(m_currentFilePath.toStdString(), data);
+        m_currentData = data;
         m_dirty = false;
         updateWindowTitle();
     } catch (const std::exception& e) {
@@ -747,6 +870,92 @@ void MainWindow::exportAircraftManifest() {
         QMessageBox::critical(this, tr("Export Failed"),
             tr("Could not export manifest:\n%1").arg(e.what()));
     }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-2: Import Boundary from KML/GeoJSON
+// ---------------------------------------------------------------------------
+void MainWindow::importBoundary() {
+    const QString path = QFileDialog::getOpenFileName(
+        this, tr("Import Boundary"),
+        QString(),
+        tr("KML/GeoJSON (*.kml *.geojson *.json);;All Files (*)"));
+    if (path.isEmpty()) return;
+
+    try {
+        const auto boundary = arld::core::BoundaryImporter::importFile(path.toStdString());
+        m_scene->setBoundary(boundary);
+        m_dirty = true;
+        updateWindowTitle();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Import Failed"),
+                              tr("Could not import boundary:\n%1").arg(e.what()));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-2: Satellite Tiles dialog
+// ---------------------------------------------------------------------------
+void MainWindow::showSatelliteTilesDialog() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Satellite Tiles"));
+    auto* layout = new QFormLayout(&dlg);
+
+    QSettings settings(QStringLiteral("OpsNormal"), QStringLiteral("ARLD"));
+    const QString savedToken = settings.value(QStringLiteral("mapboxToken")).toString();
+    const QString defaultUrl = QStringLiteral(
+        "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"
+        "{lon},{lat},{zoom}/1280x720@2x?access_token={token}");
+    const QString savedUrl = settings.value(QStringLiteral("mapboxTileUrl"), defaultUrl).toString();
+
+    auto* tokenEdit  = new QLineEdit(savedToken, &dlg);
+    tokenEdit->setEchoMode(QLineEdit::Password);
+    tokenEdit->setPlaceholderText(tr("pk.eyJ1..."));
+    layout->addRow(tr("Mapbox Access Token:"), tokenEdit);
+
+    auto* urlEdit = new QLineEdit(savedUrl, &dlg);
+    layout->addRow(tr("Tile URL Template:"), urlEdit);
+
+    auto* opacitySlider = new QSlider(Qt::Horizontal, &dlg);
+    opacitySlider->setMinimum(0);
+    opacitySlider->setMaximum(100);
+    opacitySlider->setValue(80);
+    layout->addRow(tr("Opacity:"), opacitySlider);
+
+    auto* fetchBtn = new QPushButton(tr("Fetch Tile"), &dlg);
+    fetchBtn->setEnabled(!tokenEdit->text().trimmed().isEmpty());
+    layout->addRow(fetchBtn);
+
+    connect(tokenEdit, &QLineEdit::textChanged, this, [fetchBtn](const QString& text) {
+        fetchBtn->setEnabled(!text.trimmed().isEmpty());
+    });
+
+    connect(opacitySlider, &QSlider::valueChanged, this, [this](int v) {
+        m_scene->setSatelliteOpacity(v / 100.0f);
+    });
+
+    connect(fetchBtn, &QPushButton::clicked, this, [&]() {
+        const QString token = tokenEdit->text().trimmed();
+        QString url = urlEdit->text();
+        url.replace(QStringLiteral("{token}"), token);
+        // Placeholder substitutions for lon/lat/zoom — user can edit the URL directly
+        url.replace(QStringLiteral("{lon}"),  QStringLiteral("-89.0"));
+        url.replace(QStringLiteral("{lat}"),  QStringLiteral("44.5"));
+        url.replace(QStringLiteral("{zoom}"), QStringLiteral("15"));
+
+        // Save settings
+        settings.setValue(QStringLiteral("mapboxToken"),   token);
+        settings.setValue(QStringLiteral("mapboxTileUrl"), urlEdit->text());
+
+        if (m_scene->satelliteItem())
+            m_scene->satelliteItem()->fetchTile(url);
+    });
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addRow(buttons);
+
+    dlg.exec();
 }
 
 void MainWindow::updateRecentFilesMenu() {

@@ -60,6 +60,89 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
+  package:
+    name: Package (${{ matrix.os }})
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            preset: mac-release
+            build_dir: mac-release
+          - os: ubuntu-22.04
+            preset: linux-release
+            build_dir: linux-release
+          - os: windows-2022
+            preset: win-release
+            build_dir: win-release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build gcc-13 g++-13 \
+            libgl1-mesa-dev libglu1-mesa-dev
+          echo "CC=gcc-13"  >> "$GITHUB_ENV"
+          echo "CXX=g++-13" >> "$GITHUB_ENV"
+
+      - name: Install Ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - name: Install Qt 6.7
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.3'
+          modules: 'qtsvg qtsvgwidgets'
+          cache: true
+
+      - name: Set up vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Package
+        run: |
+          cd build/${{ matrix.build_dir }}
+          cpack
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arld-${{ matrix.os }}-${{ github.ref_name }}
+          path: |
+            build/*/arld-*.dmg
+            build/*/arld-*.AppImage
+            build/*/arld-*.deb
+            build/*/arld-*.msi
+
+  release:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: dist/**
+
   lint:
     name: clang-tidy
     runs-on: ubuntu-22.04

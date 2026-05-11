@@ -113,7 +113,7 @@ TEST_CASE("ProjectFile: save and load round-trip preserves all data — 15 aircr
     REQUIRE_NOTHROW(loaded = ProjectFile::load(tmpPath));
 
     // Verify top-level fields.
-    CHECK(loaded.arldVersion   == "1.1.0");
+    CHECK(loaded.arldVersion   == "2.0.0");
     CHECK(loaded.schemaVersion == 2);
     CHECK(loaded.metadata.title == orig.metadata.title);
     CHECK(loaded.metadata.createdUtc == orig.metadata.createdUtc);

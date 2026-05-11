@@ -11,10 +11,13 @@ class QSlider;
 
 namespace arld::ui {
 class LibraryPanel;
+class MinimapWidget;
 class PropertiesPanel;
 class RampScene;
 class RampView;
+class UndoHistoryPanel;
 class ViolationsPanel;
+class VersionsPanel;
 }
 
 class MainWindow : public QMainWindow {
@@ -58,11 +61,21 @@ private:
     void addToRecentFiles(const QString& path);
     void updateRecentFilesMenu();
 
+    // Sprint 2-2 slots
+    void importBoundary();
+    void showSatelliteTilesDialog();
+
     arld::ui::RampScene*    m_scene;
     arld::ui::RampView*     m_view;
-    arld::ui::LibraryPanel*    m_libraryPanel   = nullptr;
-    arld::ui::PropertiesPanel* m_propertiesPanel = nullptr;
-    arld::ui::ViolationsPanel* m_violationsPanel = nullptr;
+    arld::ui::LibraryPanel*       m_libraryPanel    = nullptr;
+    arld::ui::MinimapWidget*      m_minimapWidget   = nullptr;
+    arld::ui::PropertiesPanel*    m_propertiesPanel = nullptr;
+    arld::ui::UndoHistoryPanel*   m_undoHistoryPanel = nullptr;
+    arld::ui::VersionsPanel*      m_versionsPanel   = nullptr;
+    arld::ui::ViolationsPanel*    m_violationsPanel = nullptr;
+
+    // Sprint 2-2: current project data (holds versions list)
+    arld::core::ProjectData m_currentData;
     QAction* m_undoAction          = nullptr;
     QAction* m_redoAction          = nullptr;
     QAction* m_drawBoundaryAction  = nullptr;

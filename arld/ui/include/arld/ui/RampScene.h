@@ -1,9 +1,11 @@
 #pragma once
 #include <arld/core/ClearanceEngine.h>
 #include <arld/core/ClearanceRuleSet.h>
+#include <arld/core/LayoutDiffer.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UndoStack.h>
 #include <arld/core/AircraftLibraryEntry.h>
+#include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QTimer>
 #include <functional>
@@ -42,6 +44,14 @@ public:
     // --- Satellite underlay (1-5-6) ---
     void setSatelliteImage(const QString& path);
     void setSatelliteOpacity(float opacity);
+    SatelliteUnderlayItem* satelliteItem() const { return m_satelliteItem; }
+
+    // --- Delta overlay (Sprint 2-2) ---
+    void showDelta(const arld::core::DeltaResult& delta);
+    void clearDelta();
+
+    // --- Boundary import (Sprint 2-2) ---
+    void setBoundary(const arld::core::RampBoundaryData& boundary);
 
     // Trigger an immediate clearance recomputation (normally debounced via timer).
     void recomputeClearance();
@@ -109,6 +119,10 @@ private:
 
     // Multi-select drag: pre-drag positions of all selected aircraft.
     std::vector<std::pair<AircraftItem*, QPointF>> m_preDragPositions;
+
+    // Delta mode state (Sprint 2-2)
+    bool m_deltaMode = false;
+    std::vector<QGraphicsRectItem*> m_deltaGhosts;  // ghost items for removed/moved aircraft
 };
 
 } // namespace arld::ui

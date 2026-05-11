@@ -25,6 +25,15 @@ public:
 
     void clear();
 
+    /// Returns descriptions of all commands oldest→newest.
+    std::vector<std::string> history() const;
+
+    /// Current top-of-stack index (0 = nothing executed, i = i commands have been executed).
+    int currentIndex() const;
+
+    /// Undo/redo to reach @p targetIndex. Calls undo() or redo() as needed.
+    void goToIndex(int targetIndex);
+
     // Invoked after every mutation so the UI can refresh action enable states.
     std::function<void()> onChanged;
 

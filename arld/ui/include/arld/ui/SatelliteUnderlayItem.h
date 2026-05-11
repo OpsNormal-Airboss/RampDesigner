@@ -2,9 +2,13 @@
 #include <QFutureWatcher>
 #include <QGraphicsItem>
 #include <QImage>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QObject>
 #include <QRectF>
 #include <QString>
+#include <QTemporaryFile>
+#include <memory>
 
 namespace arld::ui {
 
@@ -22,6 +26,11 @@ public:
     /// Emits imageLoaded() when complete.
     void loadImage(const QString& path);
 
+    /// Fetch a tile from @p url (HTTPS only).
+    /// If url does not start with "https://", emits loadingError("HTTPS required") and returns.
+    /// On success, writes to a temp file and calls loadImage().
+    void fetchTile(const QString& url);
+
     /// Set the render opacity (0.0 = invisible, 1.0 = fully opaque).
     void setOpacity(float opacity);
 
@@ -33,16 +42,22 @@ public:
 
 signals:
     void imageLoaded();
+    void loadingFinished(bool ok);
+    void loadingError(const QString& message);
 
 private slots:
     void onImageReady();
+    void onNetworkReplyFinished();
 
 private:
     QImage  m_image;
     float   m_opacity = 0.8f;
     bool    m_loading = false;
     QRectF  m_rect;   // scene-space bounding rect (pixels = feet for now)
-    QFutureWatcher<QImage> m_watcher;
+    QFutureWatcher<QImage>   m_watcher;
+    QNetworkAccessManager    m_nam;
+    QNetworkReply*           m_reply = nullptr;
+    std::unique_ptr<QTemporaryFile> m_tempFile;
 };
 
 } // namespace arld::ui

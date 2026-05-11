@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 2 — Sprint 1/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%201%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 2 — Sprint 2/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%202%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -29,7 +29,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |-------|-------------|--------|
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
 | **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **✅ Complete — All 6 sprints done** |
-| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 1/6** |
+| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 2/6** |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
@@ -59,7 +59,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | Sprint | Goal | Status |
 |--------|------|--------|
 | 2-1 | 150-aircraft library; batch export; SVG named layers; multi-select; AircraftManifestExporter CSV | ✅ Complete |
-| 2-2 | Layout versioning; change-delta view; minimap; geo-referenced tile underlay | ⬜ Up next |
+| 2-2 | Named snapshots; change-delta view; minimap; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
+| 2-3 | Opt-in library update service; LOD rendering; beta release | ⬜ Up next |
 | 2-3 | Opt-in library update service; LOD rendering; beta release | ⬜ Not started |
 | 2-4 | UAT event 1; bug fixes; snap-to-runway and group move polish | ⬜ Not started |
 | 2-5 | UAT events 2 & 3; export quality review with print vendors | ⬜ Not started |
@@ -94,6 +95,12 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **SVG named layers** — exported SVGs include Inkscape-compatible `<g id=... inkscape:label=...>` layers for Ramp Boundary, Aircraft, and Annotations; layer-aware editing in Inkscape/Illustrator works out of the box
 - **Violations report** — File → Export Violations Report exports a PDF table or CSV with all violation pairs, measured/required gaps, severity, and override justifications
 - **Satellite underlay** — View → Load Satellite Image imports a JPEG/PNG; loads asynchronously without blocking the UI; opacity slider 0–100%
+- **Geo-referenced tile streaming** — View → Satellite Tiles... opens a dialog to configure a Mapbox access token and tile URL template; clicking "Fetch Tile" downloads HTTPS imagery directly to the underlay layer; non-HTTPS URLs are silently rejected
+- **Named layout snapshots (versions)** — Versions panel (right dock): click "Save Current..." to snapshot the current scene under a named label; switch to any version, export it as a standalone `.arld`, or select two versions for a side-by-side delta view
+- **Visual change-delta overlay** — comparing two versions highlights Added (green outline), Removed (red ghost), and Moved (amber overlay) aircraft directly on the canvas; clearance evaluation is suppressed during delta view; "Clear" button restores normal view
+- **Minimap** — bottom dock shows a scaled-down overview of the full scene; viewport rectangle drawn in blue; click anywhere to pan the main canvas to that position
+- **Undo history panel** — right dock shows the last 20 commands; the current command is bold; past commands are grayed; click any entry to jump to that undo state
+- **KML/GeoJSON boundary import** — File → Import Boundary from KML/GeoJSON imports a polygon outline from standard geospatial files; flat-earth projection with centroid at scene origin (0, 0)
 - **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
@@ -150,7 +157,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 84 Catch2 tests (+ 4 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, and `test_batch_exporter.cpp`.
+Current test suite: 93 Catch2 tests (+ 4 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, `test_batch_exporter.cpp`, and `test_versioning.cpp`.
 
 ## 📋 Documentation
 

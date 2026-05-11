@@ -1,5 +1,8 @@
 #include <arld/ui/SatelliteUnderlayItem.h>
+#include <QDir>
+#include <QNetworkRequest>
 #include <QPainter>
+#include <QUrl>
 #include <QtConcurrent/QtConcurrent>
 
 namespace arld::ui {
@@ -69,6 +72,62 @@ void SatelliteUnderlayItem::onImageReady() {
 
     update();
     emit imageLoaded();
+    emit loadingFinished(!img.isNull());
+}
+
+void SatelliteUnderlayItem::fetchTile(const QString& url) {
+    // HTTPS only — reject immediately without any network call
+    if (!url.startsWith(QStringLiteral("https://"))) {
+        emit loadingError(tr("HTTPS required"));
+        return;
+    }
+
+    // Cancel any pending reply
+    if (m_reply) {
+        m_reply->abort();
+        m_reply->deleteLater();
+        m_reply = nullptr;
+    }
+
+    m_loading = true;
+    update();
+
+    QUrl parsedUrl(url);
+    QNetworkRequest req(parsedUrl);
+    req.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("ARLD/2.0"));
+    m_reply = m_nam.get(req);
+    connect(m_reply, &QNetworkReply::finished,
+            this, &SatelliteUnderlayItem::onNetworkReplyFinished);
+}
+
+void SatelliteUnderlayItem::onNetworkReplyFinished() {
+    if (!m_reply) return;
+
+    const bool ok = (m_reply->error() == QNetworkReply::NoError);
+    if (ok) {
+        const QByteArray data = m_reply->readAll();
+        // Write to a temp file, then load from disk
+        m_tempFile = std::make_unique<QTemporaryFile>();
+        m_tempFile->setFileTemplate(QStringLiteral("%1/arld_tile_XXXXXX.jpg")
+                                        .arg(QDir::tempPath()));
+        if (m_tempFile->open()) {
+            m_tempFile->write(data);
+            m_tempFile->flush();
+            loadImage(m_tempFile->fileName());
+        } else {
+            m_loading = false;
+            emit loadingError(tr("Failed to write temporary tile file"));
+            emit loadingFinished(false);
+        }
+    } else {
+        m_loading = false;
+        emit loadingError(m_reply->errorString());
+        emit loadingFinished(false);
+        update();
+    }
+
+    m_reply->deleteLater();
+    m_reply = nullptr;
 }
 
 } // namespace arld::ui

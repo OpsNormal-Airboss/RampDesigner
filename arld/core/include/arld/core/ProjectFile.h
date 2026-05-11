@@ -52,6 +52,15 @@ struct ClearanceOverride {
     std::string timestampUtc;
 };
 
+// Named layout snapshot (Sprint 2-2)
+struct LayoutVersion {
+    std::string               id;           // UUID v4
+    std::string               name;         // user-defined label, e.g. "Version A"
+    std::string               createdUtc;
+    RampBoundaryData          boundary;
+    std::vector<PlacedAircraft> aircraft;
+};
+
 struct ProjectData {
     std::string      arldVersion   = "1.1.0";
     int              schemaVersion = 2;
@@ -59,6 +68,7 @@ struct ProjectData {
     RampBoundaryData boundary;
     std::vector<PlacedAircraft>    aircraft;
     std::vector<ClearanceOverride> overrides;
+    std::vector<LayoutVersion>     versions;  // named snapshots (Sprint 2-2)
 };
 
 // ---------------------------------------------------------------------------

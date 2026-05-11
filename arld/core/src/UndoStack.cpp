@@ -59,4 +59,28 @@ void UndoStack::clear() {
     if (onChanged) onChanged();
 }
 
+std::vector<std::string> UndoStack::history() const {
+    std::vector<std::string> result;
+    result.reserve(m_stack.size());
+    for (const auto& cmd : m_stack)
+        result.push_back(cmd->describe());
+    return result;
+}
+
+int UndoStack::currentIndex() const {
+    return m_currentIndex;
+}
+
+void UndoStack::goToIndex(int targetIndex) {
+    // Clamp to valid range: -1 (nothing done) to stack.size()-1
+    const int maxIdx = static_cast<int>(m_stack.size()) - 1;
+    if (targetIndex < -1) targetIndex = -1;
+    if (targetIndex > maxIdx) targetIndex = maxIdx;
+
+    while (m_currentIndex > targetIndex)
+        undo();
+    while (m_currentIndex < targetIndex)
+        redo();
+}
+
 } // namespace arld::core

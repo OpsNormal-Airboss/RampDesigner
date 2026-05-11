@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-1 complete. 150-aircraft library (75 new entries across all categories), BatchExporter producing all 4 formats with one call, SVG named Inkscape layers, PNG scale bar overlay, library browser sort (Name/Wingspan/Length), AircraftManifestExporter CSV, multi-select/lasso rubber-band, community submission button, export performance benchmarks. 84/84 tests pass (+ 4 benchmarks tagged [.bench]).
+**Current status:** Phase 2, Sprint 2-2 complete. Named layout snapshots (LayoutVersion / schema_version 3), visual change-delta overlay (LayoutDiffer), VersionsPanel dock, UndoStack::history()/goToIndex(), UndoHistoryPanel dock, MinimapWidget dock, SatelliteUnderlayItem::fetchTile() HTTPS tile streaming, satellite tiles settings dialog, KML/GeoJSON boundary import (BoundaryImporter), tag-triggered release packaging CI jobs. 93/93 tests pass (+ 4 benchmarks tagged [.bench]).
 
 ## 📋 Post-Sprint Documentation
 
@@ -66,7 +66,8 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | Sprint | Goal | Status |
 |--------|------|--------|
 | 2-1 | 150-aircraft library; BatchExporter all-formats; SVG layers; PNG scale bar; library sort; manifest CSV; multi-select/lasso; community button; export benchmarks | ✅ Complete |
-| 2-2 | ??? | ⬜ Up next |
+| 2-2 | Named snapshots; change-delta view; minimap panel; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
+| 2-3 | ??? | ⬜ Up next |
 
 ## 🔧 Tech Stack
 
@@ -222,7 +223,8 @@ RampView    : QGraphicsView
 | `arld/tests/test_pdf_exporter.cpp` | 10 + 1 bench | PdfExporter creates/%PDF magic/non-empty/violations/landscape/paper-sizes/CMYK; ViolationReportExporter CSV header/rows/override/empty |
 | `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
 | `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
-| **Total** | **84 + 4 bench** | |
+| `arld/tests/test_versioning.cpp` | 9 | LayoutVersion round-trip; schema_version 3 written; v2→empty versions; LayoutDiffer added/removed/moved/unchanged; BoundaryImporter GeoJSON/KML/invalid; UndoStack history/goToIndex |
+| **Total** | **93 + 4 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash
@@ -252,15 +254,29 @@ using FT       = Kernel::FT;
 - Severity: **Violation** = below required gap; **Advisory** = within 20% above required; **Clear** = omitted from results
 - `RampScene::recomputeClearance()` is debounced 80 ms after last `QGraphicsScene::changed` signal; emits `violationCountChanged(int)` to the status bar
 
-## 💾 Project File Format (as built — Sprint 0-5)
+## 💾 Project File Format (as built — Sprint 2-2)
 
-Files use the `.arld` extension — UTF-8 JSON, schema_version 1, schema at `arld/schemas/arld-project.schema.json`. Top-level keys: `arld_version`, `schema_version`, `metadata`, `ramp_boundary`, `aircraft`. Placement IDs are UUID v4.
+Files use the `.arld` extension — UTF-8 JSON, schema_version 1/2/3, schema at `arld/schemas/arld-project.schema.json`. Top-level keys: `arld_version`, `schema_version`, `metadata`, `ramp_boundary`, `aircraft`, `overrides`, `versions` (sv=3 only). Placement IDs are UUID v4.
+
+- **schema_version 1** — PoC format (loaded with migration; overrides/versions empty)
+- **schema_version 2** — Production (overrides, per-aircraft metadata, gear state)
+- **schema_version 3** — Sprint 2-2 (adds `versions` array of named layout snapshots); written automatically when `ProjectData.versions` is non-empty; files without versions remain sv=2.
 
 **`ProjectFile`** (`arld/core/src/ProjectFile.cpp`): pure C++, zero Qt dependency.
-- `save(path, ProjectData)` — serializes to JSON via nlohmann/json
-- `load(path)` — deserializes; throws `std::runtime_error` on wrong `schema_version` or bad JSON
+- `save(path, ProjectData)` — serializes to JSON via nlohmann/json; writes sv=3 when `versions` non-empty, sv=2 otherwise; `arld_version` = `"2.0.0"`
+- `load(path)` — deserializes; throws `std::runtime_error` on wrong `schema_version` (supports 1–3) or bad JSON
 - `generateUuid()` — RFC 4122 v4 UUID via `std::mt19937` seeded from `std::random_device`
 - `currentUtcTimestamp()` — ISO 8601 UTC string via `gmtime_r`
+
+**`LayoutVersion`** struct (Sprint 2-2): `id` (UUID), `name`, `createdUtc`, `boundary`, `aircraft` — a full scene snapshot stored in `ProjectData.versions`.
+
+**`LayoutDiffer`** (`arld/core/src/LayoutDiffer.cpp`): pure C++20, no Qt.
+- `diff(base, compare)` → `DeltaResult` — compares by `placement_id`; labels each as Added/Removed/Moved/Unchanged (moved threshold: 0.01 ft).
+
+**`BoundaryImporter`** (`arld/core/src/BoundaryImporter.cpp`): pure C++, nlohmann/json only.
+- `importFile(path)` — detects KML vs. GeoJSON by extension; flat-earth projection; centroid at origin.
+- `importKml(content)` — parses `<coordinates>` element.
+- `importGeoJson(content)` — finds first `Polygon` geometry in FeatureCollection/Feature/bare geometry.
 
 **`SvgExporter`** (`arld/export/src/SvgExporter.cpp`): pure C++, no Qt; implements `IExporter`.
 - Computes bbox from boundary + aircraft; 100 ft padding; max 2000 px output

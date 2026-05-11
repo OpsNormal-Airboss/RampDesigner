@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2, Sprint 2-1 complete. 150-aircraft library (75 new entries across all categories), BatchExporter (SVG+PDF+PNG+JPEG in one call), SVG named Inkscape layers, PNG scale bar overlay, library sort combo (Name/Wingspan/Length), AircraftManifestExporter CSV, rubber-band multi-select with GroupMoveCommand undo, community submission button, export performance benchmarks. 84/84 tests pass (+ 4 benchmarks tagged [.bench]).
+> Updated after each sprint. **Current status:** Phase 2, Sprint 2-2 complete. Named layout snapshots (schema_version 3), visual change-delta overlay, VersionsPanel and UndoHistoryPanel docks, MinimapWidget, SatelliteUnderlayItem HTTPS tile streaming, satellite tiles settings dialog, KML/GeoJSON boundary import, tag-triggered release packaging CI. 93/93 tests pass (+ 4 benchmarks tagged [.bench]).
 
 ---
 
@@ -50,6 +50,8 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug \
   -DQt6SvgWidgets_DIR=/opt/homebrew/lib/cmake/Qt6SvgWidgets \
   -DQt6Widgets_DIR=/opt/homebrew/lib/cmake/Qt6Widgets \
   -DQt6Core_DIR=/opt/homebrew/lib/cmake/Qt6Core \
+  -DQt6Concurrent_DIR=/opt/homebrew/lib/cmake/Qt6Concurrent \
+  -DQt6Network_DIR=/opt/homebrew/lib/cmake/Qt6Network \
   -B build/mac-debug .
 cmake --build build/mac-debug
 
@@ -250,6 +252,76 @@ arld::export_::BatchExporter::exportAll(data, "/tmp/show_layout", opts);
 - **Shift-click:** add/remove individual aircraft from the current selection.
 - **Group move:** drag any selected aircraft to move the entire selection together. The move is pushed onto the undo stack as a single `GroupMoveCommand` covering all moved items.
 - **Escape:** clears the current selection.
+
+---
+
+## 🗒️ Sprint 2-2 Features (Named Snapshots, Delta View, Minimap, Tiles, KML Import)
+
+### Named Layout Snapshots (Versions)
+
+The Versions panel (right dock, tabified with Properties) lets you save, switch, export, and compare named snapshots of the current layout.
+
+**Workflow:**
+1. Design the layout. Click **Save Current...** in the Versions panel and enter a name (e.g., "Version A").
+2. Make changes. Click **Save Current...** again ("Version B").
+3. Select two versions in the list and click **Compare Δ...** to see the delta overlay.
+4. Click **Switch To** to restore a previous version's aircraft and boundary.
+5. Click **Export...** to save a version as a standalone `.arld` file.
+
+**Schema behavior:** Files with no versions are written as `schema_version: 2`. Files with ≥1 version are written as `schema_version: 3`. Both load transparently; sv=1/2 files open with an empty versions list.
+
+### Visual Change-Delta Overlay
+
+When you click **Compare Δ...** in the Versions panel, `LayoutDiffer::diff()` compares two snapshots by `placement_id`:
+
+| Delta | Visual |
+|-------|--------|
+| Added | Green outline overlay |
+| Removed | Translucent red ghost rectangle |
+| Moved | Amber semi-transparent overlay |
+| Unchanged | No tint |
+
+Clearance recomputation is suppressed while in delta mode. Call `RampScene::clearDelta()` (or switch/load a project) to return to normal.
+
+### Minimap Panel
+
+The Minimap (bottom dock, tabified with Violations) shows a 200×150 px scaled overview of the scene. The current viewport is shown as a blue rectangle. Click anywhere on the minimap to center the main view on that scene location.
+
+### Undo History Panel
+
+The Undo History panel (right dock, tabified with Versions) shows the last 20 executed commands. The current command is **bold**; commands that have been undone are grayed. Click any entry to jump to that state via `UndoStack::goToIndex()`.
+
+### Satellite Tile Streaming
+
+**View → Satellite Tiles...** opens the satellite tile settings dialog:
+- Enter a Mapbox access token (stored in `QSettings("OpsNormal", "ARLD")` under `mapboxToken`).
+- Optionally edit the tile URL template (default: `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/{lon},{lat},{zoom}/1280x720@2x?access_token={token}`).
+- Click **Fetch Tile** to download the tile via HTTPS and display it as the satellite underlay.
+- Non-HTTPS URLs are silently rejected before any network call is made.
+- The opacity slider (0–100%) updates the underlay opacity in real time.
+
+Token and URL are saved to `QSettings` on each fetch.
+
+### KML/GeoJSON Boundary Import
+
+**File → Import Boundary from KML/GeoJSON...** opens a file picker filtered for `.kml`, `.geojson`, and `.json` files.
+
+`BoundaryImporter::importFile()` auto-detects format by file extension, then:
+- **KML** — finds `<coordinates>` element; parses `lon,lat[,alt]` whitespace-delimited triples.
+- **GeoJSON** — uses nlohmann/json to find the first `Polygon` geometry in any container (FeatureCollection, Feature, bare geometry, or GeometryCollection).
+
+Both paths apply a flat-earth projection: 1° latitude ≈ 364,566 ft; 1° longitude ≈ 364,566 × cos(lat) ft. The polygon centroid is mapped to scene origin (0, 0). The result replaces the current boundary via `RampScene::setBoundary()`.
+
+### Tag-Triggered Release Packaging (CI)
+
+Push a tag matching `v*.*.*` (e.g., `git tag v2.2.0 && git push origin v2.2.0`) to trigger the `package` and `release` CI jobs:
+- `package` builds and calls `cpack` on all three platforms (macOS, Linux, Windows).
+- Artifacts are uploaded as GitHub Actions artifacts named `arld-<os>-<tag>`.
+- `release` downloads all artifacts and creates a draft GitHub Release with all installer files attached.
+
+Review the draft release on GitHub and publish when ready.
+
+---
 
 ### Adding New Undoable Actions
 
@@ -464,7 +536,7 @@ cmake --build --preset win-release --target package
 | 2-1-9 | Performance regression: bench_canvas and bench_geom pass budgets with 150-type library | 5 |
 | 2-1-10 | Export performance tests: SVG ≤ 3 s, PDF ≤ 8 s, PNG ≤ 6 s, JPEG ≤ 5 s (200-aircraft ANSI-D) | 5 |
 
-#### Sprint 2-2 · Month 7, Wk 3–4 · 44 pts
+#### Sprint 2-2 · Month 7, Wk 3–4 · 44 pts ✅ Complete
 **Goal:** Layout versioning, change-delta view, minimap, geo-referenced tile underlay
 
 | # | Story | Pts |

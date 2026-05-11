@@ -10,6 +10,8 @@ add_library(arld_core STATIC
     src/ProjectFile.cpp
     src/UnitConverter.cpp
     src/SvgSanitizer.cpp
+    src/LayoutDiffer.cpp
+    src/BoundaryImporter.cpp
 )
 
 target_include_directories(arld_core

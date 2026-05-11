@@ -87,7 +87,7 @@ TEST_CASE("Schema migration: v1 file with aircraft loads metadata defaults", "[m
     fs::remove(tmp);
 }
 
-TEST_CASE("Schema migration: schema_version > 2 throws", "[migration]") {
+TEST_CASE("Schema migration: schema_version > 3 throws", "[migration]") {
     const std::string json = R"({"schema_version": 99, "arld_version": "99.0.0"})";
     const std::string tmp = (fs::temp_directory_path() / "arld_migration_bad.arld").string();
     {
