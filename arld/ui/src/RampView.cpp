@@ -47,7 +47,10 @@ void RampView::applyScale() {
 }
 
 void RampView::notifySceneOverlay() {
-    if (!m_rampScene) return;
+    // scene() is nulled by QGraphicsView::setScene(nullptr) before scrollbar
+    // recalculation fires; m_rampScene is never explicitly cleared, so checking
+    // only m_rampScene misses the window where the scene is mid-destruction.
+    if (!m_rampScene || !scene()) return;
     // Position scale bar 12 px from the bottom-left of the viewport.
     QPointF scenePos = mapToScene(QPoint(12, height() - 12));
     m_rampScene->updateOverlay(pixelsPerFt(), scenePos);
