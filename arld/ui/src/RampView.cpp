@@ -18,7 +18,7 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
     setRenderHint(QPainter::Antialiasing);
     setRenderHint(QPainter::SmoothPixmapTransform);
     setDragMode(NoDrag);
-    setRubberBandSelectionMode(Qt::IntersectsItemShape);
+    setRubberBandSelectionMode(Qt::IntersectsItemBoundingRect);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
