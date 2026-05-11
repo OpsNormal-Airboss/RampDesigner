@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "learjet-75",
+  "display_name": "LearJet 75",
+  "manufacturer": "Bombardier",
+  "model": "Learjet 75",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 47.8,
+  "length_ft": 58.3,
+  "tail_height_ft": 13.4,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "learjet-75.svg",
+  "data_sources": [
+    "Bombardier Learjet 75 Pilot Reference Manual",
+    "Jane's All the World's Aircraft 2015–16",
+    "Learjet: The World's Most Famous Business Jet, Jan Caudron, Schiffer, 2009"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

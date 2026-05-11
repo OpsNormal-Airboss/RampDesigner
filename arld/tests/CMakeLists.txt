@@ -14,6 +14,7 @@ add_executable(arld_tests
     test_unit_converter.cpp
     test_svg_sanitizer.cpp
     test_tail_swing.cpp
+    test_batch_exporter.cpp
 )
 
 target_link_libraries(arld_tests

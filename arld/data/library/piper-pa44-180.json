@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "piper-pa44-180",
+  "display_name": "Piper PA-44-180 Seminole",
+  "manufacturer": "Piper",
+  "model": "PA-44",
+  "variant": "180",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 38.7,
+  "length_ft": 27.7,
+  "tail_height_ft": 8.7,
+  "prop_arc_ft": 6.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "piper-pa44-180.svg",
+  "data_sources": [
+    "Piper PA-44-180 Seminole Pilot's Operating Handbook 761-790",
+    "FAA Type Certificate Data Sheet 2A36 Piper PA-44",
+    "Jane's All the World's Aircraft 1985–86"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

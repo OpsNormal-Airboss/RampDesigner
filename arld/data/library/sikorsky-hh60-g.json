@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sikorsky-hh60-g",
+  "display_name": "Sikorsky HH-60G",
+  "manufacturer": "Sikorsky",
+  "model": "HH-60",
+  "variant": "G",
+  "category": "HELICOPTER",
+  "wingspan_ft": 53.7,
+  "length_ft": 50.8,
+  "tail_height_ft": 13.4,
+  "rotor_diameter_ft": 53.7,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "sikorsky-hh60-g.svg",
+  "data_sources": [
+    "USAF T.O. 1H-60G-1 Flight Manual HH-60G",
+    "Jane's All the World's Aircraft 1995–96",
+    "Sikorsky UH-60 Black Hawk, Bert Kinzey, Detail & Scale Vol. 58, 1995"
+  ],
+  "verified_date": "2026-05-11"
+}

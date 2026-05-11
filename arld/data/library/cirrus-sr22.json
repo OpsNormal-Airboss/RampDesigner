@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "cirrus-sr22",
+  "display_name": "Cirrus SR22",
+  "manufacturer": "Cirrus Aircraft",
+  "model": "SR22",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 38.3,
+  "length_ft": 26.0,
+  "tail_height_ft": 9.0,
+  "prop_arc_ft": 5.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "cirrus-sr22.svg",
+  "data_sources": [
+    "Cirrus SR22 Pilot's Operating Handbook 13772-001",
+    "FAA Type Certificate Data Sheet A00009CH Cirrus SR22",
+    "Jane's All the World's Aircraft 2005–06"
+  ],
+  "verified_date": "2026-05-11"
+}

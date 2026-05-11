@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "focke-wulf-fw190-d9",
+  "display_name": "Fw 190D-9",
+  "manufacturer": "Focke-Wulf",
+  "model": "Fw 190",
+  "variant": "D-9",
+  "category": "WARBIRD",
+  "wingspan_ft": 34.4,
+  "length_ft": 33.4,
+  "tail_height_ft": 11.0,
+  "prop_arc_ft": 6.0,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "focke-wulf-fw190-d9.svg",
+  "data_sources": [
+    "Luftwaffe Technical Manual L.Dv.T. 2190D-1: Fw 190D-9 Betriebsvorschrift",
+    "Jane's All the World's Aircraft 1945–46",
+    "Focke-Wulf Fw 190: Workhorse of the Luftwaffe, John Weal, Osprey, 1996"
+  ],
+  "verified_date": "2026-05-11"
+}

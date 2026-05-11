@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "dewoitine-d520",
+  "display_name": "D.520",
+  "manufacturer": "Dewoitine",
+  "model": "D.520",
+  "category": "WARBIRD",
+  "wingspan_ft": 33.5,
+  "length_ft": 28.5,
+  "tail_height_ft": 11.0,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "dewoitine-d520.svg",
+  "data_sources": [
+    "Armée de l'Air Notice Technique No. 3-D.520: Avion D.520, 1940",
+    "Jane's All the World's Aircraft 1941–42",
+    "French Aces of World War 2, Barry Ketley & Mark Rolfe, Osprey, 1994"
+  ],
+  "verified_date": "2026-05-11"
+}

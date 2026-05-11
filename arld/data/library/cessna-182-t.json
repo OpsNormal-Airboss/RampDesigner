@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "cessna-182-t",
+  "display_name": "Cessna 182T Skylane",
+  "manufacturer": "Cessna",
+  "model": "182",
+  "variant": "T",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 36.0,
+  "length_ft": 28.8,
+  "tail_height_ft": 9.3,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "cessna-182-t.svg",
+  "data_sources": [
+    "Cessna 182T Skylane Pilot's Operating Handbook D2279-3-13",
+    "FAA Type Certificate Data Sheet 3A13 Cessna 182",
+    "Jane's All the World's Aircraft 2005–06"
+  ],
+  "verified_date": "2026-05-11"
+}

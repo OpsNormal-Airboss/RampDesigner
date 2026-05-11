@@ -573,6 +573,391 @@ aircraft_svgs = {
     "bell-uh1h":        lambda: helicopter_svg(48.0, 41.67),
     "boeing-ah64-d":    lambda: helicopter_svg(48.0, 49.5),
     "sikorsky-ch53-e":  lambda: helicopter_svg(79.0, 73.33),
+
+    # --- Sprint 2-1: 75 new aircraft ---
+
+    # WWII Warbirds (single-engine props)
+    "grumman-f8f-1b": lambda: se_prop_fighter(
+        "f8f1b", 35.1, 28.1, 2.8, 3.5,
+        wing_le=9.5, wing_te=17.5,
+        hstab_span=12.3, hstab_le=23.0, hstab_te=27.5),
+
+    "messerschmitt-bf109-g6": lambda: se_prop_fighter(
+        "bf109g6", 32.7, 28.3, 2.5, 2.6,
+        wing_le=10.0, wing_te=18.5,
+        hstab_span=11.0, hstab_le=23.0, hstab_te=27.8),
+
+    "focke-wulf-fw190-d9": lambda: se_prop_fighter(
+        "fw190d9", 34.4, 33.4, 2.8, 3.0,
+        wing_le=12.0, wing_te=21.0,
+        hstab_span=11.5, hstab_le=27.5, hstab_te=32.8),
+
+    "vought-f4u-1d": lambda: se_prop_fighter(
+        "f4u1d", 41.0, 33.3, 3.5, 3.25,
+        wing_le=12.5, wing_te=21.5,
+        hstab_span=14.0, hstab_le=27.5, hstab_te=32.8),
+
+    "north-american-p51-b": lambda: se_prop_fighter(
+        "p51b", 37.0, 32.3, 2.8, 2.9,
+        wing_le=12.5, wing_te=21.0,
+        hstab_span=13.0, hstab_le=27.5, hstab_te=31.5),
+
+    "hawker-typhoon-ib": lambda: se_prop_fighter(
+        "typhoon1b", 41.5, 31.8, 3.5, 3.4,
+        wing_le=11.5, wing_te=21.0,
+        hstab_span=14.5, hstab_le=26.0, hstab_te=31.0),
+
+    "curtiss-p40-e": lambda: se_prop_fighter(
+        "p40e", 37.3, 31.7, 2.8, 3.25,
+        wing_le=12.0, wing_te=21.0,
+        hstab_span=13.0, hstab_le=26.5, hstab_te=31.0),
+
+    "grumman-f7f-3": lambda: twin_prop_bomber(
+        "f7f3", 51.5, 45.4, 5.0, 3.1, eng_x=10.0,
+        wing_le=15.0, wing_te=29.0,
+        hstab_span=19.0, hstab_le=37.0, hstab_te=44.5),
+
+    "lavochkin-la7": lambda: se_prop_fighter(
+        "la7", 32.2, 28.3, 2.5, 2.6,
+        wing_le=10.5, wing_te=18.5,
+        hstab_span=11.0, hstab_le=23.0, hstab_te=27.5),
+
+    "polikarpov-i16": lambda: se_prop_fighter(
+        "i16", 29.5, 20.1, 3.0, 2.4,
+        wing_le=6.5, wing_te=13.0,
+        hstab_span=10.0, hstab_le=15.5, hstab_te=19.5),
+
+    "macchi-mc205": lambda: se_prop_fighter(
+        "mc205", 34.8, 29.0, 2.6, 2.75,
+        wing_le=10.5, wing_te=19.0,
+        hstab_span=11.5, hstab_le=24.0, hstab_te=28.5),
+
+    "ryan-pt22-recruit": lambda: se_prop_fighter(
+        "pt22", 30.0, 22.3, 2.4, 2.25,
+        wing_le=8.0, wing_te=14.5,
+        hstab_span=10.0, hstab_le=18.0, hstab_te=22.0),
+
+    "north-american-at6-d": lambda: se_prop_fighter(
+        "at6d", 42.0, 29.0, 2.5, 2.75,
+        wing_le=9.5, wing_te=18.5,
+        hstab_span=13.5, hstab_le=23.5, hstab_te=28.5),
+
+    "dewoitine-d520": lambda: se_prop_fighter(
+        "d520", 33.5, 28.5, 2.5, 2.75,
+        wing_le=10.5, wing_te=19.0,
+        hstab_span=11.5, hstab_le=23.5, hstab_te=28.0),
+
+    "hawker-sea-fury-fb11": lambda: se_prop_fighter(
+        "seafury", 38.5, 34.8, 3.2, 3.5,
+        wing_le=13.0, wing_te=22.0,
+        hstab_span=13.5, hstab_le=28.5, hstab_te=34.0),
+
+    # Jet Fighters (swept)
+    "republic-f105-d": lambda: swept_jet(
+        "f105d", 34.9, 64.3, 4.0,
+        wing_le_root=30.0, wing_le_tip=42.0,
+        wing_te_root=50.0, wing_te_tip=44.0,
+        hstab_span=15.0, hstab_le=54.0, hstab_te=62.0),
+
+    "convair-f106-a": lambda: swept_jet(
+        "f106a", 38.3, 70.9, 3.5,
+        wing_le_root=25.0, wing_le_tip=42.0,
+        wing_te_root=58.0, wing_te_tip=50.0,
+        hstab_span=14.0, hstab_le=59.0, hstab_te=68.0,
+        lerx=True),
+
+    "vought-f8-e": lambda: swept_jet(
+        "f8e", 35.7, 54.6, 3.5,
+        wing_le_root=24.0, wing_le_tip=34.0,
+        wing_te_root=40.0, wing_te_tip=35.0,
+        hstab_span=14.0, hstab_le=44.0, hstab_te=52.0),
+
+    "grumman-f11f-1": lambda: swept_jet(
+        "f11f1", 31.8, 46.3, 3.5,
+        wing_le_root=19.0, wing_le_tip=29.0,
+        wing_te_root=35.0, wing_te_tip=30.0,
+        hstab_span=12.0, hstab_le=37.0, hstab_te=44.0),
+
+    "ling-temco-vought-a7-d": lambda: swept_jet(
+        "a7d", 38.8, 46.1, 4.0,
+        wing_le_root=19.0, wing_le_tip=28.0,
+        wing_te_root=36.0, wing_te_tip=32.0,
+        hstab_span=14.0, hstab_le=36.0, hstab_te=44.0),
+
+    "grumman-a6-e": lambda: swept_jet(
+        "a6e", 53.0, 54.8, 5.0,
+        wing_le_root=22.0, wing_le_tip=32.0,
+        wing_te_root=40.0, wing_te_tip=36.0,
+        hstab_span=18.0, hstab_le=44.0, hstab_te=52.0,
+        twin=True),
+
+    "northrop-f5-e": lambda: swept_jet(
+        "f5e", 26.8, 47.6, 3.0,
+        wing_le_root=20.0, wing_le_tip=28.0,
+        wing_te_root=36.0, wing_te_tip=30.0,
+        hstab_span=11.0, hstab_le=38.0, hstab_te=45.0,
+        twin=True),
+
+    "lockheed-f117-a": lambda: swept_jet(
+        "f117a", 43.3, 65.9, 5.0,
+        wing_le_root=18.0, wing_le_tip=38.0,
+        wing_te_root=52.0, wing_te_tip=50.0,
+        hstab_span=12.0, hstab_le=52.0, hstab_te=60.0),
+
+    "mikoyan-mig29-a": lambda: swept_jet(
+        "mig29a", 37.3, 56.8, 4.0,
+        wing_le_root=23.0, wing_le_tip=33.0,
+        wing_te_root=44.0, wing_te_tip=40.0,
+        hstab_span=15.0, hstab_le=46.0, hstab_te=54.0,
+        twin=True, lerx=True),
+
+    "sukhoi-su27-p": lambda: swept_jet(
+        "su27p", 48.2, 71.8, 5.0,
+        wing_le_root=28.0, wing_le_tip=40.0,
+        wing_te_root=56.0, wing_te_tip=52.0,
+        hstab_span=18.0, hstab_le=58.0, hstab_te=68.0,
+        twin=True, lerx=True),
+
+    "saab-jas39-c": lambda: swept_jet(
+        "jas39c", 27.6, 46.1, 3.5,
+        wing_le_root=17.0, wing_le_tip=27.0,
+        wing_te_root=40.0, wing_te_tip=35.0,
+        hstab_span=10.0, hstab_le=34.0, hstab_te=41.0,
+        lerx=True),
+
+    "eurofighter-typhoon": lambda: swept_jet(
+        "eftyphoon", 35.9, 52.3, 4.0,
+        wing_le_root=18.0, wing_le_tip=30.0,
+        wing_te_root=44.0, wing_te_tip=37.0,
+        hstab_span=12.0, hstab_le=42.0, hstab_te=49.0,
+        twin=True, lerx=True),
+
+    "lockheed-martin-f16-c": lambda: swept_jet(
+        "f16c", 32.8, 49.3, 3.5,
+        wing_le_root=24.0, wing_le_tip=30.0,
+        wing_te_root=40.0, wing_te_tip=36.0,
+        hstab_span=17.0, hstab_le=39.0, hstab_te=46.0,
+        lerx=True),
+
+    "mcdonnell-douglas-av8-b": lambda: swept_jet(
+        "av8b", 30.3, 46.3, 4.0,
+        wing_le_root=20.0, wing_le_tip=28.0,
+        wing_te_root=36.0, wing_te_tip=30.0,
+        hstab_span=12.0, hstab_le=37.0, hstab_te=44.0),
+
+    "boeing-f-a18-f": lambda: swept_jet(
+        "fa18f", 44.9, 60.9, 4.5,
+        wing_le_root=24.0, wing_le_tip=32.0,
+        wing_te_root=44.0, wing_te_tip=40.0,
+        hstab_span=19.0, hstab_le=50.0, hstab_te=58.0,
+        twin=True, lerx=True),
+
+    "de-havilland-dh100-vampire": lambda: swept_jet(
+        "vampire", 40.0, 30.9, 4.0,
+        wing_le_root=11.0, wing_le_tip=20.0,
+        wing_te_root=24.0, wing_te_tip=22.0,
+        hstab_span=14.0, hstab_le=22.0, hstab_te=29.0,
+        twin=True),
+
+    # Bombers
+    "boeing-b1-b": lambda: swept_jet(
+        "b1b", 137.0, 146.0, 14.0,
+        wing_le_root=50.0, wing_le_tip=90.0,
+        wing_te_root=110.0, wing_te_tip=105.0,
+        hstab_span=40.0, hstab_le=120.0, hstab_te=138.0,
+        twin=True),
+
+    "convair-b36-j": lambda: twin_prop_bomber(
+        "b36j", 230.0, 162.1, 18.0, 15.0, eng_x=50.0,
+        wing_le=48.0, wing_te=95.0,
+        hstab_span=72.0, hstab_le=135.0, hstab_te=158.0),
+
+    "boeing-b47-e": lambda: swept_jet(
+        "b47e", 116.0, 107.1, 10.0,
+        wing_le_root=35.0, wing_le_tip=65.0,
+        wing_te_root=75.0, wing_te_tip=70.0,
+        hstab_span=35.0, hstab_le=85.0, hstab_te=100.0,
+        twin=True),
+
+    # Heavy transports (use c17_svg placeholder)
+    "boeing-747-400":  lambda: c17_svg(211.5, 231.8),
+    "airbus-a380-800": lambda: c17_svg(261.7, 238.7),
+    "antonov-an225":   lambda: c17_svg(290.0, 275.6),
+
+    # Business jets (swept_jet with narrow fuselage)
+    "cessna-citation-xls": lambda: swept_jet(
+        "citxls", 56.3, 52.7, 4.0,
+        wing_le_root=22.0, wing_le_tip=33.0,
+        wing_te_root=38.0, wing_te_tip=34.0,
+        hstab_span=18.0, hstab_le=42.0, hstab_te=50.0,
+        twin=True),
+
+    "learjet-75": lambda: swept_jet(
+        "lj75", 47.8, 58.3, 3.5,
+        wing_le_root=22.0, wing_le_tip=32.0,
+        wing_te_root=40.0, wing_te_tip=37.0,
+        hstab_span=16.0, hstab_le=48.0, hstab_te=56.0,
+        twin=True),
+
+    "bombardier-challenger-605": lambda: swept_jet(
+        "cl605", 64.3, 68.4, 5.0,
+        wing_le_root=26.0, wing_le_tip=38.0,
+        wing_te_root=50.0, wing_te_tip=46.0,
+        hstab_span=20.0, hstab_le=55.0, hstab_te=65.0,
+        twin=True),
+
+    "gulfstream-g650": lambda: swept_jet(
+        "g650", 99.7, 99.8, 6.0,
+        wing_le_root=35.0, wing_le_tip=58.0,
+        wing_te_root=72.0, wing_te_tip=68.0,
+        hstab_span=28.0, hstab_le=80.0, hstab_te=95.0,
+        twin=True),
+
+    "dassault-falcon-7x": lambda: swept_jet(
+        "falcon7x", 86.3, 76.3, 5.0,
+        wing_le_root=28.0, wing_le_tip=50.0,
+        wing_te_root=58.0, wing_te_tip=55.0,
+        hstab_span=22.0, hstab_le=61.0, hstab_te=73.0,
+        twin=True),
+
+    "embraer-phenom-300": lambda: swept_jet(
+        "phenom300", 52.2, 51.2, 4.0,
+        wing_le_root=21.0, wing_le_tip=30.0,
+        wing_te_root=38.0, wing_te_tip=34.0,
+        hstab_span=17.0, hstab_le=41.0, hstab_te=49.0,
+        twin=True),
+
+    "honda-ha420": lambda: swept_jet(
+        "ha420", 39.8, 42.7, 3.5,
+        wing_le_root=17.0, wing_le_tip=25.0,
+        wing_te_root=32.0, wing_te_tip=28.0,
+        hstab_span=13.0, hstab_le=34.0, hstab_te=41.0,
+        twin=True),
+
+    # Helicopters
+    "bell-407":       lambda: helicopter_svg(35.0, 41.7),
+    "robinson-r44":   lambda: helicopter_svg(33.0, 38.3),
+    "bell-429":       lambda: helicopter_svg(36.1, 42.0),
+    "airbus-ec135-p3":lambda: helicopter_svg(33.1, 39.5),
+    "sikorsky-s61-n": lambda: helicopter_svg(62.0, 72.7),
+    "bell-ah1z":      lambda: helicopter_svg(48.0, 58.3),
+    "sikorsky-hh60-g":lambda: helicopter_svg(53.7, 50.8),
+    "boeing-ch47-f":  lambda: helicopter_svg(60.0, 98.8),
+
+    # Aerobatic
+    "extra-ea330-sc": lambda: se_prop_fighter(
+        "ea330sc", 26.3, 22.7, 2.0, 2.1,
+        wing_le=7.5, wing_te=14.5,
+        hstab_span=8.0, hstab_le=18.5, hstab_te=22.5),
+
+    "mudry-cap10-b": lambda: se_prop_fighter(
+        "cap10b", 26.3, 22.5, 2.0, 2.0,
+        wing_le=7.5, wing_te=14.5,
+        hstab_span=8.0, hstab_le=18.0, hstab_te=22.0),
+
+    "yakovlev-yak52": lambda: se_prop_fighter(
+        "yak52", 30.2, 25.4, 2.5, 2.5,
+        wing_le=8.5, wing_te=15.5,
+        hstab_span=9.5, hstab_le=20.5, hstab_te=25.0),
+
+    "sbach-342": lambda: se_prop_fighter(
+        "sbach342", 26.3, 19.5, 1.8, 1.9,
+        wing_le=6.0, wing_te=12.5,
+        hstab_span=8.0, hstab_le=15.5, hstab_te=19.0),
+
+    "sukhoi-su29": lambda: se_prop_fighter(
+        "su29", 29.2, 23.3, 2.2, 2.25,
+        wing_le=7.5, wing_te=14.5,
+        hstab_span=9.0, hstab_le=19.0, hstab_te=23.0),
+
+    "yakovlev-yak55m": lambda: se_prop_fighter(
+        "yak55m", 29.5, 23.8, 2.3, 2.4,
+        wing_le=8.0, wing_te=15.0,
+        hstab_span=9.0, hstab_le=19.5, hstab_te=23.5),
+
+    "aerotek-pitts-s1-s": lambda: biplane_svg(17.4, 15.4),
+
+    # General Aviation (single-engine props)
+    "cessna-182-t": lambda: se_prop_fighter(
+        "c182t", 36.0, 28.8, 2.5, 2.75,
+        wing_le=9.5, wing_te=18.0,
+        hstab_span=11.0, hstab_le=23.5, hstab_te=28.0),
+
+    "cessna-152": lambda: se_prop_fighter(
+        "c152", 33.3, 24.1, 2.2, 2.25,
+        wing_le=7.5, wing_te=15.5,
+        hstab_span=10.0, hstab_le=19.5, hstab_te=23.5),
+
+    "piper-pa28-181": lambda: se_prop_fighter(
+        "pa28181", 35.5, 24.0, 2.3, 2.75,
+        wing_le=7.5, wing_te=15.5,
+        hstab_span=11.0, hstab_le=19.5, hstab_te=23.5),
+
+    "piper-pa32-301": lambda: se_prop_fighter(
+        "pa32301", 36.0, 27.8, 2.5, 3.0,
+        wing_le=9.0, wing_te=17.5,
+        hstab_span=11.0, hstab_le=22.5, hstab_te=27.0),
+
+    "beechcraft-bonanza-g36": lambda: se_prop_fighter(
+        "bonanzag36", 33.5, 27.6, 2.5, 3.2,
+        wing_le=9.0, wing_te=17.5,
+        hstab_span=10.0, hstab_le=22.5, hstab_te=27.0),
+
+    "beechcraft-king-air-c90": lambda: twin_prop_bomber(
+        "kac90", 50.3, 36.1, 4.0, 4.25, eng_x=10.0,
+        wing_le=11.5, wing_te=24.0,
+        hstab_span=19.0, hstab_le=29.0, hstab_te=35.0),
+
+    "beechcraft-baron-58": lambda: twin_prop_bomber(
+        "baron58", 37.8, 29.8, 3.5, 3.15, eng_x=8.0,
+        wing_le=9.5, wing_te=20.0,
+        hstab_span=14.0, hstab_le=24.0, hstab_te=29.0),
+
+    "cirrus-sr22": lambda: se_prop_fighter(
+        "sr22", 38.3, 26.0, 2.5, 2.9,
+        wing_le=8.0, wing_te=16.5,
+        hstab_span=11.5, hstab_le=21.0, hstab_te=25.5),
+
+    "diamond-da40": lambda: se_prop_fighter(
+        "da40", 39.3, 26.5, 2.2, 2.75,
+        wing_le=8.5, wing_te=17.0,
+        hstab_span=12.0, hstab_le=21.5, hstab_te=26.0),
+
+    "mooney-m20-j": lambda: se_prop_fighter(
+        "m20j", 36.3, 24.3, 2.3, 2.75,
+        wing_le=7.5, wing_te=16.0,
+        hstab_span=10.5, hstab_le=19.5, hstab_te=23.5),
+
+    "de-havilland-canada-dhc2": lambda: se_prop_fighter(
+        "dhc2", 48.0, 30.3, 4.0, 3.5,
+        wing_le=8.5, wing_te=19.0,
+        hstab_span=14.0, hstab_le=24.0, hstab_te=29.5),
+
+    "de-havilland-canada-dhc6": lambda: twin_prop_bomber(
+        "dhc6", 65.0, 51.8, 5.5, 4.0, eng_x=13.0,
+        wing_le=17.0, wing_te=33.0,
+        hstab_span=24.0, hstab_le=43.0, hstab_te=51.0),
+
+    "grumman-aa5-b": lambda: se_prop_fighter(
+        "aa5b", 31.6, 22.0, 2.2, 2.4,
+        wing_le=7.0, wing_te=14.5,
+        hstab_span=9.5, hstab_le=17.5, hstab_te=21.5),
+
+    "maule-m7-235": lambda: se_prop_fighter(
+        "m7235", 30.7, 23.4, 2.5, 2.5,
+        wing_le=7.5, wing_te=15.0,
+        hstab_span=9.5, hstab_le=18.5, hstab_te=22.5),
+
+    "piper-pa44-180": lambda: twin_prop_bomber(
+        "pa44180", 38.7, 27.7, 3.0, 3.0, eng_x=8.5,
+        wing_le=9.0, wing_te=18.5,
+        hstab_span=14.0, hstab_le=22.5, hstab_te=27.0),
+
+    # Flying boat (twin-prop)
+    "consolidated-pby5a": lambda: twin_prop_bomber(
+        "pby5a", 104.0, 63.9, 8.0, 7.5, eng_x=20.0,
+        wing_le=22.0, wing_te=43.0,
+        hstab_span=38.0, hstab_le=53.0, hstab_te=62.0),
 }
 
 # Fix B-2 body

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-b1-b",
+  "display_name": "B-1B Lancer",
+  "manufacturer": "Boeing",
+  "model": "B-1",
+  "variant": "B",
+  "category": "BOMBER",
+  "wingspan_ft": 137.0,
+  "length_ft": 146.0,
+  "tail_height_ft": 34.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-b1-b.svg",
+  "data_sources": [
+    "USAF T.O. 1B-1B-1 Flight Manual B-1B",
+    "Jane's All the World's Aircraft 1990–91",
+    "Rockwell B-1 Lancer, Bill Holder & Mike Wallace, Schiffer Military History, 1998"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-f-a18-f",
+  "display_name": "F/A-18F Super Hornet",
+  "manufacturer": "Boeing",
+  "model": "F/A-18",
+  "variant": "F",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 44.9,
+  "length_ft": 60.9,
+  "tail_height_ft": 16.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-f-a18-f.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVAIR 01-F18EE-1 F/A-18E/F Aircraft",
+    "Jane's All the World's Aircraft 2005–06",
+    "Boeing F/A-18E/F Super Hornet, Peter Mersky, Osprey, 2007"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "yakovlev-yak55m",
+  "display_name": "Yakovlev Yak-55M",
+  "manufacturer": "Yakovlev",
+  "model": "Yak-55",
+  "variant": "M",
+  "category": "AEROBATIC",
+  "wingspan_ft": 29.5,
+  "length_ft": 23.8,
+  "tail_height_ft": 9.0,
+  "prop_arc_ft": 4.8,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "yakovlev-yak55m.svg",
+  "data_sources": [
+    "Yakovlev Design Bureau Technical Manual Yak-55M Aircraft",
+    "FAA Type Certificate Data Sheet A56EU Yak-55",
+    "Russian Aerobatic Aircraft, Yefim Gordon, Midland Publishing, 2003"
+  ],
+  "verified_date": "2026-05-11"
+}

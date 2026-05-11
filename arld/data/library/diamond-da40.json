@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "diamond-da40",
+  "display_name": "Diamond DA40 Diamond Star",
+  "manufacturer": "Diamond Aircraft",
+  "model": "DA40",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 39.3,
+  "length_ft": 26.5,
+  "tail_height_ft": 6.3,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "diamond-da40.svg",
+  "data_sources": [
+    "Diamond Aircraft DA40 Pilot's Operating Handbook POH-4.0-0",
+    "EASA Type Certificate Data Sheet EASA.A.082 DA40",
+    "Jane's All the World's Aircraft 2005–06"
+  ],
+  "verified_date": "2026-05-11"
+}

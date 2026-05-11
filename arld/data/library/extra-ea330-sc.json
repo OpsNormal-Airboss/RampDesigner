@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "extra-ea330-sc",
+  "display_name": "Extra EA-330SC",
+  "manufacturer": "Extra Aircraft",
+  "model": "EA-330",
+  "variant": "SC",
+  "category": "AEROBATIC",
+  "wingspan_ft": 26.3,
+  "length_ft": 22.7,
+  "tail_height_ft": 8.3,
+  "prop_arc_ft": 4.2,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "extra-ea330-sc.svg",
+  "data_sources": [
+    "Extra Aircraft EA-330SC Pilot's Operating Handbook Rev. 2",
+    "FAA Type Certificate Data Sheet A84EU Extra EA-330",
+    "Jane's All the World's Aircraft 2010–11"
+  ],
+  "verified_date": "2026-05-11"
+}

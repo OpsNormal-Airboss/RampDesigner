@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "airbus-a380-800",
+  "display_name": "Airbus A380-800",
+  "manufacturer": "Airbus",
+  "model": "A380",
+  "variant": "800",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 261.7,
+  "length_ft": 238.7,
+  "tail_height_ft": 79.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "airbus-a380-800.svg",
+  "data_sources": [
+    "Airbus A380 Airplane Characteristics for Airport Planning AC A380, Airbus Customer Services",
+    "Jane's All the World's Aircraft 2008–09",
+    "Airbus A380: Superjumbo of the 21st Century, Guy Norris & Mark Wagner, Zenith Press, 2005"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

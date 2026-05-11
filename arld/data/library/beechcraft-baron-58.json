@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "beechcraft-baron-58",
+  "display_name": "Beechcraft Baron 58",
+  "manufacturer": "Beechcraft",
+  "model": "Baron",
+  "variant": "58",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 37.8,
+  "length_ft": 29.8,
+  "tail_height_ft": 9.7,
+  "prop_arc_ft": 6.3,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "beechcraft-baron-58.svg",
+  "data_sources": [
+    "Beechcraft Baron 58 Pilot's Operating Handbook 58-590000-111A13",
+    "FAA Type Certificate Data Sheet 2A63 Beechcraft 58",
+    "Jane's All the World's Aircraft 1990–91"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

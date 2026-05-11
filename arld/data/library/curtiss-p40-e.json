@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "curtiss-p40-e",
+  "display_name": "P-40E Warhawk",
+  "manufacturer": "Curtiss",
+  "model": "P-40",
+  "variant": "E",
+  "category": "WARBIRD",
+  "wingspan_ft": 37.3,
+  "length_ft": 31.7,
+  "tail_height_ft": 12.3,
+  "prop_arc_ft": 6.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "curtiss-p40-e.svg",
+  "data_sources": [
+    "USAAF T.O. 01-25CJ-1 Pilot's Operating Instructions P-40E/K",
+    "Jane's All the World's Aircraft 1943–44",
+    "Curtiss P-40 in Action, Ernest McDowell, Squadron/Signal Publications, 1976"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

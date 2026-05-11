@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "grumman-a6-e",
+  "display_name": "A-6E Intruder",
+  "manufacturer": "Grumman",
+  "model": "A-6",
+  "variant": "E",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 53.0,
+  "length_ft": 54.8,
+  "tail_height_ft": 16.2,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "grumman-a6-e.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVAIR 01-85ADA-1 A-6E Aircraft",
+    "Jane's All the World's Aircraft 1980–81",
+    "Grumman A-6 Intruder, René Francillon, Naval Institute Press, 1992"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

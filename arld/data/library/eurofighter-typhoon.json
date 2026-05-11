@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "eurofighter-typhoon",
+  "display_name": "Eurofighter Typhoon",
+  "manufacturer": "Eurofighter",
+  "model": "Typhoon",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 35.9,
+  "length_ft": 52.3,
+  "tail_height_ft": 17.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "eurofighter-typhoon.svg",
+  "data_sources": [
+    "Eurofighter GmbH Technical Reference Manual: EF-2000 Aircraft System",
+    "Jane's All the World's Aircraft 2005–06",
+    "Eurofighter Typhoon, Thomas Newdick, Amber Books, 2008"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

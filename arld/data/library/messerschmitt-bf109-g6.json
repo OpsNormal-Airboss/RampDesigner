@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "messerschmitt-bf109-g6",
+  "display_name": "Bf 109G-6",
+  "manufacturer": "Messerschmitt",
+  "model": "Bf 109",
+  "variant": "G-6",
+  "category": "WARBIRD",
+  "wingspan_ft": 32.7,
+  "length_ft": 28.3,
+  "tail_height_ft": 8.3,
+  "prop_arc_ft": 5.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "messerschmitt-bf109-g6.svg",
+  "data_sources": [
+    "Luftwaffe Technical Manual L.Dv.T. 2109G-1: Bf 109G Betriebsvorschrift",
+    "Jane's All the World's Aircraft 1945–46",
+    "Messerschmitt Bf 109: The World's Most Produced Fighter, Robert Forsyth, Osprey, 2014"
+  ],
+  "verified_date": "2026-05-11"
+}

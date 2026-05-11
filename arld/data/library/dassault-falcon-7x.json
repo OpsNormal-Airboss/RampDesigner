@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "dassault-falcon-7x",
+  "display_name": "Dassault Falcon 7X",
+  "manufacturer": "Dassault",
+  "model": "Falcon 7X",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 86.3,
+  "length_ft": 76.3,
+  "tail_height_ft": 26.2,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "dassault-falcon-7x.svg",
+  "data_sources": [
+    "Dassault Falcon 7X Airplane Flight Manual DAC-145",
+    "Jane's All the World's Aircraft 2010–11",
+    "Dassault Falcon: 50 Years of Innovation, Guy Norris, Avion Magazine, 2013"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

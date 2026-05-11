@@ -47,6 +47,8 @@ private:
     void exportSvg();
     void exportPdf();
     void exportViolationsReport();
+    void exportAll();
+    void exportAircraftManifest();
     void editProjectMetadata();
 
     // View menu slots (1-3-8)

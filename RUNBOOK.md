@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-6 complete. PNG export (stb_image_write, DPI-scalable, 16384px cap), JPEG export (stb_image_write, quality 1–100, 32767px cap with warning), pure-C++ scanline rasterizer (no Qt in export/), stb_image_write.h vendored at arld/export/third_party/. 77/77 tests pass.
+> Updated after each sprint. **Current status:** Phase 2, Sprint 2-1 complete. 150-aircraft library (75 new entries across all categories), BatchExporter (SVG+PDF+PNG+JPEG in one call), SVG named Inkscape layers, PNG scale bar overlay, library sort combo (Name/Wingspan/Length), AircraftManifestExporter CSV, rubber-band multi-select with GroupMoveCommand undo, community submission button, export performance benchmarks. 84/84 tests pass (+ 4 benchmarks tagged [.bench]).
 
 ---
 
@@ -141,7 +141,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — empty for no-radius entry; 16-vertex poly for PT-17; center near tail; radius matches; gear-extended envelope > gear-retracted; rear extension ≥ minTurnRadiusFt |
 | `arld/tests/test_pdf_exporter.cpp` | 10 | PdfExporter creates file; file non-empty; starts with %PDF; paper sizes correct; CMYK conversion; ViolationReportExporter CSV header + rows |
 | `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
-| **Total** | **77 + 1 bench** | |
+| `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty-project; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
+| **Total** | **84 + 4 bench** | |
 
 ---
 
@@ -206,6 +207,10 @@ cat LICENSES.txt
 | `G` | Toggle grid overlay |
 | `M` | Toggle metric/imperial display |
 | Shift (while drawing/dragging) | Disable snap-to-grid |
+| Left-click drag (empty area) | Rubber-band lasso multi-select |
+| Shift+click aircraft | Add/remove from selection |
+| Drag selected aircraft | Move entire selection group (one undoable command) |
+| Escape | Clear current selection |
 
 ### Boundary Drawing Workflow
 
@@ -223,6 +228,28 @@ cat LICENSES.txt
 | Violation | `#CC2222` (red) | Below required gap or overlapping |
 
 The status bar shows a live violation count. The clearance re-evaluation runs at most every 80 ms (debounced via `QTimer`). Advisory threshold is 20 % above the required minimum.
+
+### Batch Export Workflow
+
+**File → Export All Formats...** calls `BatchExporter::exportAll(data, basePath, options)` in a single step. It writes four files with the same base name: `.svg`, `.pdf`, `.png`, and `.jpg`. Any per-format failure (e.g., libharu unavailable) is caught internally and reported as a summary error message after all formats are attempted.
+
+```cpp
+// Example: export to /tmp/show_layout.{svg,pdf,png,jpg}
+arld::export_::ExportOptions opts;
+opts.paperSize    = arld::export_::PaperSize::ANSI_D;
+opts.orientation  = arld::export_::Orientation::Landscape;
+opts.showScaleBar = true;
+arld::export_::BatchExporter::exportAll(data, "/tmp/show_layout", opts);
+```
+
+**File → Export Aircraft Manifest CSV...** calls `AircraftManifestExporter::exportCsv(data, path)`. The CSV contains one row per placed aircraft with columns: Placement ID, Library ID, Display Name, Tail Number, Owner, Fuel Type, Hazmat, Display Type, Center X (ft), Center Y (ft), Heading (deg).
+
+### Multi-Select and Group Move
+
+- **Rubber-band lasso:** left-click drag on empty canvas area draws a selection rectangle; all aircraft whose shape intersects the rubber band are selected.
+- **Shift-click:** add/remove individual aircraft from the current selection.
+- **Group move:** drag any selected aircraft to move the entire selection together. The move is pushed onto the undo stack as a single `GroupMoveCommand` covering all moved items.
+- **Escape:** clears the current selection.
 
 ### Adding New Undoable Actions
 
@@ -242,6 +269,12 @@ The status bar shows a live violation count. The clearance re-evaluation runs at
 ## 🗺️ Aircraft Library
 
 The aircraft library lives in `arld/data/library/` — one JSON file per aircraft entry. Entry IDs follow the format `{manufacturer_code}-{model_code}-{variant_code}` (e.g., `north-american-p51-d`). All 20 Phase 0 aircraft are implemented.
+
+### 150 Aircraft Library (Sprint 2-1)
+
+The library now contains 150 entries spanning all categories: WWII warbirds (prop fighters and bombers), Korean/Vietnam-era jets, modern jet fighters (4th and 5th gen), strategic bombers, heavy transports, business jets, helicopters, aerobatic, and general aviation. All entries follow the same JSON schema and carry dimensional data verified against ≥ 3 published sources.
+
+Run `python3 scripts/generate-silhouettes.py` to regenerate all 150 SVG silhouettes from the parametric generator.
 
 ### 20 Phase 0 Aircraft (Sprint 0-3)
 
@@ -415,7 +448,7 @@ cmake --build --preset win-release --target package
 
 ### Phase 2 — Feature Complete (Months 7–12)
 
-#### Sprint 2-1 · Month 7, Wk 1–2 · 50 pts
+#### Sprint 2-1 · Month 7, Wk 1–2 · 50 pts ✅ Complete
 **Goal:** 150-aircraft library; batch export; SVG named layers
 
 | # | Story | Pts |

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "embraer-phenom-300",
+  "display_name": "Embraer Phenom 300",
+  "manufacturer": "Embraer",
+  "model": "Phenom 300",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 52.2,
+  "length_ft": 51.2,
+  "tail_height_ft": 17.3,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "embraer-phenom-300.svg",
+  "data_sources": [
+    "Embraer Phenom 300 Pilot Operating Manual EMB-500",
+    "Jane's All the World's Aircraft 2012–13",
+    "Embraer: Flight to Excellence, Henry Tenby, Aerospace Media, 2010"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

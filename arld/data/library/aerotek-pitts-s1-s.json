@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "aerotek-pitts-s1-s",
+  "display_name": "Pitts S-1S",
+  "manufacturer": "Pitts Aerobatics",
+  "model": "S-1",
+  "variant": "S",
+  "category": "AEROBATIC",
+  "wingspan_ft": 17.4,
+  "length_ft": 15.4,
+  "tail_height_ft": 6.2,
+  "prop_arc_ft": 3.5,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "aerotek-pitts-s1-s.svg",
+  "data_sources": [
+    "Pitts Aerobatics S-1S Pilot's Operating Handbook",
+    "FAA Type Certificate Data Sheet A2SW Pitts S-1S",
+    "Pitts Special: The Story of an American Air Racer, John Underwood, EAA, 1999"
+  ],
+  "verified_date": "2026-05-11"
+}

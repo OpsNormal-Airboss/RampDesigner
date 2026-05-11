@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sukhoi-su27-p",
+  "display_name": "Su-27P Flanker-B",
+  "manufacturer": "Sukhoi",
+  "model": "Su-27",
+  "variant": "P",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 48.2,
+  "length_ft": 71.8,
+  "tail_height_ft": 19.7,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "sukhoi-su27-p.svg",
+  "data_sources": [
+    "Russian Air Force Technical Manual: Su-27 Aircraft Pilot's Operating Instructions",
+    "Jane's All the World's Aircraft 1995–96",
+    "Sukhoi Su-27 Flanker, Yefim Gordon, Midland Publishing, 1999"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

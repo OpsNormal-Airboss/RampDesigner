@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "ling-temco-vought-a7-d",
+  "display_name": "A-7D Corsair II",
+  "manufacturer": "Ling-Temco-Vought",
+  "model": "A-7",
+  "variant": "D",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.8,
+  "length_ft": 46.1,
+  "tail_height_ft": 16.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "ling-temco-vought-a7-d.svg",
+  "data_sources": [
+    "USAF T.O. 1A-7D-1 Flight Manual A-7D",
+    "Jane's All the World's Aircraft 1975–76",
+    "LTV A-7 Corsair II, Bert Kinzey, Detail & Scale Vol. 22, 1987"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

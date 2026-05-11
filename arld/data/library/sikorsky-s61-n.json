@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sikorsky-s61-n",
+  "display_name": "Sikorsky S-61N",
+  "manufacturer": "Sikorsky",
+  "model": "S-61",
+  "variant": "N",
+  "category": "HELICOPTER",
+  "wingspan_ft": 62.0,
+  "length_ft": 72.7,
+  "tail_height_ft": 15.5,
+  "rotor_diameter_ft": 62.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "sikorsky-s61-n.svg",
+  "data_sources": [
+    "Sikorsky Aircraft S-61N Maintenance Manual SA-747-2",
+    "FAA Type Certificate Data Sheet H3WE Sikorsky S-61",
+    "Jane's All the World's Aircraft 1975–76"
+  ],
+  "verified_date": "2026-05-11"
+}

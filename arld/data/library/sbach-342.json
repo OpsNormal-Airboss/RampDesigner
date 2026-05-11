@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "sbach-342",
+  "display_name": "Sbach 342",
+  "manufacturer": "Sbach Aircraft",
+  "model": "342",
+  "category": "AEROBATIC",
+  "wingspan_ft": 26.3,
+  "length_ft": 19.5,
+  "tail_height_ft": 7.5,
+  "prop_arc_ft": 3.8,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "sbach-342.svg",
+  "data_sources": [
+    "Sbach Aircraft Model 342 Pilot's Operating Handbook",
+    "FAA Type Certificate Data Sheet A53CE Sbach 342",
+    "Sport Aviation Magazine: Sbach 342 Design Review, EAA, March 2008"
+  ],
+  "verified_date": "2026-05-11"
+}

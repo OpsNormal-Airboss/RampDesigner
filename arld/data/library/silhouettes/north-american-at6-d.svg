@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 29">
+  <circle cx="21" cy="2.475" r="2.75" fill="none" stroke="#999999" stroke-width="0.336" stroke-dasharray="1.68,0.84"/>
+  <polygon points="22,23.5 27.75,24.5 27.75,28 22,28.5" fill="#6a6a6a"/>
+  <polygon points="20,23.5 14.25,24.5 14.25,28 20,28.5" fill="#6a6a6a"/>
+  <path d="M 21,0 C 21.625,3.915 22.25,9.135 22.25,13.05 L 22.062,29 L 21,29 L 19.938,29 L 19.75,13.05 C 19.75,9.135 20.375,3.915 21,0 Z" fill="#4a4a4a"/>
+  <polygon points="22.25,9.5 42,12.65 42,15.8 22.25,18.5" fill="#5e5e5e"/>
+  <polygon points="19.75,9.5 0,12.65 0,15.8 19.75,18.5" fill="#5e5e5e"/>
+</svg>

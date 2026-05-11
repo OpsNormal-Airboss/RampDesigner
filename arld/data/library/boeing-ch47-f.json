@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-ch47-f",
+  "display_name": "Boeing CH-47F Chinook",
+  "manufacturer": "Boeing",
+  "model": "CH-47",
+  "variant": "F",
+  "category": "HELICOPTER",
+  "wingspan_ft": 60.0,
+  "length_ft": 98.8,
+  "tail_height_ft": 15.0,
+  "rotor_diameter_ft": 60.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-ch47-f.svg",
+  "data_sources": [
+    "Army TM 1-1520-240-10 Operator's Manual CH-47F",
+    "Jane's All the World's Aircraft 2010–11",
+    "Boeing Vertol CH-47 Chinook, Wayne Mutza, Schiffer Military History, 2008"
+  ],
+  "verified_date": "2026-05-11"
+}

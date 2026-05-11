@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "mikoyan-mig29-a",
+  "display_name": "MiG-29A Fulcrum",
+  "manufacturer": "Mikoyan",
+  "model": "MiG-29",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 37.3,
+  "length_ft": 56.8,
+  "tail_height_ft": 15.6,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mikoyan-mig29-a.svg",
+  "data_sources": [
+    "Russian Air Force Technical Manual: MiG-29 Aircraft Flight Manual",
+    "Jane's All the World's Aircraft 1990–91",
+    "MiG-29 Fulcrum, Yefim Gordon, Midland Publishing, 1999"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

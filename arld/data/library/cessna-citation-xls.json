@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "cessna-citation-xls",
+  "display_name": "Cessna Citation XLS",
+  "manufacturer": "Cessna",
+  "model": "Citation XLS",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 56.3,
+  "length_ft": 52.7,
+  "tail_height_ft": 15.6,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "cessna-citation-xls.svg",
+  "data_sources": [
+    "Cessna Citation XLS Pilot's Operating Handbook Model 560XL",
+    "Jane's All the World's Aircraft 2005–06",
+    "Cessna Citation Family, Bill Gunston, Crowood Press, 2000"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

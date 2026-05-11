@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "bombardier-challenger-605",
+  "display_name": "Challenger 605",
+  "manufacturer": "Bombardier",
+  "model": "Challenger 605",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 64.3,
+  "length_ft": 68.4,
+  "tail_height_ft": 20.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "bombardier-challenger-605.svg",
+  "data_sources": [
+    "Bombardier Challenger 605 Pilot Reference Manual",
+    "Jane's All the World's Aircraft 2010–11",
+    "Bombardier Challenger 600 Series, Yves Balber, Aerospace Industries Association, 2008"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

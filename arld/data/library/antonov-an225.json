@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "antonov-an225",
+  "display_name": "Antonov An-225 Mriya",
+  "manufacturer": "Antonov",
+  "model": "An-225",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 290.0,
+  "length_ft": 275.6,
+  "tail_height_ft": 59.3,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "antonov-an225.svg",
+  "data_sources": [
+    "Antonov Design Bureau Technical Description An-225 Aircraft",
+    "Jane's All the World's Aircraft 1990–91",
+    "Antonov's Giants, Yefim Gordon & Dmitriy Komissarov, Midland Publishing, 2002"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

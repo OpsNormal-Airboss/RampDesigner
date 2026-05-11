@@ -33,6 +33,25 @@ private:
     QPointF m_point;
 };
 
+/// Used for undoable group moves of multiple aircraft.
+class GroupMoveCommand : public arld::core::ICommand {
+public:
+    struct Entry { AircraftItem* item; QPointF before; QPointF after; };
+    explicit GroupMoveCommand(std::vector<Entry> entries)
+        : m_entries(std::move(entries)) {}
+    void execute() override {
+        for (auto& e : m_entries) e.item->setPos(e.after);
+    }
+    void undo() override {
+        for (auto& e : m_entries) e.item->setPos(e.before);
+    }
+    std::string describe() const override {
+        return "Move " + std::to_string(m_entries.size()) + " aircraft";
+    }
+private:
+    std::vector<Entry> m_entries;
+};
+
 } // anonymous namespace
 
 // ---------------------------------------------------------------------------
@@ -131,6 +150,19 @@ void RampScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         event->accept();
         return;
     }
+    // For multi-select moves: record pre-drag positions of all selected aircraft.
+    if (event->button() == Qt::LeftButton && m_mode == EditMode::Select) {
+        const auto sel = selectedItems();
+        if (sel.size() > 1) {
+            m_preDragPositions.clear();
+            for (auto* gi : sel) {
+                if (auto* ac = qgraphicsitem_cast<AircraftItem*>(gi))
+                    m_preDragPositions.emplace_back(ac, ac->pos());
+            }
+        } else {
+            m_preDragPositions.clear();
+        }
+    }
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -150,6 +182,34 @@ void RampScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
 
 void RampScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsScene::mouseMoveEvent(event);
+}
+
+void RampScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    QGraphicsScene::mouseReleaseEvent(event);
+    // After multi-select drag: check if any items moved and create group command.
+    if (!m_preDragPositions.empty()) {
+        std::vector<GroupMoveCommand::Entry> moved;
+        for (auto& [item, before] : m_preDragPositions) {
+            QPointF after = item->pos();
+            if ((after - before).manhattanLength() > 0.01)
+                moved.push_back({item, before, after});
+        }
+        if (!moved.empty()) {
+            // GroupMoveCommand with AlreadyExecuted wrapper (move already applied)
+            struct AlreadyExecuted : arld::core::ICommand {
+                std::unique_ptr<arld::core::ICommand> inner;
+                bool done = false;
+                explicit AlreadyExecuted(std::unique_ptr<arld::core::ICommand> c)
+                    : inner(std::move(c)) {}
+                void execute() override { if (done) inner->execute(); done = true; }
+                void undo()    override { inner->undo(); }
+                std::string describe() const override { return inner->describe(); }
+            };
+            m_undoStack.push(std::make_unique<AlreadyExecuted>(
+                std::make_unique<GroupMoveCommand>(std::move(moved))));
+        }
+        m_preDragPositions.clear();
+    }
 }
 
 void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPointF scenePos) {

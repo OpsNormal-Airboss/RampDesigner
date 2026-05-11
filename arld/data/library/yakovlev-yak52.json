@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "yakovlev-yak52",
+  "display_name": "Yakovlev Yak-52",
+  "manufacturer": "Yakovlev",
+  "model": "Yak-52",
+  "category": "AEROBATIC",
+  "wingspan_ft": 30.2,
+  "length_ft": 25.4,
+  "tail_height_ft": 8.8,
+  "prop_arc_ft": 5.0,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "yakovlev-yak52.svg",
+  "data_sources": [
+    "Yakovlev Design Bureau Technical Manual Yak-52 Aircraft",
+    "FAA Type Certificate Data Sheet A29EU Yak-52",
+    "Yakov Alksnis Design Bureau Aircraft, Yefim Gordon, Midland, 2005"
+  ],
+  "verified_date": "2026-05-11"
+}

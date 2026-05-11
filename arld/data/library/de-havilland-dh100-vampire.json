@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "de-havilland-dh100-vampire",
+  "display_name": "DH.100 Vampire FB.5",
+  "manufacturer": "de Havilland",
+  "model": "DH.100",
+  "variant": "FB.5",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 40.0,
+  "length_ft": 30.9,
+  "tail_height_ft": 8.8,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "de-havilland-dh100-vampire.svg",
+  "data_sources": [
+    "Air Ministry Pilot's Notes A.P. 2490B Vampire F.B. Mk. 5 Aircraft",
+    "Jane's All the World's Aircraft 1952–53",
+    "de Havilland Vampire, Venom and Sea Vixen, Barry Ketley, Crecy, 1998"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

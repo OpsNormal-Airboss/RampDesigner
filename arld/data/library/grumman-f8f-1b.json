@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "grumman-f8f-1b",
+  "display_name": "F8F-1B Bearcat",
+  "manufacturer": "Grumman",
+  "model": "F8F",
+  "variant": "1B",
+  "category": "WARBIRD",
+  "wingspan_ft": 35.1,
+  "length_ft": 28.1,
+  "tail_height_ft": 13.8,
+  "prop_arc_ft": 7.0,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "grumman-f8f-1b.svg",
+  "data_sources": [
+    "Bureau of Aeronautics Technical Handbook AN 01-80D-1: Pilot's Handbook F8F-1/1B/2",
+    "Jane's All the World's Aircraft 1947–48",
+    "Grumman Bearcat, William T. Larkins, Aviation History Series, 1985"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

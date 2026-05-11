@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-b47-e",
+  "display_name": "B-47E Stratojet",
+  "manufacturer": "Boeing",
+  "model": "B-47",
+  "variant": "E",
+  "category": "BOMBER",
+  "wingspan_ft": 116.0,
+  "length_ft": 107.1,
+  "tail_height_ft": 27.9,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "boeing-b47-e.svg",
+  "data_sources": [
+    "USAF T.O. 1B-47E-1 Flight Manual B-47E",
+    "Jane's All the World's Aircraft 1958–59",
+    "Boeing B-47 Stratojet: Strategic Air Command's Transitional Bomber, Jan Tegler, McGraw-Hill, 2000"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 1, Sprint 1-6 complete. PNG export (stb_image_write, DPI-scalable, 16384px cap), JPEG export (stb_image_write, quality 1–100, 32767px cap with stderr warning), pure-C++ scanline rasterizer (no Qt in export/), stb_image_write.h vendored at arld/export/third_party/. 77/77 tests pass.
+**Current status:** Phase 2, Sprint 2-1 complete. 150-aircraft library (75 new entries across all categories), BatchExporter producing all 4 formats with one call, SVG named Inkscape layers, PNG scale bar overlay, library browser sort (Name/Wingspan/Length), AircraftManifestExporter CSV, multi-select/lasso rubber-band, community submission button, export performance benchmarks. 84/84 tests pass (+ 4 benchmarks tagged [.bench]).
 
 ## 📋 Post-Sprint Documentation
 
@@ -60,6 +60,13 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ✅ Complete |
 | 1-5 | PDF export (libharu+libqrencode); ViolationReport CSV; satellite underlay; project metadata | ✅ Complete |
 | 1-6 | PNG/JPEG export (stb_image_write); vendored header; 9 new tests | ✅ Complete |
+
+## 🟢 Sprint Log (Phase 2)
+
+| Sprint | Goal | Status |
+|--------|------|--------|
+| 2-1 | 150-aircraft library; BatchExporter all-formats; SVG layers; PNG scale bar; library sort; manifest CSV; multi-select/lasso; community button; export benchmarks | ✅ Complete |
+| 2-2 | ??? | ⬜ Up next |
 
 ## 🔧 Tech Stack
 
@@ -204,17 +211,18 @@ RampView    : QGraphicsView
 | File | Tests | Coverage |
 |------|-------|---------|
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction, Config constants |
-| `arld/tests/test_undo.cpp` | 7 | Full UndoStack behaviour incl. 100-level depth |
+| `arld/tests/test_undo.cpp` | 8 | Full UndoStack behaviour incl. 100-level depth, callbacks |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
-| `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
+| `arld/tests/test_project_file.cpp` | 8 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay Imperial/Metric, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — script, foreignObject, XXE/DOCTYPE, on* attrs, javascript: href, clean passthrough, multiline |
-| `arld/tests/test_tail_swing.cpp` | 5 | tailSwingPolygon — 16-vertex, radius, empty when unset, rear centre, PT-17 |
-| `arld/tests/test_pdf_exporter.cpp` | 9 | PdfExporter creates/%PDF magic/non-empty/violations/landscape; ViolationReportExporter CSV creates/header/rows/override/empty |
+| `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — 16-vertex, radius, empty when unset, rear centre, PT-17, gear-extended vs retracted |
+| `arld/tests/test_pdf_exporter.cpp` | 10 + 1 bench | PdfExporter creates/%PDF magic/non-empty/violations/landscape/paper-sizes/CMYK; ViolationReportExporter CSV header/rows/override/empty |
 | `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
-| **Total** | **77 + 1 bench** | |
+| `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
+| **Total** | **84 + 4 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

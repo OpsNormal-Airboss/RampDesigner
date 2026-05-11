@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "sukhoi-su29",
+  "display_name": "Sukhoi Su-29",
+  "manufacturer": "Sukhoi",
+  "model": "Su-29",
+  "category": "AEROBATIC",
+  "wingspan_ft": 29.2,
+  "length_ft": 23.3,
+  "tail_height_ft": 9.0,
+  "prop_arc_ft": 4.5,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "sukhoi-su29.svg",
+  "data_sources": [
+    "Sukhoi Design Bureau Technical Manual Su-29 Aerobatic Aircraft",
+    "FAA Type Certificate A46EU Sukhoi Su-29",
+    "Russian Aerobatic Aircraft, Yefim Gordon, Midland Publishing, 2003"
+  ],
+  "verified_date": "2026-05-11"
+}

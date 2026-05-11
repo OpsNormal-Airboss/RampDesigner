@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-martin-f16-c",
+  "display_name": "F-16C Block 50",
+  "manufacturer": "Lockheed Martin",
+  "model": "F-16",
+  "variant": "C Block 50",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 32.8,
+  "length_ft": 49.3,
+  "tail_height_ft": 16.7,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-martin-f16-c.svg",
+  "data_sources": [
+    "USAF T.O. 1F-16C-1 Flight Manual F-16C/D Block 50/52",
+    "Jane's All the World's Aircraft 2000–01",
+    "General Dynamics F-16 Fighting Falcon, Doug Richardson, Jane's Information Group, 1990"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "northrop-f5-e",
+  "display_name": "F-5E Tiger II",
+  "manufacturer": "Northrop",
+  "model": "F-5",
+  "variant": "E",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 26.8,
+  "length_ft": 47.6,
+  "tail_height_ft": 13.4,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "northrop-f5-e.svg",
+  "data_sources": [
+    "USAF T.O. 1F-5E-1 Flight Manual F-5E/F",
+    "Jane's All the World's Aircraft 1978–79",
+    "Northrop F-5 Freedom Fighter / Tiger II, René Francillon, Aerofax, 1991"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

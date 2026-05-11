@@ -26,16 +26,18 @@ public:
 private slots:
     void onFilterChanged();
     void onAddCustomAircraft();
+    void applySort();
 
 private:
     void loadLibrary();
     void rebuildList();
 
     std::vector<arld::core::AircraftLibraryEntry> m_entries;
-    QLineEdit*  m_searchEdit      = nullptr;
-    QComboBox*  m_categoryCombo   = nullptr;
-    QListWidget* m_list           = nullptr;
-    QPushButton* m_addCustomBtn   = nullptr;
+    QLineEdit*   m_searchEdit      = nullptr;
+    QComboBox*   m_categoryCombo   = nullptr;
+    QComboBox*   m_sortCombo       = nullptr;
+    QListWidget* m_list            = nullptr;
+    QPushButton* m_addCustomBtn    = nullptr;
 };
 
 } // namespace arld::ui

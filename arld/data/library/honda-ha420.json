@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "honda-ha420",
+  "display_name": "Honda HA-420 HondaJet",
+  "manufacturer": "Honda Aircraft Company",
+  "model": "HA-420",
+  "category": "BUSINESS_JET",
+  "wingspan_ft": 39.8,
+  "length_ft": 42.7,
+  "tail_height_ft": 14.9,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "honda-ha420.svg",
+  "data_sources": [
+    "Honda Aircraft Company HA-420 HondaJet Airplane Flight Manual FAA Approved",
+    "Jane's All the World's Aircraft 2018–19",
+    "HondaJet: The Story of a Breakthrough Business Aircraft, Michimasa Fujino, AOPA, 2015"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

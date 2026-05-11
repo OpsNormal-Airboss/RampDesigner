@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "vought-f4u-1d",
+  "display_name": "F4U-1D Corsair",
+  "manufacturer": "Vought",
+  "model": "F4U",
+  "variant": "1D",
+  "category": "WARBIRD",
+  "wingspan_ft": 41.0,
+  "length_ft": 33.3,
+  "tail_height_ft": 16.1,
+  "prop_arc_ft": 6.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "vought-f4u-1d.svg",
+  "data_sources": [
+    "Bureau of Aeronautics Technical Handbook AN 01-45HA-1: Pilot's Handbook F4U-1D",
+    "Jane's All the World's Aircraft 1945–46",
+    "Vought F4U Corsair, Nichols & Tillman, Naval Institute Press, 2001"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "grumman-aa5-b",
+  "display_name": "Grumman American Tiger AA5B",
+  "manufacturer": "Grumman American",
+  "model": "AA5",
+  "variant": "B",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 31.6,
+  "length_ft": 22.0,
+  "tail_height_ft": 8.0,
+  "prop_arc_ft": 4.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "grumman-aa5-b.svg",
+  "data_sources": [
+    "Grumman American AA5B Tiger Pilot's Operating Handbook",
+    "FAA Type Certificate Data Sheet A17EA AA5B",
+    "Jane's All the World's Aircraft 1980–81"
+  ],
+  "verified_date": "2026-05-11"
+}

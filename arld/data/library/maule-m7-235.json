@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "maule-m7-235",
+  "display_name": "Maule M7-235",
+  "manufacturer": "Maule Air",
+  "model": "M7",
+  "variant": "235",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 30.7,
+  "length_ft": 23.4,
+  "tail_height_ft": 6.5,
+  "prop_arc_ft": 5.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "maule-m7-235.svg",
+  "data_sources": [
+    "Maule Air M7-235 Pilot's Operating Handbook Rev. 3",
+    "FAA Type Certificate Data Sheet A19CE Maule M7",
+    "Jane's All the World's Aircraft 1995–96"
+  ],
+  "verified_date": "2026-05-11"
+}

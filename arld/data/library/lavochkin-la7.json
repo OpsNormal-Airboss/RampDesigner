@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "lavochkin-la7",
+  "display_name": "La-7",
+  "manufacturer": "Lavochkin",
+  "model": "La-7",
+  "category": "WARBIRD",
+  "wingspan_ft": 32.2,
+  "length_ft": 28.3,
+  "tail_height_ft": 8.7,
+  "prop_arc_ft": 5.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "lavochkin-la7.svg",
+  "data_sources": [
+    "TsAGI Report: Technical Description of the La-7 Fighter Aircraft, 1944",
+    "Soviet Aircraft and Aviation 1917–1941, Heinz Nowarra, Harleyford, 1962",
+    "Lavochkin's Piston-Engined Fighters, Yefim Gordon & Dmitriy Khazanov, Midland, 2003"
+  ],
+  "verified_date": "2026-05-11"
+}

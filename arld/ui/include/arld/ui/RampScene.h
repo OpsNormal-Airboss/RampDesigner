@@ -88,6 +88,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
     QPointF snapToGrid(QPointF pos, bool freehand) const;
@@ -105,6 +106,9 @@ private:
     arld::core::ClearanceRuleSet                    m_ruleSet;
     std::vector<arld::core::ViolationResult>        m_lastViolations;
     std::vector<arld::core::ClearanceOverride>      m_overrides;
+
+    // Multi-select drag: pre-drag positions of all selected aircraft.
+    std::vector<std::pair<AircraftItem*, QPointF>> m_preDragPositions;
 };
 
 } // namespace arld::ui

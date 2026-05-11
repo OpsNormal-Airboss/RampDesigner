@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "consolidated-pby5a",
+  "display_name": "PBY-5A Catalina",
+  "manufacturer": "Consolidated",
+  "model": "PBY",
+  "variant": "5A",
+  "category": "WARBIRD",
+  "wingspan_ft": 104.0,
+  "length_ft": 63.9,
+  "tail_height_ft": 20.7,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "consolidated-pby5a.svg",
+  "data_sources": [
+    "Bureau of Aeronautics Technical Handbook AN 01-5C-1: Pilot's Handbook PBY-5A",
+    "Jane's All the World's Aircraft 1945–46",
+    "Catalina: The Consolidated PBY, Andrew Hendrie, Airlife Publishing, 1994"
+  ],
+  "verified_date": "2026-05-11"
+}

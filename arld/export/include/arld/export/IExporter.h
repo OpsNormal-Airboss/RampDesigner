@@ -26,6 +26,9 @@ struct ExportOptions {
     int  dpi         = 150;
     int  jpegQuality = 90;
 
+    // Draw a scale bar indicator on PNG output
+    bool showScaleBar = true;
+
     // Violations report (used by both PdfExporter and ViolationReportExporter)
     bool includeViolations = false;
     std::vector<arld::core::ViolationResult>   violations;

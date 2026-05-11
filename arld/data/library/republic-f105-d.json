@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "republic-f105-d",
+  "display_name": "F-105D Thunderchief",
+  "manufacturer": "Republic",
+  "model": "F-105",
+  "variant": "D",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 34.9,
+  "length_ft": 64.3,
+  "tail_height_ft": 19.6,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "republic-f105-d.svg",
+  "data_sources": [
+    "USAF T.O. 1F-105D-1 Flight Manual F-105D",
+    "Jane's All the World's Aircraft 1965–66",
+    "F-105 Thunderchief: Workhorse of the Vietnam War, Jack Broughton, Orion, 1985"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

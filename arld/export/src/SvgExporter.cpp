@@ -140,6 +140,7 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
 
     svg << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         << "<svg xmlns=\"http://www.w3.org/2000/svg\""
+        << " xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\""
         << " width=\""  << fmt(svgW) << "\""
         << " height=\"" << fmt(svgH) << "\""
         << " viewBox=\"0 0 " << fmt(svgW) << " " << fmt(svgH) << "\""
@@ -148,9 +149,10 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
     // Background
     svg << "  <rect width=\"100%\" height=\"100%\" fill=\"#F8F8F0\"/>\n";
 
-    // -- Ramp boundary polygon --
+    // -- Ramp boundary layer --
+    svg << "  <g id=\"boundary\" inkscape:label=\"Ramp Boundary\">\n";
     if (!data.boundary.vertices.empty()) {
-        svg << "  <polygon points=\"";
+        svg << "    <polygon points=\"";
         bool first = true;
         for (const auto& [x, y] : data.boundary.vertices) {
             if (!first) svg << " ";
@@ -163,8 +165,10 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
             << " stroke-width=\"" << fmt(3.0 * scale) << "\""
             << "/>\n";
     }
+    svg << "  </g><!-- boundary -->\n";
 
-    // -- Aircraft --
+    // -- Aircraft layer --
+    svg << "  <g id=\"aircraft\" inkscape:label=\"Aircraft\">\n";
     for (const auto& ac : data.aircraft) {
         const double cx    = wx(ac.centerX);
         const double cy    = wy(ac.centerY);
@@ -178,11 +182,11 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
         const double minDim   = std::min(ac.wingspanFt, ac.lengthFt) * scale;
         const double fontSize = std::max(6.0, minDim * 0.25);
 
-        svg << "  <g transform=\"translate(" << fmt(cx) << "," << fmt(cy)
+        svg << "    <g transform=\"translate(" << fmt(cx) << "," << fmt(cy)
             << ") rotate(" << fmt(angle) << ")\">\n";
 
         // Footprint rectangle
-        svg << "    <rect"
+        svg << "      <rect"
             << " x=\""      << fmt(-hw) << "\""
             << " y=\""      << fmt(-hl) << "\""
             << " width=\""  << fmt(hw * 2.0) << "\""
@@ -194,7 +198,7 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
             << "/>\n";
 
         // Label (display name)
-        svg << "    <text"
+        svg << "      <text"
             << " x=\"0\" y=\"0\""
             << " text-anchor=\"middle\""
             << " dominant-baseline=\"middle\""
@@ -206,13 +210,15 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
             << xmlEscape(ac.displayName)
             << "</text>\n";
 
-        svg << "  </g>\n";
+        svg << "    </g>\n";
     }
+    svg << "  </g><!-- aircraft -->\n";
 
-    // -- Title --
+    // -- Annotations layer (title + scale) --
+    svg << "  <g id=\"annotations\" inkscape:label=\"Annotations\">\n";
     {
         const double titleSize = std::max(10.0, svgH * 0.025);
-        svg << "  <text"
+        svg << "    <text"
             << " x=\"" << fmt(kPadding * scale * 0.5) << "\""
             << " y=\"" << fmt(titleSize + 4.0) << "\""
             << " font-family=\"sans-serif\""
@@ -224,7 +230,7 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
             << "</text>\n";
 
         // Scale note
-        svg << "  <text"
+        svg << "    <text"
             << " x=\"" << fmt(kPadding * scale * 0.5) << "\""
             << " y=\"" << fmt(titleSize * 2.0 + 8.0) << "\""
             << " font-family=\"sans-serif\""
@@ -232,6 +238,7 @@ void SvgExporter::exportLayout(const arld::core::ProjectData& data,
             << " fill=\"#555555\""
             << ">1 unit = 1 ft</text>\n";
     }
+    svg << "  </g><!-- annotations -->\n";
 
     svg << "</svg>\n";
 

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "robinson-r44",
+  "display_name": "Robinson R44",
+  "manufacturer": "Robinson Helicopter Company",
+  "model": "R44",
+  "category": "HELICOPTER",
+  "wingspan_ft": 33.0,
+  "length_ft": 38.3,
+  "tail_height_ft": 8.3,
+  "rotor_diameter_ft": 33.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "robinson-r44.svg",
+  "data_sources": [
+    "Robinson Helicopter Company R44 Pilot's Operating Handbook",
+    "FAA Type Certificate Data Sheet H6WE Robinson R44",
+    "Jane's All the World's Aircraft 2005–06"
+  ],
+  "verified_date": "2026-05-11"
+}

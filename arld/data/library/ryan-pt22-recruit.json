@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "ryan-pt22-recruit",
+  "display_name": "PT-22 Recruit",
+  "manufacturer": "Ryan",
+  "model": "PT-22",
+  "category": "WARBIRD",
+  "wingspan_ft": 30.0,
+  "length_ft": 22.3,
+  "tail_height_ft": 7.2,
+  "prop_arc_ft": 4.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "ryan-pt22-recruit.svg",
+  "data_sources": [
+    "USAAF T.O. 01-100FA-1 Pilot's Operating Instructions PT-22",
+    "Jane's All the World's Aircraft 1943–44",
+    "Ryan Aeronautical Company: A History, Walter J. Boyne, Schiffer, 2005"
+  ],
+  "verified_date": "2026-05-11"
+}

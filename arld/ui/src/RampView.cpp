@@ -17,6 +17,7 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
     setRenderHint(QPainter::Antialiasing);
     setRenderHint(QPainter::SmoothPixmapTransform);
     setDragMode(NoDrag);
+    setRubberBandSelectionMode(Qt::IntersectsItemShape);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -87,25 +88,44 @@ void RampView::keyPressEvent(QKeyEvent* event) {
         setTransformationAnchor(AnchorViewCenter);
         setScaleDenominator(m_scaleDenominator * 1.25);
         break;
+    case Qt::Key_Escape:
+        if (m_rampScene) m_rampScene->clearSelection();
+        break;
     default:
         QGraphicsView::keyPressEvent(event);
     }
 }
 
 void RampView::mousePressEvent(QMouseEvent* event) {
-    // Middle-click OR left-click on empty canvas → pan.
-    if (event->button() == Qt::MiddleButton ||
-        (event->button() == Qt::LeftButton && !itemAt(event->pos()))) {
-        // Only pan in select mode; in draw mode, left-click draws.
-        if (!m_rampScene || m_rampScene->editMode() == EditMode::Select ||
-            event->button() == Qt::MiddleButton) {
-            m_panning = true;
-            m_lastPanPos = event->pos();
-            setCursor(Qt::ClosedHandCursor);
-            event->accept();
-            return;
+    // Middle-click → always pan.
+    if (event->button() == Qt::MiddleButton) {
+        m_panning = true;
+        m_lastPanPos = event->pos();
+        setCursor(Qt::ClosedHandCursor);
+        event->accept();
+        return;
+    }
+
+    if (event->button() == Qt::LeftButton) {
+        const bool onItem = (itemAt(event->pos()) != nullptr);
+        const bool inSelectMode = !m_rampScene || m_rampScene->editMode() == EditMode::Select;
+
+        if (inSelectMode) {
+            if (!onItem) {
+                // Left-click on empty canvas: rubber-band lasso selection.
+                // Clear selection unless Shift is held.
+                if (!(event->modifiers() & Qt::ShiftModifier) && m_rampScene)
+                    m_rampScene->clearSelection();
+                setDragMode(RubberBandDrag);
+                QGraphicsView::mousePressEvent(event);
+                return;
+            } else {
+                // Left-click on an item: pass to scene for item interaction.
+                setDragMode(NoDrag);
+            }
         }
     }
+
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -130,6 +150,9 @@ void RampView::mouseReleaseEvent(QMouseEvent* event) {
         return;
     }
     QGraphicsView::mouseReleaseEvent(event);
+    // Reset drag mode back to NoDrag after rubber-band completes.
+    if (dragMode() == RubberBandDrag)
+        setDragMode(NoDrag);
 }
 
 void RampView::resizeEvent(QResizeEvent* event) {

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "bell-ah1z",
+  "display_name": "Bell AH-1Z Viper",
+  "manufacturer": "Bell",
+  "model": "AH-1",
+  "variant": "Z",
+  "category": "HELICOPTER",
+  "wingspan_ft": 48.0,
+  "length_ft": 58.3,
+  "tail_height_ft": 12.0,
+  "rotor_diameter_ft": 48.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "bell-ah1z.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVAIR 01-H1ZE-1 AH-1Z Aircraft",
+    "Jane's All the World's Aircraft 2010–11",
+    "Bell AH-1 Cobra Variants, Ray Mehlberger, Detail & Scale Vol. 74, 2004"
+  ],
+  "verified_date": "2026-05-11"
+}

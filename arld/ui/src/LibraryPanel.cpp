@@ -3,6 +3,7 @@
 #include <arld/core/AircraftLibraryParser.h>
 #include <arld/core/UnitConverter.h>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QHBoxLayout>
@@ -18,6 +19,7 @@
 #include <QPushButton>
 #include <QStandardPaths>
 #include <QSvgRenderer>
+#include <QUrl>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -140,6 +142,17 @@ LibraryPanel::LibraryPanel(QWidget* parent)
     m_categoryCombo->addItem(tr("Business Jet"),       8);
     vbox->addWidget(m_categoryCombo);
 
+    // Sort control
+    auto* sortRow = new QWidget(container);
+    auto* sortLayout = new QHBoxLayout(sortRow);
+    sortLayout->setContentsMargins(0, 0, 0, 0);
+    auto* sortLabel = new QLabel(tr("Sort:"), sortRow);
+    m_sortCombo = new QComboBox(sortRow);
+    m_sortCombo->addItems({tr("Name"), tr("Wingspan"), tr("Length")});
+    sortLayout->addWidget(sortLabel);
+    sortLayout->addWidget(m_sortCombo, 1);
+    vbox->addWidget(sortRow);
+
     // Aircraft list
     m_list = new DraggableListWidget(container);
     vbox->addWidget(m_list, 1);
@@ -147,6 +160,17 @@ LibraryPanel::LibraryPanel(QWidget* parent)
     // Add Custom Aircraft button
     m_addCustomBtn = new QPushButton(tr("Add Custom Aircraft..."), container);
     vbox->addWidget(m_addCustomBtn);
+
+    // Submit community entry button
+    auto* submitBtn = new QPushButton(tr("Submit Aircraft Entry..."), container);
+    vbox->addWidget(submitBtn);
+    connect(submitBtn, &QPushButton::clicked, this, [] {
+        QDesktopServices::openUrl(QUrl(
+            "https://github.com/OpsNormal-Airboss/RampDesigner/issues/new"
+            "?template=aircraft_library_entry.md"
+            "&title=Aircraft+Entry+Request%3A+%5BManufacturer+Model%5D"
+        ));
+    });
 
     setWidget(container);
     setMinimumWidth(220);
@@ -161,6 +185,8 @@ LibraryPanel::LibraryPanel(QWidget* parent)
             this, &LibraryPanel::onFilterChanged);
     connect(m_addCustomBtn, &QPushButton::clicked,
             this, &LibraryPanel::onAddCustomAircraft);
+    connect(m_sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &LibraryPanel::applySort);
 
     loadLibrary();
 }
@@ -231,7 +257,9 @@ void LibraryPanel::rebuildList() {
 
         // Create list item
         auto* item = new QListWidgetItem(m_list);
-        item->setData(Qt::UserRole, QString::fromStdString(entry.id));
+        item->setData(Qt::UserRole,     QString::fromStdString(entry.id));
+        item->setData(Qt::UserRole + 1, entry.wingspanFt);
+        item->setData(Qt::UserRole + 2, entry.lengthFt);
 
         // Thumbnail (48×48)
         QPixmap thumb;
@@ -268,6 +296,39 @@ void LibraryPanel::rebuildList() {
 
 void LibraryPanel::onFilterChanged() {
     rebuildList();
+}
+
+void LibraryPanel::applySort() {
+    if (!m_list || m_list->count() == 0) return;
+
+    const int sortIndex = m_sortCombo ? m_sortCombo->currentIndex() : 0;
+
+    // Collect all items into a list.
+    QList<QListWidgetItem*> items;
+    items.reserve(m_list->count());
+    for (int i = 0; i < m_list->count(); ++i)
+        items.append(m_list->takeItem(0));
+
+    // Sort based on chosen criterion.
+    if (sortIndex == 1) {
+        // Wingspan (descending: largest first)
+        std::sort(items.begin(), items.end(), [](QListWidgetItem* a, QListWidgetItem* b) {
+            return a->data(Qt::UserRole + 1).toDouble() > b->data(Qt::UserRole + 1).toDouble();
+        });
+    } else if (sortIndex == 2) {
+        // Length (descending: longest first)
+        std::sort(items.begin(), items.end(), [](QListWidgetItem* a, QListWidgetItem* b) {
+            return a->data(Qt::UserRole + 2).toDouble() > b->data(Qt::UserRole + 2).toDouble();
+        });
+    } else {
+        // Name (ascending: A-Z)
+        std::sort(items.begin(), items.end(), [](QListWidgetItem* a, QListWidgetItem* b) {
+            return a->text().toLower() < b->text().toLower();
+        });
+    }
+
+    for (auto* item : items)
+        m_list->addItem(item);
 }
 
 void LibraryPanel::onAddCustomAircraft() {

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "airbus-ec135-p3",
+  "display_name": "Airbus EC135 P3",
+  "manufacturer": "Airbus Helicopters",
+  "model": "EC135",
+  "variant": "P3",
+  "category": "HELICOPTER",
+  "wingspan_ft": 33.1,
+  "length_ft": 39.5,
+  "tail_height_ft": 8.3,
+  "rotor_diameter_ft": 33.1,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "airbus-ec135-p3.svg",
+  "data_sources": [
+    "Airbus Helicopters EC135 P3 Flight Manual MBB-BK117 C-2",
+    "EASA Type Certificate Data Sheet EASA.R.009 EC135",
+    "Jane's All the World's Aircraft 2010–11"
+  ],
+  "verified_date": "2026-05-11"
+}

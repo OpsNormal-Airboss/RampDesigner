@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "vought-f8-e",
+  "display_name": "F-8E Crusader",
+  "manufacturer": "Vought",
+  "model": "F-8",
+  "variant": "E",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 35.7,
+  "length_ft": 54.6,
+  "tail_height_ft": 15.8,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "vought-f8-e.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVAIR 01-45HHC-1 F-8E Aircraft",
+    "Jane's All the World's Aircraft 1968–69",
+    "Crusader: The F-8 Fighter, Peter Mersky, Naval Institute Press, 1994"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

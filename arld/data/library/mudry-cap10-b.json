@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "mudry-cap10-b",
+  "display_name": "Mudry CAP 10B",
+  "manufacturer": "Mudry",
+  "model": "CAP 10",
+  "variant": "B",
+  "category": "AEROBATIC",
+  "wingspan_ft": 26.3,
+  "length_ft": 22.5,
+  "tail_height_ft": 8.3,
+  "prop_arc_ft": 4.0,
+  "default_display_type": "RAMP_SHOW",
+  "silhouette_svg": "mudry-cap10-b.svg",
+  "data_sources": [
+    "DGAC Fiche de Données CAP 10B",
+    "EASA Type Certificate Data Sheet EASA.A.166 CAP 10",
+    "Jane's All the World's Aircraft 1980–81"
+  ],
+  "verified_date": "2026-05-11"
+}

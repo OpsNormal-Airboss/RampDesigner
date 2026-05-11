@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "convair-b36-j",
+  "display_name": "B-36J Peacemaker",
+  "manufacturer": "Convair",
+  "model": "B-36",
+  "variant": "J",
+  "category": "BOMBER",
+  "wingspan_ft": 230.0,
+  "length_ft": 162.1,
+  "tail_height_ft": 46.8,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "convair-b36-j.svg",
+  "data_sources": [
+    "USAF T.O. 1B-36J-1 Flight Manual B-36J",
+    "Jane's All the World's Aircraft 1954–55",
+    "Convair B-36: A Comprehensive History, Meyers K. Jacobsen, Schiffer, 1997"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

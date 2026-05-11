@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "polikarpov-i16",
+  "display_name": "Polikarpov I-16",
+  "manufacturer": "Polikarpov",
+  "model": "I-16",
+  "category": "WARBIRD",
+  "wingspan_ft": 29.5,
+  "length_ft": 20.1,
+  "tail_height_ft": 7.7,
+  "prop_arc_ft": 4.8,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "polikarpov-i16.svg",
+  "data_sources": [
+    "NII VVS State Air Force Research Institute Report on I-16 Type 24, 1939",
+    "Soviet Aircraft and Aviation 1917–1941, Heinz Nowarra, Harleyford, 1962",
+    "Polikarpov's Biplane Fighters, Yefim Gordon & Keith Dexter, Midland, 2002"
+  ],
+  "verified_date": "2026-05-11"
+}

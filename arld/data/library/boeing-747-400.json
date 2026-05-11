@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-747-400",
+  "display_name": "Boeing 747-400",
+  "manufacturer": "Boeing",
+  "model": "747",
+  "variant": "400",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 211.5,
+  "length_ft": 231.8,
+  "tail_height_ft": 63.7,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "boeing-747-400.svg",
+  "data_sources": [
+    "Boeing 747-400 Airplane Characteristics for Airport Planning, Boeing D6-58326-1",
+    "Jane's All the World's Aircraft 1995–96",
+    "Boeing 747: Design and Development Since 1969, Peter Birtles, Ian Allan, 1999"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

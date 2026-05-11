@@ -13,12 +13,14 @@ add_library(arld_export STATIC
     include/arld/export/JpegExporter.h
     include/arld/export/BatchExporter.h
     include/arld/export/ViolationReportExporter.h
+    include/arld/export/AircraftManifestExporter.h
     src/SvgExporter.cpp
     src/PdfExporter.cpp
     src/PngExporter.cpp
     src/JpegExporter.cpp
     src/BatchExporter.cpp
     src/ViolationReportExporter.cpp
+    src/AircraftManifestExporter.cpp
 )
 
 target_include_directories(arld_export PUBLIC

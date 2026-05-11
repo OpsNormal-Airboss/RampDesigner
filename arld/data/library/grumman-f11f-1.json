@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "grumman-f11f-1",
+  "display_name": "F11F-1 Tiger",
+  "manufacturer": "Grumman",
+  "model": "F11F",
+  "variant": "1",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 31.8,
+  "length_ft": 46.3,
+  "tail_height_ft": 13.4,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "grumman-f11f-1.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVWEPS 01-40LMA-1 F11F-1 Aircraft",
+    "Jane's All the World's Aircraft 1962–63",
+    "Grumman Tiger F11F/F-11, Robert Lawson, Ginter Books, 2000"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

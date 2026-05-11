@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "de-havilland-canada-dhc6",
+  "display_name": "DHC-6 Twin Otter",
+  "manufacturer": "de Havilland Canada",
+  "model": "DHC-6",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 65.0,
+  "length_ft": 51.8,
+  "tail_height_ft": 19.5,
+  "prop_arc_ft": 8.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "de-havilland-canada-dhc6.svg",
+  "data_sources": [
+    "de Havilland Canada DHC-6 Twin Otter Series 300 Pilot's Operating Handbook",
+    "FAA Type Certificate Data Sheet A11EA DHC-6",
+    "Jane's All the World's Aircraft 1980–81"
+  ],
+  "verified_date": "2026-05-11"
+}

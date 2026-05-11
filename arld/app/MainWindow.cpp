@@ -8,6 +8,8 @@
 #include <arld/ui/AircraftItem.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UnitConverter.h>
+#include <arld/export/AircraftManifestExporter.h>
+#include <arld/export/BatchExporter.h>
 #include <arld/export/PdfExporter.h>
 #include <arld/export/SvgExporter.h>
 #include <arld/export/ViolationReportExporter.h>
@@ -255,7 +257,10 @@ void MainWindow::setupFileActions() {
     fm->addSeparator();
     fm->addAction(tr("Export &SVG..."), this, &MainWindow::exportSvg);
     fm->addAction(tr("Export &PDF..."), this, &MainWindow::exportPdf);
+    fm->addAction(tr("Export &All Formats..."), this, &MainWindow::exportAll);
+    fm->addSeparator();
     fm->addAction(tr("Export &Violations Report..."), this, &MainWindow::exportViolationsReport);
+    fm->addAction(tr("Export Aircraft &Manifest CSV..."), this, &MainWindow::exportAircraftManifest);
     fm->addSeparator();
     m_recentFilesMenu = fm->addMenu(tr("&Recent Projects"));
     updateRecentFilesMenu();
@@ -679,6 +684,69 @@ void MainWindow::addToRecentFiles(const QString& path) {
         recent.removeLast();
     settings.setValue(QStringLiteral("recentFiles"), recent);
     updateRecentFilesMenu();
+}
+
+void MainWindow::exportAll() {
+    // Strip any extension from the suggested path
+    QString suggested = m_currentFilePath;
+    if (!suggested.isEmpty()) {
+        QFileInfo fi(suggested);
+        suggested = fi.absolutePath() + "/" + fi.completeBaseName();
+    }
+
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export All Formats"),
+        suggested,
+        tr("All Files (*)"));
+    if (path.isEmpty()) return;
+
+    // Strip any extension the user typed
+    QString basePath = path;
+    {
+        QFileInfo fi(path);
+        const QString suf = fi.suffix().toLower();
+        if (suf == "svg" || suf == "pdf" || suf == "png" || suf == "jpg" || suf == "jpeg")
+            basePath = fi.absolutePath() + "/" + fi.completeBaseName();
+    }
+
+    try {
+        auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
+
+        arld::export_::ExportOptions opts;
+        opts.paperSize   = arld::export_::ExportOptions::PaperSize::ANSI_D;
+        opts.orientation = arld::export_::ExportOptions::Orientation::Landscape;
+        opts.showName    = m_projectMetadata.title;
+        opts.showDate    = m_projectMetadata.showDate;
+        opts.showVenue   = m_projectMetadata.showVenue;
+
+        arld::export_::BatchExporter::exportAll(data, basePath.toStdString(), opts);
+
+        QMessageBox::information(this, tr("Export Successful"),
+            tr("Layout exported to:\n  %1.svg\n  %1.pdf\n  %1.png\n  %1.jpg")
+                .arg(basePath));
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Export Partially Failed"),
+            tr("Some formats could not be exported:\n%1").arg(e.what()));
+    }
+}
+
+void MainWindow::exportAircraftManifest() {
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export Aircraft Manifest CSV"), QString(),
+        tr("CSV Files (*.csv);;All Files (*)"));
+    if (path.isEmpty()) return;
+
+    try {
+        auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
+        arld::export_::AircraftManifestExporter::exportCsv(data, path.toStdString());
+        QMessageBox::information(this, tr("Export Successful"),
+            tr("Aircraft manifest exported to:\n%1").arg(path));
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Export Failed"),
+            tr("Could not export manifest:\n%1").arg(e.what()));
+    }
 }
 
 void MainWindow::updateRecentFilesMenu() {

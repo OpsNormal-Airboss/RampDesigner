@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "convair-f106-a",
+  "display_name": "F-106A Delta Dart",
+  "manufacturer": "Convair",
+  "model": "F-106",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.3,
+  "length_ft": 70.9,
+  "tail_height_ft": 20.3,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "convair-f106-a.svg",
+  "data_sources": [
+    "USAF T.O. 1F-106A-1 Flight Manual F-106A/B",
+    "Jane's All the World's Aircraft 1968–69",
+    "Convair F-106 Delta Dart, Alwyn Lloyd, Aerofax, 1999"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

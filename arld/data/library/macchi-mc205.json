@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "macchi-mc205",
+  "display_name": "MC.205 Veltro",
+  "manufacturer": "Macchi",
+  "model": "MC.205",
+  "category": "WARBIRD",
+  "wingspan_ft": 34.8,
+  "length_ft": 29.0,
+  "tail_height_ft": 9.8,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "macchi-mc205.svg",
+  "data_sources": [
+    "Regia Aeronautica Technical Manual Istruzione Tecnica per il velivolo MC 205, 1943",
+    "Jane's All the World's Aircraft 1944–45",
+    "Italian Aces of World War 2, Giovanni Massimello & Giorgio Apostolo, Osprey, 2000"
+  ],
+  "verified_date": "2026-05-11"
+}

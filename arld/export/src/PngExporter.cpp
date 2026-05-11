@@ -180,7 +180,53 @@ void PngExporter::exportLayout(const arld::core::ProjectData& data,
     }
 
     // ------------------------------------------------------------------
-    // 6. Write PNG
+    // 6. Draw scale bar if requested
+    // ------------------------------------------------------------------
+    if (options.showScaleBar && width > 40 && height > 20) {
+        // Scale bar = 100 ft wide in pixels, capped at width/3
+        const int barWidthPx = std::min(static_cast<int>(100.0 * pixPerFt),
+                                        width / 3);
+        if (barWidthPx >= 4) {
+            const int margin = 20;
+            const int barHeight = 4;
+            const int tickHeight = 10;
+            const int barY = height - margin - tickHeight;
+            const int barX = margin;
+
+            auto setPixel = [&](int x, int y, Pixel px) {
+                if (x < 0 || x >= width || y < 0 || y >= height) return;
+                buf[(size_t)y * width + x] = px;
+            };
+
+            const Pixel white  = {0xFF, 0xFF, 0xFF, 0xFF};
+            const Pixel black  = {0x00, 0x00, 0x00, 0xFF};
+
+            // White filled rectangle (bar body)
+            for (int y = barY; y < barY + barHeight; ++y)
+                for (int x = barX; x <= barX + barWidthPx; ++x)
+                    setPixel(x, y, white);
+
+            // Black border on bar
+            for (int x = barX; x <= barX + barWidthPx; ++x) {
+                setPixel(x, barY,             black);
+                setPixel(x, barY + barHeight - 1, black);
+            }
+            for (int y = barY; y < barY + barHeight; ++y) {
+                setPixel(barX,                y, black);
+                setPixel(barX + barWidthPx,   y, black);
+            }
+
+            // End ticks (vertical lines above/below the bar)
+            for (int y = barY - (tickHeight - barHeight) / 2;
+                 y < barY + tickHeight; ++y) {
+                setPixel(barX,              y, black);
+                setPixel(barX + barWidthPx, y, black);
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // 7. Write PNG
     // ------------------------------------------------------------------
     if (!stbi_write_png(outputPath.c_str(), width, height, 4,
                         buf.data(), width * 4))

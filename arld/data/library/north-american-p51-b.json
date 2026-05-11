@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "north-american-p51-b",
+  "display_name": "P-51B Mustang",
+  "manufacturer": "North American",
+  "model": "P-51",
+  "variant": "B",
+  "category": "WARBIRD",
+  "wingspan_ft": 37.0,
+  "length_ft": 32.3,
+  "tail_height_ft": 13.5,
+  "prop_arc_ft": 5.8,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "north-american-p51-b.svg",
+  "data_sources": [
+    "USAAF T.O. 01-60JE-1 Pilot's Operating Instructions P-51B/C",
+    "Jane's All the World's Aircraft 1944–45",
+    "P-51 Mustang: Development of the Long-Range Escort Fighter, Thomas H. Hitchcock, Monogram, 1984"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

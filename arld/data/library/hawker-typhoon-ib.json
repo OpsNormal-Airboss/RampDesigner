@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "hawker-typhoon-ib",
+  "display_name": "Typhoon Ib",
+  "manufacturer": "Hawker",
+  "model": "Typhoon",
+  "variant": "Ib",
+  "category": "WARBIRD",
+  "wingspan_ft": 41.5,
+  "length_ft": 31.8,
+  "tail_height_ft": 14.8,
+  "prop_arc_ft": 6.8,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "hawker-typhoon-ib.svg",
+  "data_sources": [
+    "Air Ministry Pilot's Notes A.P. 1804B Typhoon I Aircraft",
+    "Jane's All the World's Aircraft 1945–46",
+    "Hawker Typhoon and Tempest, Francis Mason, Aston Publications, 1988"
+  ],
+  "verified_date": "2026-05-11"
+}

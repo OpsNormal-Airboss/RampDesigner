@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "bell-407",
+  "display_name": "Bell 407",
+  "manufacturer": "Bell",
+  "model": "407",
+  "category": "HELICOPTER",
+  "wingspan_ft": 35.0,
+  "length_ft": 41.7,
+  "tail_height_ft": 8.8,
+  "rotor_diameter_ft": 35.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "bell-407.svg",
+  "data_sources": [
+    "Bell Helicopter Textron Model 407 Flight Manual BHT-407-FM-1",
+    "Jane's All the World's Aircraft 2000–01",
+    "Bell Helicopter Textron 407 Type Certificate Data Sheet H2WE"
+  ],
+  "verified_date": "2026-05-11"
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "piper-pa32-301",
+  "display_name": "Piper PA-32-301 Saratoga",
+  "manufacturer": "Piper",
+  "model": "PA-32",
+  "variant": "301",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 36.0,
+  "length_ft": 27.8,
+  "tail_height_ft": 8.2,
+  "prop_arc_ft": 6.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "piper-pa32-301.svg",
+  "data_sources": [
+    "Piper PA-32-301 Saratoga Pilot's Operating Handbook 761-601",
+    "FAA Type Certificate Data Sheet 3A17 Piper PA-32",
+    "Jane's All the World's Aircraft 1990–91"
+  ],
+  "verified_date": "2026-05-11"
+}

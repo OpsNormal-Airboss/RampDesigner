@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "hawker-sea-fury-fb11",
+  "display_name": "Sea Fury FB.11",
+  "manufacturer": "Hawker",
+  "model": "Sea Fury",
+  "variant": "FB.11",
+  "category": "WARBIRD",
+  "wingspan_ft": 38.5,
+  "length_ft": 34.8,
+  "tail_height_ft": 15.7,
+  "prop_arc_ft": 7.0,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "hawker-sea-fury-fb11.svg",
+  "data_sources": [
+    "Royal Navy Pilot's Notes A.P. 4335A: Sea Fury F.B. Mark 11 Aircraft",
+    "Jane's All the World's Aircraft 1950–51",
+    "Hawker Sea Fury, David Brown, Profile Publications No. 214, 1972"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

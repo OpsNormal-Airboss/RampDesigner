@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "north-american-at6-d",
+  "display_name": "AT-6D Texan",
+  "manufacturer": "North American",
+  "model": "AT-6",
+  "variant": "D",
+  "category": "WARBIRD",
+  "wingspan_ft": 42.0,
+  "length_ft": 29.0,
+  "tail_height_ft": 11.8,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "north-american-at6-d.svg",
+  "data_sources": [
+    "USAAF T.O. 01-60FDB-1 Pilot's Operating Instructions AT-6D",
+    "Jane's All the World's Aircraft 1944–45",
+    "North American T-6 Texan Variants, Kenn Rust, Aircraft in Profile No. 26, 1965"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

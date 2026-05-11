@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "grumman-f7f-3",
+  "display_name": "F7F-3 Tigercat",
+  "manufacturer": "Grumman",
+  "model": "F7F",
+  "variant": "3",
+  "category": "WARBIRD",
+  "wingspan_ft": 51.5,
+  "length_ft": 45.4,
+  "tail_height_ft": 16.7,
+  "prop_arc_ft": 6.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "grumman-f7f-3.svg",
+  "data_sources": [
+    "Bureau of Aeronautics Technical Handbook AN 01-75EE-1: Pilot's Handbook F7F-3",
+    "Jane's All the World's Aircraft 1947–48",
+    "Grumman F7F Tigercat, Tommy Thomason, Specialty Press, 2010"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

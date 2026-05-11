@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "mcdonnell-douglas-av8-b",
+  "display_name": "AV-8B Harrier II",
+  "manufacturer": "McDonnell Douglas",
+  "model": "AV-8",
+  "variant": "B",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 30.3,
+  "length_ft": 46.3,
+  "tail_height_ft": 11.8,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mcdonnell-douglas-av8-b.svg",
+  "data_sources": [
+    "NATOPS Flight Manual NAVAIR 01-AV8BB-1 AV-8B Aircraft",
+    "Jane's All the World's Aircraft 1990–91",
+    "BAe/McDonnell Douglas Harrier II AV-8B/GR.5, Paul Jackson, Aerofax, 1987"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

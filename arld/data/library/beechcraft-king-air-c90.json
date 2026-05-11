@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "beechcraft-king-air-c90",
+  "display_name": "Beechcraft King Air C90",
+  "manufacturer": "Beechcraft",
+  "model": "King Air",
+  "variant": "C90",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 50.3,
+  "length_ft": 36.1,
+  "tail_height_ft": 14.3,
+  "prop_arc_ft": 8.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "beechcraft-king-air-c90.svg",
+  "data_sources": [
+    "Beechcraft King Air C90B Pilot's Operating Handbook 90-590000-115A13",
+    "FAA Type Certificate Data Sheet A-776 Beechcraft 90",
+    "Jane's All the World's Aircraft 1990–91"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

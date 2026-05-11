@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "piper-pa28-181",
+  "display_name": "Piper PA-28-181 Archer",
+  "manufacturer": "Piper",
+  "model": "PA-28",
+  "variant": "181",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 35.5,
+  "length_ft": 24.0,
+  "tail_height_ft": 8.0,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "piper-pa28-181.svg",
+  "data_sources": [
+    "Piper PA-28-181 Archer III Pilot's Operating Handbook 761-880",
+    "FAA Type Certificate Data Sheet 2A13 Piper PA-28",
+    "Jane's All the World's Aircraft 1995–96"
+  ],
+  "verified_date": "2026-05-11"
+}

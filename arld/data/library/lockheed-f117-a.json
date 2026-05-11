@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-f117-a",
+  "display_name": "F-117A Nighthawk",
+  "manufacturer": "Lockheed",
+  "model": "F-117",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 43.3,
+  "length_ft": 65.9,
+  "tail_height_ft": 12.4,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-f117-a.svg",
+  "data_sources": [
+    "USAF T.O. 1F-117A-1 Flight Manual F-117A (Declassified)",
+    "Jane's All the World's Aircraft 1992–93",
+    "Lockheed F-117 Nighthawk: Stealth Fighter, Michael Richardson, Osprey, 2001"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}

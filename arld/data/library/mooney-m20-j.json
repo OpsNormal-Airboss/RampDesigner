@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "mooney-m20-j",
+  "display_name": "Mooney M20J",
+  "manufacturer": "Mooney Aircraft",
+  "model": "M20",
+  "variant": "J",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 36.3,
+  "length_ft": 24.3,
+  "tail_height_ft": 8.4,
+  "prop_arc_ft": 5.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "mooney-m20-j.svg",
+  "data_sources": [
+    "Mooney M20J 201 Pilot's Operating Handbook 18-001",
+    "FAA Type Certificate Data Sheet 2A3 Mooney M20",
+    "Jane's All the World's Aircraft 1985–86"
+  ],
+  "verified_date": "2026-05-11",
+  "has_retractable_gear": true
+}
