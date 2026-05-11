@@ -28,6 +28,14 @@ struct PlacedAircraft {
     bool        hasHazmat    = false;
     // Gear state (Sprint 1-4-2); safe default = gear down
     bool        gearExtended = true;
+
+    // Scheduling fields (Sprint 2-3-3)
+    std::string arrivalTime;    // ISO 8601 local time, e.g. "2026-07-04T08:00"
+    std::string departureTime;  // ISO 8601 local time
+
+    // Label display mode (Sprint 2-3-4)
+    enum class LabelMode { DisplayName, TailNumber, Hidden };
+    LabelMode labelMode = LabelMode::DisplayName;
 };
 
 struct RampBoundaryData {

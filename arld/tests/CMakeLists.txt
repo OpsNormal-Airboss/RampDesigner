@@ -16,6 +16,8 @@ add_executable(arld_tests
     test_tail_swing.cpp
     test_batch_exporter.cpp
     test_versioning.cpp
+    test_security.cpp
+    test_perf.cpp
 )
 
 target_link_libraries(arld_tests

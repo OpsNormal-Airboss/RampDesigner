@@ -48,13 +48,13 @@ void ClearanceZoneItem::updateAppearance() {
             fill    = QColor(0xDD, 0xAA, 0x00,
                              static_cast<int>(arld::core::kAdvisoryZoneOpacity * 255));
             outline = QColor(0xBB, 0x88, 0x00, 200);
-            brushStyle = Qt::BDiagPattern;   // advisory: diagonal lines (CVD)
+            brushStyle = Qt::Dense4Pattern;   // advisory: grid texture (CVD, Sprint 2-3-6)
             break;
         case S::Violation:
             fill    = QColor(0xCC, 0x22, 0x22,
                              static_cast<int>(arld::core::kViolationZoneOpacity * 255));
             outline = QColor(0xAA, 0x00, 0x00, 220);
-            brushStyle = Qt::DiagCrossPattern; // violation: cross-hatch (CVD)
+            brushStyle = Qt::BDiagPattern;    // violation: backward diagonal (CVD, Sprint 2-3-6)
             break;
         case S::Overridden:
             fill    = QColor(0xDD, 0x77, 0x00,

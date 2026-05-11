@@ -65,6 +65,10 @@ private:
     void importBoundary();
     void showSatelliteTilesDialog();
 
+    // Sprint 2-3 slots
+    void showAboutDialog();
+    void showLibraryUpdateDialog();
+
     arld::ui::RampScene*    m_scene;
     arld::ui::RampView*     m_view;
     arld::ui::LibraryPanel*       m_libraryPanel    = nullptr;

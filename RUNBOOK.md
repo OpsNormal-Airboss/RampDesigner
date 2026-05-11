@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2, Sprint 2-2 complete. Named layout snapshots (schema_version 3), visual change-delta overlay, VersionsPanel and UndoHistoryPanel docks, MinimapWidget, SatelliteUnderlayItem HTTPS tile streaming, satellite tiles settings dialog, KML/GeoJSON boundary import, tag-triggered release packaging CI. 93/93 tests pass (+ 4 benchmarks tagged [.bench]).
+> Updated after each sprint. **Current status:** Phase 2, Sprint 2-3 complete. LOD simplified rendering (scaleDenominator > 2000), arrival/departure times on PlacedAircraft, Hot Ramp 100 ft no-smoking circle (JET-A), right-click label toggle (DisplayName/TailNumber/Hidden) with LabelMode serialization, locale-aware QDoubleSpinBox inputs, CVD hatching fills on clearance zones, JSON depth-limit security check (max 32), LibraryUpdateChecker HTTPS-only, NOTICES.txt generation, About ARLD dialog, ARLD_VERSION_STRING macro. 98/98 tests pass (+ benchmarks tagged [.bench]).
 
 ---
 
@@ -550,22 +550,22 @@ cmake --build --preset win-release --target package
 | 2-2-7 | KML/GeoJSON boundary import; convert to logical-ft polygon | 5 |
 | 2-2-8 | Tag-triggered CPack packaging; attach to GitHub Release; publish community edition | 3 |
 
-#### Sprint 2-3 · Month 8–9, Wk 1–2 · 47 pts
-**Goal:** Opt-in library update service; LOD rendering; beta release
+#### Sprint 2-3 · Month 8–9, Wk 1–2 · 47 pts ✅ Complete
+**Goal:** Opt-in library update service; LOD rendering; beta release; security hardening
 
-| # | Story | Pts |
-|---|-------|-----|
-| 2-3-1 | Opt-in library update check: HTTPS fetch of library_manifest.json; SHA-256 comparison; incremental download | 8 |
-| 2-3-2 | LOD rendering: at zoom < 1:2000 render AircraftItems as bounding rectangles | 5 |
-| 2-3-3 | Arrival/departure time fields; fuel type auto-trigger no-smoking overlay in Hot Ramp mode | 3 |
-| 2-3-4 | Aircraft label toggle (tail number / call sign) per aircraft; persists in .arld | 2 |
-| 2-3-5 | Locale-based decimal separator in all numeric inputs; lupdate CI green | 3 |
-| 2-3-6 | WCAG contrast audit CI tooling; pattern fills as supplement to colour coding for CVD users | 5 |
-| 2-3-7 | Performance benchmark suite: add TRD-PERF-007–010 timed tests; trend chart in CI | 5 |
-| 2-3-8 | Beta release to 25 users via GitHub Releases; NPS survey link in release notes | 3 |
-| 2-3-9 | Open-source license compliance review; update LICENSES.txt and NOTICES.txt | 5 |
-| 2-3-10 | Security review: nlohmann/json SAX parser depth/length limits; network code compile-time flags | 5 |
-| 2-3-11 | Catch2 test: .arld file nesting depth > 32 rejected with error | 3 |
+| # | Story | Pts | Status |
+|---|-------|-----|--------|
+| 2-3-1 | Opt-in library update check: HTTPS fetch of library_manifest.json; SHA-256 comparison; incremental download; "Check for Library Updates..." in Help menu | 8 | ✅ |
+| 2-3-2 | LOD rendering: at scaleDenominator > 2000 render AircraftItems as colored bounding rectangles | 5 | ✅ |
+| 2-3-3 | Arrival/departure time fields on PlacedAircraft; fuel type auto-trigger no-smoking 100 ft circle overlay in Hot Ramp mode for JET-A aircraft | 3 | ✅ |
+| 2-3-4 | Aircraft label toggle (Display Name / Tail Number / Hidden) via right-click context menu; LabelMode persists in .arld | 2 | ✅ |
+| 2-3-5 | Locale-aware decimal separator via QLocale::system() on all QDoubleSpinBox inputs in ClearanceRuleDialog and CustomAircraftDialog | 3 | ✅ |
+| 2-3-6 | CVD pattern fills: advisory zones use Dense4Pattern (grid); violation zones use BDiagPattern (diagonal); overridden uses HorPattern | 5 | ✅ |
+| 2-3-7 | Performance benchmarks: bench_library_load (150 entries) and bench_project_open_200ac; tagged [.bench] | 5 | ✅ |
+| 2-3-8 | Beta release to 25 users via GitHub Releases; NPS survey link in release notes | 3 | ⬜ Deferred |
+| 2-3-9 | NOTICES.txt generation via `scripts/check-licenses.py --notices`; generate_notices CMake target; About ARLD dialog with View Licenses button; ARLD_VERSION_STRING macro | 5 | ✅ |
+| 2-3-10 | Security: pre-parse JSON depth check (max 32 levels) in ProjectFile::load; rejects deeply nested files with runtime_error | 5 | ✅ |
+| 2-3-11 | Catch2 tests: test_security.cpp — 4 tests covering depth > 32 rejection, depth ≤ 32 acceptance, arrival/departure round-trip, LabelMode round-trip | 3 | ✅ |
 
 #### Sprint 2-4 · Month 9–10, Wk 3–4 · 44 pts
 **Goal:** UAT event 1; bug fixes; snap-to-runway and group move polish

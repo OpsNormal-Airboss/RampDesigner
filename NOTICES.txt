@@ -1,0 +1,112 @@
+ARLD Third-Party Software Notices
+============================================================
+
+This product includes software developed by third parties.
+Their respective licenses and attribution notices are listed below.
+
+------------------------------------------------------------
+Package: CGAL
+License: LGPL-3.0-or-later
+
+CGAL is used under the GNU Lesser General Public License v3.0 (LGPL-3.0).
+Source available at https://github.com/CGAL/cgal
+
+------------------------------------------------------------
+Package: Catch2
+License: BSL-1.0
+
+Catch2 © 2022 Two Blue Cubes Ltd., Boost Software License 1.0.
+Source available at https://github.com/catchorg/Catch2
+
+------------------------------------------------------------
+Package: Qt6 (LGPL dynamic link)
+License: LGPL-3.0-only
+
+Qt is used under the GNU Lesser General Public License v3.0 (LGPL-3.0).
+Source available at https://code.qt.io
+Qt is a registered trademark of The Qt Company Ltd.
+
+------------------------------------------------------------
+Package: Qt6 Network (LGPL dynamic link)
+License: LGPL-3.0-only
+
+Qt Network module is used under LGPL-3.0.
+Source available at https://code.qt.io
+
+------------------------------------------------------------
+Package: Qt6 SvgWidgets (LGPL dynamic link)
+License: LGPL-3.0-only
+
+Qt SVG Widgets module is used under LGPL-3.0.
+Source available at https://code.qt.io
+
+------------------------------------------------------------
+Package: boost
+License: BSL-1.0
+
+Boost C++ Libraries, Boost Software License 1.0.
+Source available at https://www.boost.org
+
+------------------------------------------------------------
+Package: eigen3
+License: MPL-2.0
+
+Eigen is used under the Mozilla Public License 2.0.
+Source available at https://gitlab.com/libeigen/eigen
+
+------------------------------------------------------------
+Package: gmp
+License: LGPL-3.0-or-later
+
+GMP (GNU Multiple Precision Arithmetic Library) is used under LGPL-3.0.
+Source available at https://gmplib.org
+
+------------------------------------------------------------
+Package: libharu
+License: MIT
+
+libharu © 2000-2006 Takeshi Kanno, © 2007-2009 Antony Dovgal, MIT License.
+Source available at https://github.com/libharu/libharu
+
+------------------------------------------------------------
+Package: libjpeg-turbo
+License: IJG
+
+libjpeg-turbo, IJG License / BSD-3-Clause / zlib License.
+Source available at https://www.libjpeg-turbo.org
+
+------------------------------------------------------------
+Package: libpng
+License: libpng
+
+libpng © 1995-2023 the PNG Reference Library Authors, libpng License.
+Source available at http://www.libpng.org
+
+------------------------------------------------------------
+Package: mpfr
+License: LGPL-3.0-or-later
+
+MPFR is used under LGPL-3.0.
+Source available at https://www.mpfr.org
+
+------------------------------------------------------------
+Package: nlohmann-json
+License: MIT
+
+nlohmann/json © 2013-present Niels Lohmann, MIT License.
+Source available at https://github.com/nlohmann/json
+
+------------------------------------------------------------
+Package: stb
+License: MIT
+
+stb © 2017 Sean T. Barrett, MIT License / Public Domain.
+Source available at https://github.com/nothings/stb
+
+------------------------------------------------------------
+Package: zlib
+License: Zlib
+
+zlib © 1995-2023 Jean-loup Gailly and Mark Adler, zlib License.
+Source available at https://www.zlib.net
+

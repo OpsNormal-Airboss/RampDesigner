@@ -8,6 +8,7 @@ add_library(arld_ui STATIC
     include/arld/ui/CustomAircraftDialog.h
     include/arld/ui/GridOverlayItem.h
     include/arld/ui/LibraryPanel.h
+    include/arld/ui/LibraryUpdateChecker.h
     include/arld/ui/MinimapWidget.h
     include/arld/ui/PropertiesPanel.h
     include/arld/ui/RampBoundaryItem.h
@@ -25,6 +26,7 @@ add_library(arld_ui STATIC
     src/CustomAircraftDialog.cpp
     src/GridOverlayItem.cpp
     src/LibraryPanel.cpp
+    src/LibraryUpdateChecker.cpp
     src/MinimapWidget.cpp
     src/PropertiesPanel.cpp
     src/RampBoundaryItem.cpp

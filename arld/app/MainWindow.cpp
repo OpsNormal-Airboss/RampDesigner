@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <arld/ui/ClearanceRuleDialog.h>
 #include <arld/ui/LibraryPanel.h>
+#include <arld/ui/LibraryUpdateChecker.h>
 #include <arld/ui/MinimapWidget.h>
 #include <arld/ui/PropertiesPanel.h>
 #include <arld/ui/RampScene.h>
@@ -11,6 +12,7 @@
 #include <arld/ui/ViolationsPanel.h>
 #include <arld/ui/AircraftItem.h>
 #include <arld/core/BoundaryImporter.h>
+#include <arld/core/Config.h>
 #include <arld/core/LayoutDiffer.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UnitConverter.h>
@@ -23,6 +25,7 @@
 #include <QActionGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDir>
@@ -38,6 +41,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
@@ -45,6 +49,7 @@
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QStringList>
+#include <QTextBrowser>
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWidgetAction>
@@ -245,6 +250,13 @@ void MainWindow::setupMenuBar() {
     sliderLayout->addWidget(opacitySlider);
     opacityAction->setDefaultWidget(sliderWidget);
     viewMenu->addAction(opacityAction);
+
+    // ---- Help menu ----
+    auto* helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(tr("Check for Library &Updates..."), this,
+                        &MainWindow::showLibraryUpdateDialog);
+    helpMenu->addSeparator();
+    helpMenu->addAction(tr("About &ARLD..."), this, &MainWindow::showAboutDialog);
 }
 
 void MainWindow::setupFileActions() {
@@ -954,6 +966,154 @@ void MainWindow::showSatelliteTilesDialog() {
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close);
     connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
     layout->addRow(buttons);
+
+    dlg.exec();
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-3-9: About dialog
+// ---------------------------------------------------------------------------
+void MainWindow::showAboutDialog() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("About ARLD"));
+    auto* layout = new QVBoxLayout(&dlg);
+
+    auto* titleLabel = new QLabel(
+        QStringLiteral("<b>Airshow Ramp Layout Designer</b>"), &dlg);
+    titleLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(titleLabel);
+
+    auto* versionLabel = new QLabel(
+        tr("Version %1").arg(QLatin1String(ARLD_VERSION_STRING)), &dlg);
+    versionLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(versionLabel);
+
+    auto* buildLabel = new QLabel(
+        tr("Build date: %1").arg(QLatin1String(__DATE__)), &dlg);
+    buildLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(buildLabel);
+
+    auto* copyrightLabel = new QLabel(
+        QStringLiteral("© 2026 OpsNormal Airboss"), &dlg);
+    copyrightLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(copyrightLabel);
+
+    auto* licensesBtn = new QPushButton(tr("View Licenses..."), &dlg);
+    layout->addWidget(licensesBtn);
+
+    connect(licensesBtn, &QPushButton::clicked, &dlg, [this, &dlg] {
+        // Try to load NOTICES.txt from the source tree or install prefix
+        QString noticesText;
+        const QStringList searchPaths = {
+            QDir::currentPath() + QStringLiteral("/NOTICES.txt"),
+            QCoreApplication::applicationDirPath() + QStringLiteral("/NOTICES.txt"),
+            QStringLiteral("/usr/local/share/arld/NOTICES.txt"),
+        };
+        for (const QString& p : searchPaths) {
+            QFile f(p);
+            if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                noticesText = QString::fromUtf8(f.readAll());
+                break;
+            }
+        }
+        if (noticesText.isEmpty())
+            noticesText = tr("NOTICES.txt not found. Run 'cmake --build --target generate_notices' to generate it.");
+
+        QDialog licensesDlg(&dlg);
+        licensesDlg.setWindowTitle(tr("Third-Party Licenses"));
+        licensesDlg.resize(600, 400);
+        auto* lLayout = new QVBoxLayout(&licensesDlg);
+        auto* browser = new QTextBrowser(&licensesDlg);
+        browser->setPlainText(noticesText);
+        lLayout->addWidget(browser);
+        auto* closeBtn = new QDialogButtonBox(QDialogButtonBox::Close, &licensesDlg);
+        connect(closeBtn, &QDialogButtonBox::rejected, &licensesDlg, &QDialog::reject);
+        lLayout->addWidget(closeBtn);
+        licensesDlg.exec();
+    });
+
+    auto* closeBtn = new QDialogButtonBox(QDialogButtonBox::Close, &dlg);
+    connect(closeBtn, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addWidget(closeBtn);
+
+    dlg.exec();
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-3-1: Library update dialog
+// ---------------------------------------------------------------------------
+void MainWindow::showLibraryUpdateDialog() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Check for Library Updates"));
+    auto* layout = new QVBoxLayout(&dlg);
+
+    auto* statusLabel = new QLabel(tr("Enter the manifest URL to check for updates."), &dlg);
+    statusLabel->setWordWrap(true);
+    layout->addWidget(statusLabel);
+
+    auto* urlEdit = new QLineEdit(
+        QStringLiteral("https://raw.githubusercontent.com/opsnormal/arld-library/main/library_manifest.json"),
+        &dlg);
+    layout->addWidget(urlEdit);
+
+    auto* progressBar = new QProgressBar(&dlg);
+    progressBar->setVisible(false);
+    layout->addWidget(progressBar);
+
+    auto* checker = new arld::ui::LibraryUpdateChecker(&dlg);
+
+    auto* checkBtn  = new QPushButton(tr("Check Now"), &dlg);
+    auto* downloadBtn = new QPushButton(tr("Download Updates"), &dlg);
+    downloadBtn->setEnabled(false);
+
+    auto* btnLayout = new QHBoxLayout;
+    btnLayout->addWidget(checkBtn);
+    btnLayout->addWidget(downloadBtn);
+    layout->addLayout(btnLayout);
+
+    QStringList pendingIds;
+
+    connect(checker, &arld::ui::LibraryUpdateChecker::updatesAvailable,
+            &dlg, [statusLabel, downloadBtn, &pendingIds](const QStringList& ids) {
+        pendingIds = ids;
+        statusLabel->setText(tr("%1 update(s) available.").arg(ids.size()));
+        downloadBtn->setEnabled(true);
+    });
+    connect(checker, &arld::ui::LibraryUpdateChecker::upToDate,
+            &dlg, [statusLabel] {
+        statusLabel->setText(tr("Library is up to date."));
+    });
+    connect(checker, &arld::ui::LibraryUpdateChecker::checkFailed,
+            &dlg, [statusLabel](const QString& error) {
+        statusLabel->setText(tr("Check failed: %1").arg(error));
+    });
+    connect(checker, &arld::ui::LibraryUpdateChecker::downloadProgress,
+            &dlg, [progressBar](int current, int total) {
+        progressBar->setMaximum(total);
+        progressBar->setValue(current);
+    });
+
+    connect(checkBtn, &QPushButton::clicked, &dlg, [checker, urlEdit] {
+        checker->checkForUpdates(urlEdit->text().trimmed());
+    });
+
+    connect(downloadBtn, &QPushButton::clicked, &dlg,
+            [checker, urlEdit, progressBar, &pendingIds] {
+        if (!pendingIds.isEmpty()) {
+            progressBar->setVisible(true);
+            progressBar->setMaximum(pendingIds.size());
+            progressBar->setValue(0);
+            QString baseUrl = urlEdit->text().trimmed();
+            // Strip manifest filename to get base URL
+            const int lastSlash = baseUrl.lastIndexOf(QLatin1Char('/'));
+            if (lastSlash > 0) baseUrl = baseUrl.left(lastSlash);
+            checker->downloadUpdates(pendingIds, baseUrl);
+        }
+    });
+
+    auto* closeBtns = new QDialogButtonBox(QDialogButtonBox::Close, &dlg);
+    connect(closeBtns, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addWidget(closeBtns);
 
     dlg.exec();
 }

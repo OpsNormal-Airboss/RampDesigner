@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 2 — Sprint 2/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%202%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 2 — Sprint 3/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%203%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -29,7 +29,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |-------|-------------|--------|
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
 | **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **✅ Complete — All 6 sprints done** |
-| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 2/6** |
+| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 3/6** |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
@@ -60,8 +60,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |--------|------|--------|
 | 2-1 | 150-aircraft library; batch export; SVG named layers; multi-select; AircraftManifestExporter CSV | ✅ Complete |
 | 2-2 | Named snapshots; change-delta view; minimap; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
-| 2-3 | Opt-in library update service; LOD rendering; beta release | ⬜ Up next |
-| 2-3 | Opt-in library update service; LOD rendering; beta release | ⬜ Not started |
+| 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog | ✅ Complete |
 | 2-4 | UAT event 1; bug fixes; snap-to-runway and group move polish | ⬜ Not started |
 | 2-5 | UAT events 2 & 3; export quality review with print vendors | ⬜ Not started |
 | 2-6 | Security review; open-source license audit; Phase 2 hardening | ⬜ Not started |
@@ -113,6 +112,14 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Properties panel** — right dock shows display type (all 7 types), tail number, owner, fuel type, and hazmat flag for any selected aircraft; changing display type immediately recalculates clearance zones
 - **Clearance overrides** — violations can be overridden with a justification (min 20 characters); overridden pairs render in orange and are stored in the project file with username and timestamp
 - **Hazmat indicator** — aircraft marked as carrying hazardous materials show a ⚠ warning icon on the canvas
+- **LOD simplified rendering** — at zoom scales beyond 1:2000 (scaleDenominator > 2000), aircraft silhouettes switch to plain colored rectangles for smooth 60 fps performance with 200+ aircraft
+- **Arrival/departure times** — each placed aircraft stores optional ISO 8601 arrival and departure times; persisted in the `.arld` project file
+- **Hot Ramp no-smoking overlay** — JET-A aircraft assigned to Hot Ramp display a 100 ft red dashed no-smoking circle; activates automatically when display type is Hot Ramp and fuel type contains "Jet"/"JET"/"jet"
+- **Right-click label toggle** — right-click any aircraft to choose label: Display Name, Tail Number, or Hidden; preference is serialized in the project file
+- **Locale-aware inputs** — all `QDoubleSpinBox` widgets use `QLocale::system()` so the decimal separator matches the user's locale
+- **Library update checker** — Help → Check for Library Updates... opens a dialog that fetches a remote manifest over HTTPS and identifies stale library entries; supports download to user data directory
+- **About dialog** — Help → About ARLD... shows version, build date, copyright, and a "View Licenses..." button that displays NOTICES.txt in a scrollable dialog
+- **NOTICES.txt generation** — `cmake --build --target generate_notices` writes NOTICES.txt with attribution text for all third-party dependencies
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 

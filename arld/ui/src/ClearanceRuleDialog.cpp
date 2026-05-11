@@ -4,12 +4,14 @@
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QLabel>
+#include <QLocale>
 #include <QVBoxLayout>
 
 namespace arld::ui {
 
 static QDoubleSpinBox* makeDistanceSpin() {
     auto* sb = new QDoubleSpinBox;
+    sb->setLocale(QLocale::system());  // locale-aware decimal separator (Sprint 2-3-5)
     sb->setMinimum(0.0);
     sb->setMaximum(500.0);
     sb->setSingleStep(1.0);

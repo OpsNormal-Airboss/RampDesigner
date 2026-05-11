@@ -2,8 +2,10 @@
 """
 Verify no GPL-licensed packages are in the ARLD dependency graph.
 Generates LICENSES.txt with SPDX identifiers for all known dependencies.
+Optionally writes NOTICES.txt (--notices <path>) with attribution text.
 """
 
+import argparse
 import sys
 
 BLOCKED_PREFIXES = ("GPL-", "AGPL-")
@@ -14,6 +16,7 @@ DEPENDENCY_LICENSES: dict[str, str] = {
     # Runtime / build deps
     "Qt6 (LGPL dynamic link)":           "LGPL-3.0-only",
     "Qt6 SvgWidgets (LGPL dynamic link)": "LGPL-3.0-only",
+    "Qt6 Network (LGPL dynamic link)":    "LGPL-3.0-only",
     "CGAL":                     "LGPL-3.0-or-later",
     "nlohmann-json":             "MIT",
     "Catch2":                    "BSL-1.0",
@@ -30,8 +33,78 @@ DEPENDENCY_LICENSES: dict[str, str] = {
     "stb":                       "MIT",
 }
 
+# Attribution text for NOTICES.txt
+NOTICES: dict[str, str] = {
+    "Qt6 (LGPL dynamic link)": (
+        "Qt is used under the GNU Lesser General Public License v3.0 (LGPL-3.0).\n"
+        "Source available at https://code.qt.io\n"
+        "Qt is a registered trademark of The Qt Company Ltd."
+    ),
+    "Qt6 SvgWidgets (LGPL dynamic link)": (
+        "Qt SVG Widgets module is used under LGPL-3.0.\n"
+        "Source available at https://code.qt.io"
+    ),
+    "Qt6 Network (LGPL dynamic link)": (
+        "Qt Network module is used under LGPL-3.0.\n"
+        "Source available at https://code.qt.io"
+    ),
+    "CGAL": (
+        "CGAL is used under the GNU Lesser General Public License v3.0 (LGPL-3.0).\n"
+        "Source available at https://github.com/CGAL/cgal"
+    ),
+    "nlohmann-json": (
+        "nlohmann/json © 2013-present Niels Lohmann, MIT License.\n"
+        "Source available at https://github.com/nlohmann/json"
+    ),
+    "Catch2": (
+        "Catch2 © 2022 Two Blue Cubes Ltd., Boost Software License 1.0.\n"
+        "Source available at https://github.com/catchorg/Catch2"
+    ),
+    "boost": (
+        "Boost C++ Libraries, Boost Software License 1.0.\n"
+        "Source available at https://www.boost.org"
+    ),
+    "eigen3": (
+        "Eigen is used under the Mozilla Public License 2.0.\n"
+        "Source available at https://gitlab.com/libeigen/eigen"
+    ),
+    "gmp": (
+        "GMP (GNU Multiple Precision Arithmetic Library) is used under LGPL-3.0.\n"
+        "Source available at https://gmplib.org"
+    ),
+    "mpfr": (
+        "MPFR is used under LGPL-3.0.\n"
+        "Source available at https://www.mpfr.org"
+    ),
+    "zlib": (
+        "zlib © 1995-2023 Jean-loup Gailly and Mark Adler, zlib License.\n"
+        "Source available at https://www.zlib.net"
+    ),
+    "libpng": (
+        "libpng © 1995-2023 the PNG Reference Library Authors, libpng License.\n"
+        "Source available at http://www.libpng.org"
+    ),
+    "libjpeg-turbo": (
+        "libjpeg-turbo, IJG License / BSD-3-Clause / zlib License.\n"
+        "Source available at https://www.libjpeg-turbo.org"
+    ),
+    "libharu": (
+        "libharu © 2000-2006 Takeshi Kanno, © 2007-2009 Antony Dovgal, MIT License.\n"
+        "Source available at https://github.com/libharu/libharu"
+    ),
+    "stb": (
+        "stb © 2017 Sean T. Barrett, MIT License / Public Domain.\n"
+        "Source available at https://github.com/nothings/stb"
+    ),
+}
+
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--notices", metavar="PATH",
+                        help="Write NOTICES.txt to the given path")
+    args = parser.parse_args()
+
     violations: list[str] = []
     lines: list[str] = [
         "# ARLD Transitive Dependency License Inventory",
@@ -48,6 +121,9 @@ def main() -> int:
     with open("LICENSES.txt", "w") as fh:
         fh.write("\n".join(lines) + "\n")
 
+    if args.notices:
+        _write_notices(args.notices)
+
     if violations:
         print("ERROR: GPL-licensed dependencies detected:")
         for v in violations:
@@ -56,7 +132,34 @@ def main() -> int:
 
     print(f"License check passed — {len(DEPENDENCY_LICENSES)} packages verified.")
     print("LICENSES.txt written.")
+    if args.notices:
+        print(f"NOTICES.txt written to {args.notices}.")
     return 0
+
+
+def _write_notices(path: str) -> None:
+    """Write a NOTICES.txt file with third-party attribution text."""
+    notice_lines: list[str] = [
+        "ARLD Third-Party Software Notices",
+        "=" * 60,
+        "",
+        "This product includes software developed by third parties.",
+        "Their respective licenses and attribution notices are listed below.",
+        "",
+    ]
+
+    for pkg in sorted(DEPENDENCY_LICENSES.keys()):
+        spdx = DEPENDENCY_LICENSES[pkg]
+        notice_lines.append("-" * 60)
+        notice_lines.append(f"Package: {pkg}")
+        notice_lines.append(f"License: {spdx}")
+        if pkg in NOTICES:
+            notice_lines.append("")
+            notice_lines.append(NOTICES[pkg])
+        notice_lines.append("")
+
+    with open(path, "w") as fh:
+        fh.write("\n".join(notice_lines) + "\n")
 
 
 if __name__ == "__main__":

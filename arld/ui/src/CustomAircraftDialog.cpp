@@ -15,6 +15,7 @@
 #include <QIODevice>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocale>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -119,6 +120,7 @@ void CustomAircraftDialog::buildUi() {
 
     // --- Dimensions ---
     m_wingspanSpin = new QDoubleSpinBox(content);
+    m_wingspanSpin->setLocale(QLocale::system());  // locale-aware decimal separator
     m_wingspanSpin->setRange(5.0, 500.0);
     m_wingspanSpin->setSuffix(tr(" ft"));
     m_wingspanSpin->setDecimals(1);
@@ -126,6 +128,7 @@ void CustomAircraftDialog::buildUi() {
     form->addRow(tr("Wingspan*:"), m_wingspanSpin);
 
     m_lengthSpin = new QDoubleSpinBox(content);
+    m_lengthSpin->setLocale(QLocale::system());
     m_lengthSpin->setRange(5.0, 500.0);
     m_lengthSpin->setSuffix(tr(" ft"));
     m_lengthSpin->setDecimals(1);
@@ -133,6 +136,7 @@ void CustomAircraftDialog::buildUi() {
     form->addRow(tr("Length*:"), m_lengthSpin);
 
     m_tailHeightSpin = new QDoubleSpinBox(content);
+    m_tailHeightSpin->setLocale(QLocale::system());
     m_tailHeightSpin->setRange(1.0, 100.0);
     m_tailHeightSpin->setSuffix(tr(" ft"));
     m_tailHeightSpin->setDecimals(1);
@@ -140,6 +144,7 @@ void CustomAircraftDialog::buildUi() {
     form->addRow(tr("Tail Height*:"), m_tailHeightSpin);
 
     m_propArcSpin = new QDoubleSpinBox(content);
+    m_propArcSpin->setLocale(QLocale::system());
     m_propArcSpin->setRange(0.0, 50.0);
     m_propArcSpin->setSuffix(tr(" ft"));
     m_propArcSpin->setDecimals(1);

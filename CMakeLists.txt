@@ -48,3 +48,14 @@ include(CPack)
 
 enable_testing()
 add_subdirectory(arld/tests)
+
+# ---------------------------------------------------------------------------
+# NOTICES.txt generation (Sprint 2-3-9)
+# ---------------------------------------------------------------------------
+add_custom_target(generate_notices
+    COMMAND ${CMAKE_COMMAND} -E echo "Generating NOTICES.txt..."
+    COMMAND python3 ${CMAKE_SOURCE_DIR}/scripts/check-licenses.py
+            --notices ${CMAKE_SOURCE_DIR}/NOTICES.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating NOTICES.txt from scripts/check-licenses.py"
+)

@@ -5,6 +5,7 @@
 CGAL: LGPL-3.0-or-later
 Catch2: BSL-1.0
 Qt6 (LGPL dynamic link): LGPL-3.0-only
+Qt6 Network (LGPL dynamic link): LGPL-3.0-only
 Qt6 SvgWidgets (LGPL dynamic link): LGPL-3.0-only
 boost: BSL-1.0
 eigen3: MPL-2.0

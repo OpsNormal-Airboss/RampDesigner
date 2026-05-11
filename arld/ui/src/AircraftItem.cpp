@@ -7,10 +7,14 @@
 #include <arld/core/ProjectFile.h>
 #include <QGuiApplication>
 #include <QGraphicsScene>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSvgItem>
 #include <QSvgRenderer>
+#include <QAction>
+#include <QColor>
 #include <QCursor>
+#include <QFont>
+#include <QMenu>
 #include <QPolygonF>
 #include <QPen>
 #include <QBrush>
@@ -123,17 +127,25 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     setCursor(Qt::SizeAllCursor);
 
     // SVG silhouette scaled so 1 scene unit = 1 foot.
-    auto* svg = new QGraphicsSvgItem(svgResourcePath, this);
-    const QSizeF svgSize = svg->boundingRect().size();
+    m_svgItem = new QGraphicsSvgItem(svgResourcePath, this);
+    const QSizeF svgSize = m_svgItem->boundingRect().size();
     if (svgSize.width() > 0 && m_entry.wingspanFt > 0) {
         const double scaleF = m_entry.wingspanFt / svgSize.width();
-        svg->setScale(scaleF);
+        m_svgItem->setScale(scaleF);
     }
 
     // Record local centre before adding non-content children.
     const QRectF br = childrenBoundingRect();
     m_localCenter = br.center();
     setTransformOriginPoint(m_localCenter);
+
+    // LOD placeholder rect (hidden by default; shown when simplified).
+    m_lodRect = new QGraphicsRectItem(this);
+    m_lodRect->setZValue(0.1);
+    m_lodRect->setAcceptedMouseButtons(Qt::NoButton);
+    m_lodRect->setFlag(QGraphicsItem::ItemIsSelectable, false);
+    m_lodRect->setFlag(QGraphicsItem::ItemIsMovable, false);
+    m_lodRect->setVisible(false);
 
     // Tail-swing arc — rendered below clearance zone.
     m_tailSwingItem = new QGraphicsPolygonItem(this);
@@ -156,6 +168,29 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     m_clearanceItem->setDisplayType(m_displayType);
     rebuildClearancePolygon();
 
+    // No-smoking circle for JET-A aircraft in Hot Ramp mode (Sprint 2-3-3)
+    m_noSmokingItem = new QGraphicsEllipseItem(this);
+    m_noSmokingItem->setZValue(-0.3);
+    m_noSmokingItem->setPen(QPen(QColor("#CC2222"), 1.5, Qt::DashLine));
+    m_noSmokingItem->setBrush(QBrush(QColor(204, 34, 34, 25)));
+    m_noSmokingItem->setAcceptedMouseButtons(Qt::NoButton);
+    m_noSmokingItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+    m_noSmokingItem->setFlag(QGraphicsItem::ItemIsMovable, false);
+    m_noSmokingItem->setVisible(false);
+
+    // Aircraft label (Sprint 2-3-4)
+    m_labelItem = new QGraphicsTextItem(this);
+    m_labelItem->setZValue(1.5);
+    m_labelItem->setAcceptedMouseButtons(Qt::NoButton);
+    m_labelItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+    m_labelItem->setFlag(QGraphicsItem::ItemIsMovable, false);
+    {
+        QFont lf = m_labelItem->font();
+        lf.setPointSize(6);
+        m_labelItem->setFont(lf);
+    }
+    m_labelItem->setDefaultTextColor(QColor(0x22, 0x22, 0x22));
+
     // Rotation handle — hidden until selected.
     auto* handle = new RotationHandle(this);
     handle->setVisible(false);
@@ -163,6 +198,10 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
 
     // Accessibility: set tool tip as accessible name.
     updateAccessibleName();
+
+    // Initialize label and no-smoking overlay.
+    updateLabel();
+    updateNoSmoking();
 }
 
 void AircraftItem::rebuildClearancePolygon() {
@@ -290,17 +329,24 @@ void AircraftItem::setDisplayType(arld::core::DisplayType dt) {
     m_displayType = dt;
     rebuildClearancePolygon();
     updateAccessibleName();
+    updateNoSmoking();
     update();
 }
 
 void AircraftItem::setTailNumber(const std::string& s) {
     m_tailNumber = s;
     updateAccessibleName();
+    updateLabel();
 }
 
 void AircraftItem::setOwner(const std::string& s) {
     m_owner = s;
     updateAccessibleName();
+}
+
+void AircraftItem::setFuelType(const std::string& s) {
+    m_fuelType = s;
+    updateNoSmoking();
 }
 
 void AircraftItem::setGearExtended(bool v) {
@@ -335,6 +381,100 @@ void AircraftItem::setHazmat(bool v) {
     update();
 }
 
+// ---------------------------------------------------------------------------
+// LOD simplified rendering (Sprint 2-3-2)
+// ---------------------------------------------------------------------------
+void AircraftItem::setLodSimplified(bool simplified) {
+    if (m_lodSimplified == simplified) return;
+    m_lodSimplified = simplified;
+
+    if (m_svgItem)  m_svgItem->setVisible(!simplified);
+    if (m_lodRect) {
+        if (simplified) {
+            // Position the rect to cover the aircraft footprint (wingspan x length),
+            // centred on m_localCenter.
+            const double hw = m_entry.wingspanFt / 2.0;
+            const double hl = m_entry.lengthFt   / 2.0;
+            m_lodRect->setRect(m_localCenter.x() - hw, m_localCenter.y() - hl,
+                               m_entry.wingspanFt,     m_entry.lengthFt);
+
+            // Color by display type (same palette as SvgExporter)
+            QColor fillColor;
+            using DT = arld::core::DisplayType;
+            switch (m_displayType) {
+                case DT::StaticDisplay:      fillColor = QColor(0x44, 0x77, 0xAA); break;
+                case DT::WarbirdHeritage:    fillColor = QColor(0x44, 0x77, 0x44); break;
+                case DT::TaxiOnly:           fillColor = QColor(0x77, 0x77, 0xAA); break;
+                case DT::MilitaryStatic:     fillColor = QColor(0xAA, 0x44, 0x44); break;
+                case DT::HotRamp:            fillColor = QColor(0xCC, 0x77, 0x22); break;
+                case DT::MediaPhotoPlatform: fillColor = QColor(0x88, 0x44, 0x88); break;
+                case DT::RampShow:           fillColor = QColor(0x44, 0xAA, 0xAA); break;
+            }
+            fillColor.setAlpha(static_cast<int>(0.85 * 255));
+            m_lodRect->setBrush(QBrush(fillColor));
+            m_lodRect->setPen(QPen(fillColor.darker(150), 0.5));
+        }
+        m_lodRect->setVisible(simplified);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Label mode (Sprint 2-3-4)
+// ---------------------------------------------------------------------------
+void AircraftItem::updateLabel() {
+    if (!m_labelItem) return;
+    switch (m_labelMode) {
+        case LabelMode::DisplayName:
+            m_labelItem->setPlainText(QString::fromStdString(m_entry.displayName));
+            m_labelItem->setVisible(true);
+            break;
+        case LabelMode::TailNumber: {
+            const QString tn = QString::fromStdString(m_tailNumber);
+            m_labelItem->setPlainText(tn.isEmpty()
+                ? QString::fromStdString(m_entry.displayName)
+                : tn);
+            m_labelItem->setVisible(true);
+            break;
+        }
+        case LabelMode::Hidden:
+            m_labelItem->setVisible(false);
+            break;
+    }
+    // Re-center label above the aircraft
+    if (m_labelItem->isVisible()) {
+        const QRectF lblBr = m_labelItem->boundingRect();
+        m_labelItem->setPos(m_localCenter.x() - lblBr.width() / 2.0,
+                            m_localCenter.y() - m_entry.lengthFt / 2.0 - lblBr.height() - 2.0);
+    }
+}
+
+void AircraftItem::setLabelMode(LabelMode mode) {
+    if (m_labelMode == mode) return;
+    m_labelMode = mode;
+    updateLabel();
+}
+
+// ---------------------------------------------------------------------------
+// No-smoking overlay (Sprint 2-3-3)
+// ---------------------------------------------------------------------------
+void AircraftItem::updateNoSmoking() {
+    if (!m_noSmokingItem) return;
+    const bool hotRamp = (m_displayType == arld::core::DisplayType::HotRamp);
+    const bool jetFuel = (m_fuelType.find("JET") != std::string::npos ||
+                          m_fuelType.find("Jet") != std::string::npos ||
+                          m_fuelType.find("jet") != std::string::npos);
+    const bool show = hotRamp && jetFuel;
+    constexpr float kNoSmokingRadiusFt = 100.0f;
+    if (show) {
+        m_noSmokingItem->setRect(
+            m_localCenter.x() - kNoSmokingRadiusFt,
+            m_localCenter.y() - kNoSmokingRadiusFt,
+            kNoSmokingRadiusFt * 2,
+            kNoSmokingRadiusFt * 2);
+    }
+    m_noSmokingItem->setVisible(show);
+}
+
 void AircraftItem::updateAccessibleName() {
     // Build a human-readable accessible name for screen readers and VoiceOver.
     // Format: "TAIL_NUMBER (DisplayType)" or "DisplayName (DisplayType)" if no tail.
@@ -361,6 +501,23 @@ void AircraftItem::updateAccessibleName() {
 
     // Qt QGraphicsItem uses toolTip for accessibility on macOS VoiceOver.
     setToolTip(name);
+}
+
+void AircraftItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
+    QMenu menu;
+    auto addLabelAction = [&](const QString& text, LabelMode mode) {
+        QAction* act = menu.addAction(text);
+        act->setCheckable(true);
+        act->setChecked(m_labelMode == mode);
+        QObject::connect(act, &QAction::triggered, [this, mode] {
+            setLabelMode(mode);
+        });
+    };
+    addLabelAction(QStringLiteral("Label: Display Name"), LabelMode::DisplayName);
+    addLabelAction(QStringLiteral("Label: Tail Number"),  LabelMode::TailNumber);
+    addLabelAction(QStringLiteral("Label: Hidden"),       LabelMode::Hidden);
+    menu.exec(event->screenPos());
+    event->accept();
 }
 
 void AircraftItem::applyRotation(double angleDeg) {

@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-2 complete. Named layout snapshots (LayoutVersion / schema_version 3), visual change-delta overlay (LayoutDiffer), VersionsPanel dock, UndoStack::history()/goToIndex(), UndoHistoryPanel dock, MinimapWidget dock, SatelliteUnderlayItem::fetchTile() HTTPS tile streaming, satellite tiles settings dialog, KML/GeoJSON boundary import (BoundaryImporter), tag-triggered release packaging CI jobs. 93/93 tests pass (+ 4 benchmarks tagged [.bench]).
+**Current status:** Phase 2, Sprint 2-3 complete. LOD simplified rendering (scaleDenominator > 2000), arrival/departure times on PlacedAircraft, Hot Ramp no-smoking 100 ft circle overlay (JET-A), right-click label toggle (DisplayName/TailNumber/Hidden) with LabelMode serialization, locale-aware QDoubleSpinBox inputs, CVD hatching pattern fills on clearance zones, JSON depth-limit security check (max 32), LibraryUpdateChecker with HTTPS-only, NOTICES.txt generation, About ARLD dialog, ARLD_VERSION_STRING macro. 98/98 tests pass (+ benchmarks tagged [.bench]).
 
 ## 📋 Post-Sprint Documentation
 
@@ -67,7 +67,8 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 |--------|------|--------|
 | 2-1 | 150-aircraft library; BatchExporter all-formats; SVG layers; PNG scale bar; library sort; manifest CSV; multi-select/lasso; community button; export benchmarks | ✅ Complete |
 | 2-2 | Named snapshots; change-delta view; minimap panel; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
-| 2-3 | ??? | ⬜ Up next |
+| 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog; perf benchmarks | ✅ Complete |
+| 2-4 | ??? | ⬜ Up next |
 
 ## 🔧 Tech Stack
 
@@ -224,7 +225,9 @@ RampView    : QGraphicsView
 | `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
 | `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
 | `arld/tests/test_versioning.cpp` | 9 | LayoutVersion round-trip; schema_version 3 written; v2→empty versions; LayoutDiffer added/removed/moved/unchanged; BoundaryImporter GeoJSON/KML/invalid; UndoStack history/goToIndex |
-| **Total** | **93 + 4 bench** | |
+| `arld/tests/test_security.cpp` | 4 | JSON depth > 32 rejected; depth ≤ 32 not depth-rejected; minimal valid loads; arrival/departure round-trip; LabelMode round-trip |
+| `arld/tests/test_perf.cpp` | 2 bench | bench_library_load 150 entries; bench_project_open_200ac |
+| **Total** | **98 + 6 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

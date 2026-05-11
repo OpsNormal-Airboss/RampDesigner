@@ -417,6 +417,8 @@ arld::core::ProjectData RampScene::toProjectData() const {
         pa.fuelType     = item->fuelType();
         pa.hasHazmat    = item->hasHazmat();
         pa.gearExtended = item->gearExtended();
+        pa.labelMode    = static_cast<arld::core::PlacedAircraft::LabelMode>(
+            static_cast<int>(item->labelMode()));
         data.aircraft.push_back(std::move(pa));
     }
 
@@ -469,6 +471,8 @@ void RampScene::loadProjectData(
         aircraft->setFuelType(pa.fuelType);
         aircraft->setHazmat(pa.hasHazmat);
         aircraft->setGearExtended(pa.gearExtended);
+        aircraft->setLabelMode(static_cast<arld::ui::AircraftItem::LabelMode>(
+            static_cast<int>(pa.labelMode)));
 
         // Wire up command routing (same as placeAircraft).
         aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {

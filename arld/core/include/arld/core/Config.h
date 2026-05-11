@@ -1,5 +1,8 @@
 #pragma once
 
+// Application version string (Sprint 2-3-9)
+#define ARLD_VERSION_STRING "2.3.0"
+
 namespace arld::core {
 
 // FAA CoW default clearance distances — all values in feet (TRD-ARCH-004)

@@ -1,5 +1,6 @@
 #include <arld/ui/RampView.h>
 #include <arld/ui/RampScene.h>
+#include <arld/ui/AircraftItem.h>
 #include <arld/core/Config.h>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -61,6 +62,15 @@ void RampView::setScaleDenominator(double s) {
     applyScale();
     notifySceneOverlay();
     emit scaleChanged(m_scaleDenominator);
+
+    // LOD: switch to simplified rect rendering when zoomed out past 1:2000.
+    if (scene()) {
+        const bool simplified = (m_scaleDenominator > 2000.0);
+        for (auto* item : scene()->items()) {
+            if (auto* ai = qgraphicsitem_cast<arld::ui::AircraftItem*>(item))
+                ai->setLodSimplified(simplified);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------

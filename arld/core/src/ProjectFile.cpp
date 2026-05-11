@@ -104,11 +104,17 @@ static json serializeAircraft(const arld::core::PlacedAircraft& ac) {
         {"length_ft",     ac.lengthFt},
         {"display_type",  arld::core::displayTypeToString(ac.displayType)}
     };
-    if (!ac.tailNumber.empty()) acj["tail_number"] = ac.tailNumber;
-    if (!ac.owner.empty())      acj["owner"]       = ac.owner;
-    if (!ac.fuelType.empty())   acj["fuel_type"]   = ac.fuelType;
-    if (ac.hasHazmat)           acj["has_hazmat"]  = true;
-    if (!ac.gearExtended)       acj["gear_extended"] = false;
+    if (!ac.tailNumber.empty())    acj["tail_number"]   = ac.tailNumber;
+    if (!ac.owner.empty())         acj["owner"]         = ac.owner;
+    if (!ac.fuelType.empty())      acj["fuel_type"]     = ac.fuelType;
+    if (ac.hasHazmat)              acj["has_hazmat"]    = true;
+    if (!ac.gearExtended)          acj["gear_extended"] = false;
+    if (!ac.arrivalTime.empty())   acj["arrival_time"]   = ac.arrivalTime;
+    if (!ac.departureTime.empty()) acj["departure_time"] = ac.departureTime;
+    // LabelMode (default DisplayName is omitted to save space)
+    using LM = arld::core::PlacedAircraft::LabelMode;
+    if (ac.labelMode == LM::TailNumber) acj["label_mode"] = "tail_number";
+    else if (ac.labelMode == LM::Hidden) acj["label_mode"] = "hidden";
     return acj;
 }
 
@@ -191,6 +197,56 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
 }
 
 // ---------------------------------------------------------------------------
+// Pre-parse depth check: reject files with JSON nesting > 32 (Sprint 2-3-10)
+// ---------------------------------------------------------------------------
+static int jsonMaxDepth(const std::string& s) {
+    int depth = 0, maxDepth = 0;
+    bool inString = false;
+    char prev = 0;
+    for (char c : s) {
+        if (c == '"' && prev != '\\') { inString = !inString; }
+        if (!inString) {
+            if (c == '{' || c == '[') maxDepth = std::max(maxDepth, ++depth);
+            else if (c == '}' || c == ']') --depth;
+        }
+        prev = c;
+    }
+    return maxDepth;
+}
+
+// Helper: deserialize LabelMode from JSON value (Sprint 2-3-4)
+static arld::core::PlacedAircraft::LabelMode labelModeFromString(const std::string& s) {
+    using LM = arld::core::PlacedAircraft::LabelMode;
+    if (s == "tail_number") return LM::TailNumber;
+    if (s == "hidden")      return LM::Hidden;
+    return LM::DisplayName; // default / "display_name"
+}
+
+// Helper: deserialize a single aircraft from JSON (used in both load paths)
+static arld::core::PlacedAircraft deserializeAircraft(const json& ac) {
+    arld::core::PlacedAircraft pa;
+    pa.placementId   = ac.value("placement_id", "");
+    pa.libraryId     = ac.value("library_id",   "");
+    pa.displayName   = ac.value("display_name", "");
+    pa.centerX       = ac.value("center_x",     0.0f);
+    pa.centerY       = ac.value("center_y",     0.0f);
+    pa.rotationDeg   = ac.value("rotation_deg", 0.0f);
+    pa.wingspanFt    = ac.value("wingspan_ft",  0.0f);
+    pa.lengthFt      = ac.value("length_ft",    0.0f);
+    pa.displayType   = arld::core::displayTypeFromString(
+        ac.value("display_type", std::string("static_display")));
+    pa.tailNumber    = ac.value("tail_number",   std::string(""));
+    pa.owner         = ac.value("owner",         std::string(""));
+    pa.fuelType      = ac.value("fuel_type",     std::string(""));
+    pa.hasHazmat     = ac.value("has_hazmat",    false);
+    pa.gearExtended  = ac.value("gear_extended", true);
+    pa.arrivalTime   = ac.value("arrival_time",   std::string(""));
+    pa.departureTime = ac.value("departure_time", std::string(""));
+    pa.labelMode     = labelModeFromString(ac.value("label_mode", std::string("display_name")));
+    return pa;
+}
+
+// ---------------------------------------------------------------------------
 // Load (supports schema version 1 migration and version 2)
 // ---------------------------------------------------------------------------
 ProjectData ProjectFile::load(const std::string& path) {
@@ -198,9 +254,15 @@ ProjectData ProjectFile::load(const std::string& path) {
     if (!ifs.is_open())
         throw std::runtime_error("ProjectFile::load: cannot open file: " + path);
 
+    const std::string content((std::istreambuf_iterator<char>(ifs)),
+                               std::istreambuf_iterator<char>());
+    if (jsonMaxDepth(content) > 32)
+        throw std::runtime_error(
+            "ProjectFile::load: JSON nesting depth exceeds limit (max 32)");
+
     json j;
     try {
-        ifs >> j;
+        j = json::parse(content);
     } catch (const json::parse_error& e) {
         throw std::runtime_error(std::string("ProjectFile::load: JSON parse error: ") + e.what());
     }
@@ -243,24 +305,7 @@ ProjectData ProjectFile::load(const std::string& path) {
     // Aircraft
     if (j.contains("aircraft") && j["aircraft"].is_array()) {
         for (const auto& ac : j["aircraft"]) {
-            PlacedAircraft pa;
-            pa.placementId  = ac.value("placement_id", "");
-            pa.libraryId    = ac.value("library_id",   "");
-            pa.displayName  = ac.value("display_name", "");
-            pa.centerX      = ac.value("center_x",     0.0f);
-            pa.centerY      = ac.value("center_y",     0.0f);
-            pa.rotationDeg  = ac.value("rotation_deg", 0.0f);
-            pa.wingspanFt   = ac.value("wingspan_ft",  0.0f);
-            pa.lengthFt     = ac.value("length_ft",    0.0f);
-            pa.displayType  = displayTypeFromString(
-                ac.value("display_type", std::string("static_display")));
-            // Per-aircraft metadata (v2; use defaults for v1 migration)
-            pa.tailNumber   = ac.value("tail_number",  std::string(""));
-            pa.owner        = ac.value("owner",        std::string(""));
-            pa.fuelType     = ac.value("fuel_type",    std::string(""));
-            pa.hasHazmat    = ac.value("has_hazmat",   false);
-            pa.gearExtended = ac.value("gear_extended", true); // safe default: gear down
-            data.aircraft.push_back(std::move(pa));
+            data.aircraft.push_back(deserializeAircraft(ac));
         }
     }
 
@@ -297,25 +342,8 @@ ProjectData ProjectFile::load(const std::string& path) {
 
             // Aircraft
             if (vj.contains("aircraft") && vj["aircraft"].is_array()) {
-                for (const auto& ac : vj["aircraft"]) {
-                    PlacedAircraft pa;
-                    pa.placementId  = ac.value("placement_id", "");
-                    pa.libraryId    = ac.value("library_id",   "");
-                    pa.displayName  = ac.value("display_name", "");
-                    pa.centerX      = ac.value("center_x",     0.0f);
-                    pa.centerY      = ac.value("center_y",     0.0f);
-                    pa.rotationDeg  = ac.value("rotation_deg", 0.0f);
-                    pa.wingspanFt   = ac.value("wingspan_ft",  0.0f);
-                    pa.lengthFt     = ac.value("length_ft",    0.0f);
-                    pa.displayType  = displayTypeFromString(
-                        ac.value("display_type", std::string("static_display")));
-                    pa.tailNumber   = ac.value("tail_number",  std::string(""));
-                    pa.owner        = ac.value("owner",        std::string(""));
-                    pa.fuelType     = ac.value("fuel_type",    std::string(""));
-                    pa.hasHazmat    = ac.value("has_hazmat",   false);
-                    pa.gearExtended = ac.value("gear_extended", true);
-                    ver.aircraft.push_back(std::move(pa));
-                }
+                for (const auto& ac : vj["aircraft"])
+                    ver.aircraft.push_back(deserializeAircraft(ac));
             }
 
             data.versions.push_back(std::move(ver));
