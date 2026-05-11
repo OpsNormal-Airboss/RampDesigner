@@ -1,5 +1,6 @@
 #pragma once
 #include <arld/core/AircraftLibraryEntry.h>
+#include <arld/core/ClearanceEngine.h>
 #include <QGraphicsItemGroup>
 #include <functional>
 #include <memory>
@@ -8,6 +9,7 @@ namespace arld::core { class ICommand; }
 
 namespace arld::ui {
 
+class ClearanceZoneItem;
 class RotationHandle;
 
 class AircraftItem : public QGraphicsItemGroup {
@@ -18,9 +20,13 @@ public:
 
     const arld::core::AircraftLibraryEntry& entry() const { return m_entry; }
 
-    // Called by RampScene when the item is placed or moved via undo/redo.
     void setDisplayType(arld::core::DisplayType dt);
     arld::core::DisplayType displayType() const { return m_displayType; }
+
+    ClearanceZoneItem* clearanceItem() { return m_clearanceItem; }
+
+    // Snapshot of this item's spatial state for clearance computation.
+    arld::core::AircraftState toAircraftState() const;
 
     enum { Type = UserType + 1 };
     int type() const override { return Type; }
@@ -34,9 +40,13 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
+    void rebuildClearancePolygon();
+
     arld::core::AircraftLibraryEntry m_entry;
     arld::core::DisplayType m_displayType;
+    QPointF m_localCenter;     // bounding rect centre in local item coords
     QPointF m_dragStartPos;
+    ClearanceZoneItem* m_clearanceItem = nullptr;
 
     friend class RotationHandle;
     void applyRotation(double angleDeg);

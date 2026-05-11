@@ -24,7 +24,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     m_view->setRampScene(m_scene);
     setCentralWidget(m_view);
 
-    // Refresh undo/redo action state whenever the stack changes.
     m_scene->undoStack().onChanged = [this] { updateUndoRedoActions(); };
 
     setupMenuBar();
@@ -72,11 +71,17 @@ void MainWindow::setupToolBar() {
 }
 
 void MainWindow::setupStatusBar() {
+    m_violationLabel = new QLabel(this);
+    m_violationLabel->setMinimumWidth(160);
+    statusBar()->addWidget(m_violationLabel);
+    updateViolationLabel(0);
+
     m_scaleLabel = new QLabel(this);
     statusBar()->addPermanentWidget(m_scaleLabel);
     updateScaleLabel(m_view->scaleDenominator());
 
-    connect(m_view, &RampView::scaleChanged, this, &MainWindow::updateScaleLabel);
+    connect(m_view,  &RampView::scaleChanged,         this, &MainWindow::updateScaleLabel);
+    connect(m_scene, &RampScene::violationCountChanged, this, &MainWindow::updateViolationLabel);
 }
 
 void MainWindow::updateUndoRedoActions() {
@@ -99,8 +104,6 @@ void MainWindow::setupLibraryPanel() {
     m_libraryPanel = new LibraryPanel(this);
     addDockWidget(Qt::LeftDockWidgetArea, m_libraryPanel);
 
-    // When the user drops an aircraft onto the canvas, look up the entry
-    // in the library panel and place it on the scene.
     connect(m_view, &RampView::aircraftDropped,
             this, [this](const QString& id, QPointF scenePos) {
         const auto* entry = m_libraryPanel->entryById(id.toStdString());
@@ -110,4 +113,15 @@ void MainWindow::setupLibraryPanel() {
 
 void MainWindow::updateScaleLabel(double denominator) {
     m_scaleLabel->setText(tr("Scale  1:%1").arg(static_cast<int>(denominator)));
+}
+
+void MainWindow::updateViolationLabel(int count) {
+    if (count == 0) {
+        m_violationLabel->setText(tr("✓ No clearance violations"));
+        m_violationLabel->setStyleSheet("color: #00AA33; font-weight: bold;");
+    } else {
+        m_violationLabel->setText(tr("⚠ %1 clearance violation%2")
+            .arg(count).arg(count == 1 ? "" : "s"));
+        m_violationLabel->setStyleSheet("color: #CC2222; font-weight: bold;");
+    }
 }

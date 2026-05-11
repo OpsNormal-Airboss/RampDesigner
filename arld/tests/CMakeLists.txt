@@ -6,6 +6,7 @@ add_executable(arld_tests
     test_smoke.cpp
     test_undo.cpp
     test_aircraft_library.cpp
+    test_clearance.cpp
 )
 
 target_link_libraries(arld_tests

@@ -1,16 +1,19 @@
 #include <arld/ui/RampScene.h>
 #include <arld/ui/AircraftItem.h>
+#include <arld/ui/ClearanceZoneItem.h>
 #include <arld/ui/RampBoundaryItem.h>
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
+#include <arld/core/ClearanceEngine.h>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <cmath>
+#include <unordered_map>
 
 namespace arld::ui {
 
 // ---------------------------------------------------------------------------
-// Command defined here — operates on RampBoundaryItem (same translation unit)
+// Commands
 // ---------------------------------------------------------------------------
 namespace {
 
@@ -34,16 +37,12 @@ private:
 RampScene::RampScene(QObject* parent)
     : QGraphicsScene(parent)
     , m_undoStack(arld::core::kUndoHistoryDepth) {
-    // Default scene rect: 20 000 ft × 20 000 ft centred on origin.
     setSceneRect(-10000, -10000, 20000, 20000);
 
     m_boundaryItem = new RampBoundaryItem();
     addItem(m_boundaryItem);
 
     m_boundaryItem->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {
-        // Vertex-drag commands arrive already applied visually; push without
-        // re-executing by inserting directly (bypass push's execute call).
-        // We use a thin wrapper that skips the first execute().
         struct AlreadyExecutedWrapper : arld::core::ICommand {
             std::unique_ptr<arld::core::ICommand> inner;
             bool firstExecuteDone = false;
@@ -61,6 +60,17 @@ RampScene::RampScene(QObject* parent)
 
     m_scaleBarItem = new ScaleBarItem();
     addItem(m_scaleBarItem);
+
+    // Debounce clearance recomputation: wait 80 ms after the last scene change
+    // before running the O(N²) check so dragging doesn't block the UI.
+    m_clearanceTimer.setSingleShot(true);
+    m_clearanceTimer.setInterval(80);
+    connect(&m_clearanceTimer, &QTimer::timeout,
+            this, &RampScene::recomputeClearance);
+
+    connect(this, &QGraphicsScene::changed, this, [this](const QList<QRectF>&) {
+        m_clearanceTimer.start();  // restart debounce window
+    });
 }
 
 void RampScene::setEditMode(EditMode mode) {
@@ -93,7 +103,6 @@ void RampScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
 
 void RampScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
     if (m_mode == EditMode::DrawBoundary && event->button() == Qt::LeftButton) {
-        // mousePressEvent already added the second-click point — undo it.
         if (m_undoStack.canUndo()) m_undoStack.undo();
 
         if (m_boundaryItem->pointCount() >= 3) {
@@ -116,12 +125,10 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
 
     auto* aircraft = new AircraftItem(entry, svgPath);
 
-    // Centre the aircraft bounding rect on scenePos.
     aircraft->setPos(scenePos);
     const QRectF br = aircraft->childrenBoundingRect();
     aircraft->setPos(scenePos - br.center());
 
-    // Wire up the command callback so moves/rotations are undoable.
     aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {
         struct AlreadyExecuted : arld::core::ICommand {
             std::unique_ptr<arld::core::ICommand> inner;
@@ -135,23 +142,14 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
         m_undoStack.push(std::make_unique<AlreadyExecuted>(std::move(cmd)));
     };
 
-    // Wrap placement itself as an undoable command.
-    struct PlaceCommand : arld::core::ICommand {
-        RampScene* scene;
+    struct PlaceCmd : arld::core::ICommand {
         AircraftItem* item;
-        bool added = false;
-        PlaceCommand(RampScene* s, AircraftItem* a) : scene(s), item(a) {}
-        void execute() override {
-            if (!added) { scene->addItem(item); added = true; }
-            else item->setVisible(true);
-        }
-        void undo() override { item->setVisible(false); }
+        explicit PlaceCmd(AircraftItem* a) : item(a) {}
+        void execute() override { item->setVisible(true); }
+        void undo()    override { item->setVisible(false); }
         std::string describe() const override { return "Place Aircraft"; }
     };
 
-    addItem(aircraft);
-    // Push a command that undoes the placement (hides/shows the item).
-    // The item was already added visually, so use AlreadyExecuted wrapper.
     struct AlreadyExecuted : arld::core::ICommand {
         std::unique_ptr<arld::core::ICommand> inner;
         bool done = false;
@@ -162,16 +160,67 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
         std::string describe() const override { return inner->describe(); }
     };
 
-    struct PlaceCmd : arld::core::ICommand {
-        AircraftItem* item;
-        explicit PlaceCmd(AircraftItem* a) : item(a) {}
-        void execute() override { item->setVisible(true); }
-        void undo()    override { item->setVisible(false); }
-        std::string describe() const override { return "Place Aircraft"; }
-    };
+    addItem(aircraft);
+    m_aircraft.push_back(aircraft);
 
     m_undoStack.push(std::make_unique<AlreadyExecuted>(
         std::make_unique<PlaceCmd>(aircraft)));
+}
+
+void RampScene::recomputeClearance() {
+    // Collect states for all visible (placed and not undone) aircraft.
+    std::vector<arld::core::AircraftState> states;
+    states.reserve(m_aircraft.size());
+    std::vector<AircraftItem*> visible;
+    visible.reserve(m_aircraft.size());
+
+    for (auto* item : m_aircraft) {
+        if (item->isVisible()) {
+            states.push_back(item->toAircraftState());
+            visible.push_back(item);
+        }
+    }
+
+    if (states.empty()) {
+        emit violationCountChanged(0);
+        return;
+    }
+
+    const auto violations = arld::core::ClearanceEngine::detectViolations(states);
+
+    // Reset all clearance zones to Clear.
+    for (auto* item : visible) {
+        if (auto* zone = item->clearanceItem())
+            zone->setStatus(arld::core::ClearanceSeverity::Clear);
+    }
+
+    // Build a quick id → AircraftItem* lookup.
+    std::unordered_map<std::string, AircraftItem*> lookup;
+    for (auto* item : visible)
+        lookup[item->entry().id] = item;
+
+    // Apply the worst severity per aircraft (a single aircraft can have multiple violations).
+    int violationPairs = 0;
+    for (const auto& v : violations) {
+        if (v.severity == arld::core::ClearanceSeverity::Violation) ++violationPairs;
+
+        auto applyWorst = [](ClearanceZoneItem* zone, arld::core::ClearanceSeverity sev) {
+            if (!zone) return;
+            // Only upgrade, never downgrade a zone already in a worse state.
+            using S = arld::core::ClearanceSeverity;
+            if (sev == S::Violation ||
+                (sev == S::Advisory && zone->status() == S::Clear)) {
+                zone->setStatus(sev);
+            }
+        };
+
+        if (auto it = lookup.find(v.idA); it != lookup.end())
+            applyWorst(it->second->clearanceItem(), v.severity);
+        if (auto it = lookup.find(v.idB); it != lookup.end())
+            applyWorst(it->second->clearanceItem(), v.severity);
+    }
+
+    emit violationCountChanged(violationPairs);
 }
 
 } // namespace arld::ui

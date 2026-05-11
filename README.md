@@ -27,7 +27,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **🟢 In Progress — Sprint 2 of 5** |
+| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **🟢 In Progress — Sprint 4 of 5** |
 | 1 | Production desktop, 75+ aircraft, all display types, satellite underlay | ⬜ Not started |
 | 2 | 150+ aircraft, full export suite (SVG/PDF/PNG/JPEG), UAT | ⬜ Not started |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
@@ -40,8 +40,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 0-1 | CMake/vcpkg scaffold, CI matrix, `Config.h`, smoke tests | ✅ Complete |
 | 0-2 | Qt canvas — pan/zoom, boundary drawing, undo/redo framework | ✅ Complete |
 | 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
-| 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Up next |
-| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Pending |
+| 0-4 | CGAL clearance zones, real-time violation detection | ✅ Complete |
+| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Up next |
 
 ## 🟢 What Works Today
 
@@ -57,6 +57,9 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Aircraft library panel** — 20 aircraft across all major categories (WWII warbirds, jet fighters, heavy transports, bombers, aerobatic) with accurate dimensional data
 - **Drag-and-drop placement** — drag from library panel onto canvas; silhouettes render at true geographic scale (1 scene unit = 1 ft)
 - **Aircraft rotation** — click to select, drag the rotation handle to rotate; snaps to 45° (or hold Shift for 1° precision); fully undoable
+- **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
+- **Violation status bar** — shows live count of clearance violations across all placed aircraft
+- **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 
@@ -101,7 +104,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 10 Catch2 tests across `test_smoke.cpp` and `test_undo.cpp`.
+Current test suite: 25 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, and `test_clearance.cpp`.
 
 ## 📋 Documentation
 

@@ -23,6 +23,7 @@ private:
     void setupLibraryPanel();
     void updateUndoRedoActions();
     void updateScaleLabel(double denominator);
+    void updateViolationLabel(int count);
 
     arld::ui::RampScene* m_scene;
     arld::ui::RampView* m_view;
@@ -31,4 +32,5 @@ private:
     QAction* m_redoAction = nullptr;
     QAction* m_drawBoundaryAction = nullptr;
     QLabel* m_scaleLabel = nullptr;
+    QLabel* m_violationLabel = nullptr;
 };

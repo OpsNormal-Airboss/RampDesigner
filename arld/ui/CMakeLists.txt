@@ -2,12 +2,14 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS Core Widgets Svg SvgWidgets)
 
 add_library(arld_ui STATIC
     include/arld/ui/AircraftItem.h
+    include/arld/ui/ClearanceZoneItem.h
     include/arld/ui/LibraryPanel.h
     include/arld/ui/RampBoundaryItem.h
     include/arld/ui/RampScene.h
     include/arld/ui/RampView.h
     include/arld/ui/ScaleBarItem.h
     src/AircraftItem.cpp
+    src/ClearanceZoneItem.cpp
     src/LibraryPanel.cpp
     src/RampBoundaryItem.cpp
     src/RampScene.cpp

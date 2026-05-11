@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 0, Sprint 0-3 complete. Build system, CI, Qt canvas, undo/redo framework, 20-aircraft library, and drag-and-drop placement are all operational.
+> Updated after each sprint. **Current status:** Phase 0, Sprint 0-4 complete. Build system, CI, Qt canvas, undo/redo framework, 20-aircraft library, drag-and-drop placement, CGAL clearance engine, and real-time violation detection are all operational.
 
 ---
 
@@ -86,7 +86,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction; Config constant values and ranges |
 | `arld/tests/test_undo.cpp` | 7 | UndoStack push/undo/redo, 100-level limit, redo clearing, callbacks |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopter rotor, manifest ordering, error handling |
-| **Total** | **17** | |
+| `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — 8 scenarios (separation, warbird, military, overlap, advisory, rotation, constants) + bench_clearance_200 |
+| **Total** | **25 + 1 bench** | |
 
 ---
 
@@ -155,6 +156,16 @@ cat LICENSES.txt
 2. Click to add each vertex — points snap to 5 ft grid by default.
 3. Double-click to close the polygon (requires ≥ 3 points).
 4. Drag any vertex handle to reshape; each move creates an undoable command.
+
+### Clearance Zone Colours
+
+| Status | Colour | Meaning |
+|--------|--------|---------|
+| Clear | `#22AA44` (green) | ≥ 120% of required gap |
+| Advisory | `#DDAA00` (amber) | 100–120% of required gap |
+| Violation | `#CC2222` (red) | Below required gap or overlapping |
+
+The status bar shows a live violation count. The clearance re-evaluation runs at most every 80 ms (debounced via `QTimer`). Advisory threshold is 20 % above the required minimum.
 
 ### Adding New Undoable Actions
 
@@ -247,7 +258,7 @@ cmake --build --preset win-release --target package
 - [x] GitHub Actions CI passes clean builds on all 3 matrix targets
 - [x] 20 aircraft types in library with correct scaled silhouette rendering *(Sprint 0-3 ✅)*
 - [ ] Test layout: 15 aircraft created, saved, reloaded, SVG-exported with no data loss *(Sprint 0-5)*
-- [ ] Clearance violations correctly detected for ≥ 5 scenarios in the test suite *(Sprint 0-4)*
+- [x] Clearance violations correctly detected for ≥ 5 scenarios in the test suite *(Sprint 0-4 ✅)*
 - [ ] Domain expert completes a 10-aircraft layout in < 20 minutes unassisted *(Sprint 0-5)*
 - [x] No GPL-licensed code in deliverable binaries (license-check CI step passes)
 

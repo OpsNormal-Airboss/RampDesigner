@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 0 (C++ PoC) — Sprints 0-1, 0-2, and 0-3 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, boundary drawing, 20-aircraft library, and drag-and-drop placement are all implemented. Next up is Sprint 0-4 (CGAL clearance zones + violation detection).
+**Current status:** Phase 0 (C++ PoC) — Sprints 0-1 through 0-4 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, boundary drawing, 20-aircraft library, drag-and-drop placement, CGAL clearance engine, and real-time violation detection are all implemented. Next up is Sprint 0-5 (SVG export, JSON project save/load, PoC acceptance gate).
 
 ## 📋 Post-Sprint Documentation
 
@@ -39,7 +39,7 @@ After completing each sprint, update the following files to reflect the current 
 | 0-1 | CMake/vcpkg scaffold, CI matrix, Config.h, smoke tests | ✅ Complete |
 | 0-2 | Qt canvas prototype — pan/zoom, boundary drawing, undo/redo | ✅ Complete |
 | 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
-| 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Not started |
+| 0-4 | CGAL clearance zones, real-time violation detection | ✅ Complete |
 | 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Not started |
 
 ## 🔧 Tech Stack
@@ -144,9 +144,10 @@ RampScene   : QGraphicsScene
   │     └── VertexHandle  : QGraphicsEllipseItem  (child, draggable)
   ├── ScaleBarItem        : QGraphicsItem         ← Sprint 0-2 ✅ (ItemIgnoresTransformations)
   ├── AircraftItem        : QGraphicsItemGroup    ← Sprint 0-3 ✅
+  │     ├── ClearanceZoneItem : QGraphicsPolygonItem  ← Sprint 0-4 ✅ (zValue=-0.5; green/yellow/red)
   │     ├── QGraphicsSvgItem (silhouette, scaled to wingspan in scene-ft)
   │     └── RotationHandle  : QGraphicsEllipseItem (ItemIgnoresTransformations; visible when selected)
-  ├── ClearanceZoneItem   : QGraphicsPathItem     ← Sprint 0-4 (pending)
+  ├── ClearanceZoneItem   (owned by AircraftItem, not scene-level) ← Sprint 0-4 ✅
   ├── GridOverlayItem     : QGraphicsItem         ← Sprint 0-2+ (pending)
   └── AnnotationItem      : QGraphicsTextItem     ← Phase 1 (pending)
 
@@ -186,11 +187,18 @@ RampView    : QGraphicsView
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction, Config constants |
 | `arld/tests/test_undo.cpp` | 7 | Full UndoStack behaviour incl. 100-level depth |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
-| **Total** | **17** | |
+| `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
+| **Total** | **25 + 1 bench** | |
 
-## 📐 CGAL Geometry (Sprint 0-4, pending)
+Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
+```bash
+ctest --preset mac-debug -R bench_
+# or directly: ./build/mac-debug/arld/tests/arld_tests "[.bench]"
+```
 
-Required kernel and type aliases will be defined in `arld/core/GeomTypes.h`:
+## 📐 CGAL Geometry (as built — Sprint 0-4)
+
+Type aliases in `arld/core/include/arld/core/GeomTypes.h`:
 
 ```cpp
 using Kernel   = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -200,7 +208,15 @@ using PolySet  = CGAL::Polygon_with_holes_2<Kernel>;
 using FT       = Kernel::FT;
 ```
 
-Clearance envelopes: `CGAL::minkowski_sum_2()`. Violation detection: `CGAL::do_intersect()` + `CGAL::squared_distance()`. Convex hulls precomputed at library load time.
+**ClearanceEngine** (`arld/core/src/ClearanceEngine.cpp`):
+- `AircraftState` struct: id, wingspan/length, centre (scene-ft), rotationDeg, displayType, propArcFt
+- `ViolationResult` struct: idA, idB, severity, separationFt, requiredFt
+- `requiredClearanceFt(DisplayType, propArcFt)` — maps display type to hull-to-hull gap requirement
+- `aircraftFootprint(AircraftState)` → rotated rectangle `Polygon2`
+- `clearanceEnvelope(AircraftState)` → footprint expanded by the required clearance margin
+- `detectViolations(vector<AircraftState>)` — O(N²) pairwise; uses `CGAL::squared_distance` on edge pairs; vertices checked via `bounded_side` for overlap detection
+- Severity: **Violation** = below required gap; **Advisory** = within 20% above required; **Clear** = omitted from results
+- `RampScene::recomputeClearance()` is debounced 80 ms after last `QGraphicsScene::changed` signal; emits `violationCountChanged(int)` to the status bar
 
 ## 💾 Project File Format (Sprint 0-5, pending)
 

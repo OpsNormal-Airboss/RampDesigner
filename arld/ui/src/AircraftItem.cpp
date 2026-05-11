@@ -1,17 +1,20 @@
 #include <arld/ui/AircraftItem.h>
+#include <arld/ui/ClearanceZoneItem.h>
 #include <arld/core/ICommand.h>
+#include <arld/core/ClearanceEngine.h>
 #include <QGuiApplication>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSvgItem>
 #include <QSvgRenderer>
 #include <QCursor>
+#include <QPolygonF>
 #include <cmath>
 
 namespace arld::ui {
 
 // ---------------------------------------------------------------------------
-// Rotation handle — a small fixed-size circle the user drags to rotate the aircraft.
+// Rotation handle — a small fixed-size circle the user drags to rotate.
 // ---------------------------------------------------------------------------
 class RotationHandle : public QGraphicsEllipseItem {
 public:
@@ -23,8 +26,6 @@ public:
         setBrush(QColor(0x00, 0xCC, 0x00, 200));
         setPen(QPen(QColor(0x00, 0x88, 0x00), 1.0));
         setZValue(1.0);
-        // Position the handle 20 scene-pixels above the aircraft centre.
-        // Placed at top of SVG (y = 0 in item coordinates = nose of aircraft).
         setPos(m_aircraft->boundingRect().center().x(), -15.0);
     }
 
@@ -39,7 +40,6 @@ protected:
             const double dy = handleScene.y() - center.y();
             double angle = std::atan2(dx, -dy) * 180.0 / M_PI;
 
-            // Snap to 45° unless Shift is held.
             const bool freehand = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
             if (!freehand)
                 angle = std::round(angle / 45.0) * 45.0;
@@ -48,7 +48,6 @@ protected:
 
             m_aircraft->setRotation(angle);
 
-            // Keep the handle at constant distance from the centre (constrain to circle).
             const double radius = 15.0;
             const double rad = angle * M_PI / 180.0;
             return QPointF(m_aircraft->boundingRect().center().x() + radius * std::sin(rad),
@@ -119,29 +118,65 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
 
     // SVG silhouette scaled so 1 scene unit = 1 foot.
     auto* svg = new QGraphicsSvgItem(svgResourcePath, this);
-    // The SVG viewBox is already in feet, but QGraphicsSvgItem renders at
-    // its natural pixel size. We need to scale it so the rendered width equals
-    // the aircraft wingspan in scene units (feet).
     const QSizeF svgSize = svg->boundingRect().size();
     if (svgSize.width() > 0 && m_entry.wingspanFt > 0) {
         const double scaleF = m_entry.wingspanFt / svgSize.width();
         svg->setScale(scaleF);
     }
 
-    // Set transform origin to the aircraft's geometric centre so rotation
-    // pivots naturally.
+    // Record local centre before adding non-content children.
     const QRectF br = childrenBoundingRect();
-    setTransformOriginPoint(br.center());
+    m_localCenter = br.center();
+    setTransformOriginPoint(m_localCenter);
 
-    // Rotation handle — hidden until the item is selected.
+    // Clearance zone — rendered behind the silhouette.
+    m_clearanceItem = new ClearanceZoneItem(this);
+    rebuildClearancePolygon();
+
+    // Rotation handle — hidden until selected.
     auto* handle = new RotationHandle(this);
     handle->setVisible(false);
     Q_UNUSED(handle);
 }
 
+void AircraftItem::rebuildClearancePolygon() {
+    if (!m_clearanceItem) return;
+
+    const double margin = static_cast<double>(
+        arld::core::ClearanceEngine::requiredClearanceFt(m_displayType, m_entry.propArcFt));
+
+    const double hw = m_entry.wingspanFt / 2.0 + margin;
+    const double hh = m_entry.lengthFt   / 2.0 + margin;
+    const double cx = m_localCenter.x();
+    const double cy = m_localCenter.y();
+
+    QPolygonF poly;
+    poly << QPointF(cx - hw, cy - hh)
+         << QPointF(cx + hw, cy - hh)
+         << QPointF(cx + hw, cy + hh)
+         << QPointF(cx - hw, cy + hh);
+
+    m_clearanceItem->setPolygon(poly);
+}
+
+arld::core::AircraftState AircraftItem::toAircraftState() const {
+    arld::core::AircraftState s;
+    s.id          = m_entry.id;
+    s.wingspanFt  = m_entry.wingspanFt;
+    s.lengthFt    = m_entry.lengthFt;
+    s.rotationDeg = static_cast<float>(rotation());
+    s.displayType = m_displayType;
+    s.propArcFt   = m_entry.propArcFt;
+
+    // Aircraft centre in scene coordinates.
+    const QPointF sceneCentre = mapToScene(m_localCenter);
+    s.centerX = static_cast<float>(sceneCentre.x());
+    s.centerY = static_cast<float>(sceneCentre.y());
+    return s;
+}
+
 QVariant AircraftItem::itemChange(GraphicsItemChange change, const QVariant& value) {
     if (change == ItemSelectedChange) {
-        // Show rotation handle when selected.
         for (auto* child : childItems()) {
             if (auto* handle = dynamic_cast<RotationHandle*>(child))
                 handle->setVisible(value.toBool());
@@ -159,8 +194,6 @@ void AircraftItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsItemGroup::mouseReleaseEvent(event);
     const QPointF endPos = pos();
     if ((endPos - m_dragStartPos).manhattanLength() > 0.01 && onCommandReady) {
-        // Wrap already-applied move in an AlreadyExecutedWrapper pattern by
-        // emitting a command that re-applies on redo but was already applied visually.
         struct AlreadyExecuted : arld::core::ICommand {
             std::unique_ptr<arld::core::ICommand> inner;
             bool done = false;
@@ -177,6 +210,7 @@ void AircraftItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 
 void AircraftItem::setDisplayType(arld::core::DisplayType dt) {
     m_displayType = dt;
+    rebuildClearancePolygon();
     update();
 }
 
