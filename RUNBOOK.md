@@ -108,7 +108,7 @@ CI jobs (in order):
 | 1 | **build** — `cmake --preset release && cmake --build` | 🟢 Active |
 | 2 | **test** — `ctest --preset release --output-on-failure` | 🟢 Active |
 | 3 | **license-check** — `python3 scripts/check-licenses.py` | 🟢 Active |
-| 4 | **lint** — clang-tidy static analysis | ⬜ Planned (Sprint 0-3) |
+| 4 | **lint** — clang-tidy static analysis | ⬜ Planned (Phase 1) |
 | 5 | **schema-validate** — JSON schema validation | ⬜ Planned (Sprint 0-5) |
 
 A PR cannot merge unless build, test, and license-check pass on all three platforms.

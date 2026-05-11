@@ -47,7 +47,7 @@ After completing each sprint, update the following files to reflect the current 
 **Phases 0–3 (Desktop)**
 - Language: C++20 (Clang 16+, GCC 13+, MSVC 2022)
 - GUI/Canvas: Qt 6.7 LGPL — `QGraphicsScene`/`QGraphicsView`
-- Geometry: CGAL 5.6 LGPL — Minkowski sums, polygon intersection, spatial indexing
+- Geometry: CGAL 5.6 LGPL — rotated-rectangle polygon construction, squared-distance violation detection, spatial indexing
 - JSON/Persistence: nlohmann/json 3.11
 - PDF Export: libharu 2.4 (Phase 1+)
 - Raster Export: stb_image_write header-only (Phase 1+)
@@ -147,7 +147,6 @@ RampScene   : QGraphicsScene
   │     ├── ClearanceZoneItem : QGraphicsPolygonItem  ← Sprint 0-4 ✅ (zValue=-0.5; green/yellow/red)
   │     ├── QGraphicsSvgItem (silhouette, scaled to wingspan in scene-ft)
   │     └── RotationHandle  : QGraphicsEllipseItem (ItemIgnoresTransformations; visible when selected)
-  ├── ClearanceZoneItem   (owned by AircraftItem, not scene-level) ← Sprint 0-4 ✅
   ├── GridOverlayItem     : QGraphicsItem         ← Sprint 0-2+ (pending)
   └── AnnotationItem      : QGraphicsTextItem     ← Phase 1 (pending)
 
@@ -157,7 +156,7 @@ RampView    : QGraphicsView
 
 **Coordinate system:** 1 scene unit = 1 ft. `pixelsPerFt = 12 × logicalDPI / scaleDenominator`. Default scale 1:1200; range 1:200–1:5000.
 
-**Clearance zone colors** (Sprint 0-4): clear = `#22AA44`, advisory = `#DDAA00`, violation = `#CC2222`, override = `#E07000` (fill-opacity 0.25 advisory / 0.40 violation).
+**Clearance zone colors** (Sprint 0-4): clear = `#22AA44`, advisory = `#DDAA00`, violation = `#CC2222` (fill-opacity 0.25 advisory / 0.40 violation).
 
 ## ↩️ Undo/Redo Framework (as built)
 
