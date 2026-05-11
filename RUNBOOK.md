@@ -25,21 +25,54 @@ ARLD uses CMake 3.28 with vcpkg manifest mode. `CMakePresets.json` defines six p
 | `win-debug` | Windows 10/11 (MSVC 2022) | Debug |
 | `win-release` | Windows 10/11 | Release |
 
-### First-Time Setup
+### First-Time Setup — macOS
 
 ```bash
-# 1. Install vcpkg and bootstrap (if not already installed)
-git clone https://github.com/microsoft/vcpkg.git
-./vcpkg/bootstrap-vcpkg.sh       # macOS/Linux
-# or bootstrap-vcpkg.bat on Windows
+# 1. Install Homebrew dependencies
+brew install cmake ninja qt@6 cgal
 
-# 2. Set VCPKG_ROOT (add to shell profile for persistence)
+# 2. Install vcpkg and bootstrap (if not already installed)
+git clone https://github.com/microsoft/vcpkg.git
+./vcpkg/bootstrap-vcpkg.sh
+
+# 3. Set VCPKG_ROOT (add to ~/.zshrc for persistence)
 export VCPKG_ROOT=/path/to/vcpkg
 
-# 3. Install Qt 6.7 (see CONTRIBUTING.md for platform-specific instructions)
-#    Qt is NOT managed by vcpkg — install separately via aqtinstall or system package manager
+# 4. Install remaining C++ dependencies via vcpkg (nlohmann-json, Catch2)
+vcpkg install
 
-# 4. Install remaining C++ dependencies via vcpkg (CGAL, nlohmann-json, Catch2)
+# 5. Configure and build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+  -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
+  -DQt6_DIR=/opt/homebrew/lib/cmake/Qt6 \
+  -DQt6Svg_DIR=/opt/homebrew/lib/cmake/Qt6Svg \
+  -DQt6SvgWidgets_DIR=/opt/homebrew/lib/cmake/Qt6SvgWidgets \
+  -DQt6Widgets_DIR=/opt/homebrew/lib/cmake/Qt6Widgets \
+  -DQt6Core_DIR=/opt/homebrew/lib/cmake/Qt6Core \
+  -B build/mac-debug .
+cmake --build build/mac-debug
+
+# 6. Run the application
+./build/mac-debug/arld/app/arld
+```
+
+### First-Time Setup — Linux (Ubuntu 22.04)
+
+```bash
+# 1. Install system dependencies
+sudo apt-get update
+sudo apt-get install -y ninja-build gcc-13 g++-13 libgl1-mesa-dev libglu1-mesa-dev
+
+# 2. Install vcpkg and bootstrap
+git clone https://github.com/microsoft/vcpkg.git
+./vcpkg/bootstrap-vcpkg.sh
+export VCPKG_ROOT=/path/to/vcpkg
+
+# 3. Qt 6.7 is installed by CI via jurplel/install-qt-action; for local dev use aqtinstall:
+#    pip install aqtinstall && aqt install-qt linux desktop 6.7.3
+
+# 4. Install remaining C++ dependencies via vcpkg
 vcpkg install
 
 # 5. Configure and build
@@ -47,14 +80,28 @@ cmake --preset linux-debug
 cmake --build --preset linux-debug
 
 # 6. Run the application
-./build/linux-debug/arld
+./build/linux-debug/arld/app/arld
+```
+
+### First-Time Setup — Windows
+
+```bash
+# 1. Install Visual Studio 2022 with C++ workload, CMake, and Ninja
+# 2. Install vcpkg: git clone https://github.com/microsoft/vcpkg.git && bootstrap-vcpkg.bat
+# 3. Install Qt 6.7 via Qt Installer or aqtinstall
+# 4. vcpkg install
+# 5. cmake --preset win-debug && cmake --build --preset win-debug
 ```
 
 ### Clean Build
 
 ```bash
+# macOS
+rm -rf build/mac-debug && cmake -G Ninja ... -B build/mac-debug . && cmake --build build/mac-debug
+
+# Linux / Windows
 rm -rf build/
-cmake --preset linux-debug
+cmake --preset linux-debug   # or win-debug
 cmake --build --preset linux-debug
 ```
 
