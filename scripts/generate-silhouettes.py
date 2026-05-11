@@ -325,25 +325,33 @@ def helicopter_svg(ws, length):
     return svg_wrap(ws, length, body)
 
 def biplane_svg(ws, length):
-    """Pitts S-2C: show upper wing (full span) and lower wing (shorter) with offset."""
+    """Biplane silhouette (Pitts S-1S, S-2C): upper wing full span, lower wing shorter.
+    All chord-wise positions scale proportionally with length so no element escapes the viewBox.
+    Ratios derived from Pitts S-2C geometry (length=17.9 ft).
+    """
     cx = ws / 2; fw = 1.8
     prop_r = 2.5
-    lower_ws = ws * 0.85  # lower wing is shorter
-    body = ""
-    body += circle(cx, prop_r * 0.9, prop_r, stroke=PROP_STROKE, sw=0.35, dash="1,0.5")
-    body += hstab_pair(cx, 6.0, 13.5, 17.5)
-    body += path(fuselage_path(cx, fw, 0, length), FUSELAGE_FILL)
-    # Lower wing (slightly behind upper, shorter)
+    lower_ws = ws * 0.85
     lw_root = fw / 2
     lower_hw = lower_ws / 2
-    offset_x = cx - lower_hw
-    r_lower = [(cx+lw_root, 7.5), (cx+lower_hw, 8.5), (cx+lower_hw, 12.5), (cx+lw_root, 12.5)]
-    l_lower = [(cx-lw_root, 7.5), (cx-lower_hw, 8.5), (cx-lower_hw, 12.5), (cx-lw_root, 12.5)]
+    upper_le = length * 0.335   # upper wing leading edge
+    upper_te = length * 0.643   # upper wing trailing edge
+    lower_le = length * 0.419   # lower wing leading edge
+    lower_te = length * 0.699   # lower wing trailing edge
+    hstab_le = length * 0.754   # horizontal stabilizer leading edge
+    hstab_te = length * 0.978   # horizontal stabilizer trailing edge
+    body = ""
+    body += circle(cx, prop_r * 0.9, prop_r, stroke=PROP_STROKE, sw=0.35, dash="1,0.5")
+    body += hstab_pair(cx, 6.0, hstab_le, hstab_te)
+    body += path(fuselage_path(cx, fw, 0, length), FUSELAGE_FILL)
+    # Lower wing (slightly behind upper, shorter)
+    r_lower = [(cx+lw_root, lower_le), (cx+lower_hw, lower_le+1.0), (cx+lower_hw, lower_te), (cx+lw_root, lower_te)]
+    l_lower = [(cx-lw_root, lower_le), (cx-lower_hw, lower_le+1.0), (cx-lower_hw, lower_te), (cx-lw_root, lower_te)]
     body += polygon(r_lower, WING_FILL, opacity=0.75)
     body += polygon(l_lower, WING_FILL, opacity=0.75)
     # Upper wing (full span)
-    r_upper = [(cx+lw_root, 6.0), (ws, 7.2), (ws, 11.5), (cx+lw_root, 11.0)]
-    l_upper = [(cx-lw_root, 6.0), (0, 7.2), (0, 11.5), (cx-lw_root, 11.0)]
+    r_upper = [(cx+lw_root, upper_le), (ws, upper_le+1.2), (ws, upper_te), (cx+lw_root, upper_te-0.5)]
+    l_upper = [(cx-lw_root, upper_le), (0, upper_le+1.2), (0, upper_te), (cx-lw_root, upper_te-0.5)]
     body += polygon(r_upper, WING_FILL)
     body += polygon(l_upper, WING_FILL)
     return svg_wrap(ws, length, body)

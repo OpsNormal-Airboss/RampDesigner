@@ -10,7 +10,7 @@
   "length_ft": 15.4,
   "tail_height_ft": 6.2,
   "prop_arc_ft": 3.5,
-  "default_display_type": "RAMP_SHOW",
+  "default_display_type": "STATIC_DISPLAY",
   "silhouette_svg": "aerotek-pitts-s1-s.svg",
   "data_sources": [
     "Pitts Aerobatics S-1S Pilot's Operating Handbook",
