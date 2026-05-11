@@ -22,6 +22,14 @@ After completing each sprint, update the following files to reflect the current 
 - **README.md** — update the getting started guide, feature summary, and setup instructions
 - **RUNBOOK.md** — update operational procedures, deployment steps, and runbook entries for any new or changed functionality
 
+## 🐛 GitHub Issue Workflow
+
+When work on a GitHub issue is complete (code implemented, tests passing, committed):
+- Move the issue to **"Testing"** status — do not mark it as closed/complete.
+- Only mark an issue as **closed/complete** when the user explicitly requests it.
+
+Use `gh issue edit <number> --add-label "testing"` or the project board move command as appropriate.
+
 ## 📅 Phases
 
 | Phase | Scope | Timeline |
