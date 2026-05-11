@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 1 — Sprint 4/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%204%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 1 — Sprint 5/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%205%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -51,7 +51,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat | ✅ Complete |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ✅ Complete |
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ✅ Complete |
-| 1-5 | Satellite underlay; PDF export (libharu) | ⬜ Up next |
+| 1-5 | PDF export (libharu); satellite underlay; violations report | ✅ Complete |
+| 1-6 | PNG/JPEG export; recently-used files; alpha release | ⬜ Up next |
 | 1-5 | Satellite underlay; PDF export (libharu) | ⬜ Planned |
 | 1-6 | PNG/JPEG export; print dialog; beta release | ⬜ Planned |
 
@@ -75,6 +76,9 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Extended/retracted gear** — aircraft with retractable gear show a gear state toggle (Gear Extended / Retracted) that expands or contracts the clearance zone by 8 ft
 - **Display-type zone rendering** — Taxi-Only shows a narrow corridor shape; Military Static uses a thick red dashed border; Ramp Show uses a thick amber DashDot boundary
 - **CVD accessibility** — clearance zone fills use hatch patterns (diagonal/cross-hatch/horizontal lines) in addition to color, supporting color-vision-deficient users
+- **PDF export** — File → Export PDF exports to Letter, Tabloid, ANSI C/D/E/E1 in portrait or landscape; title block with show name, date, venue, version, export date, and QR code (SHA-256); display type legend; optional violations report page
+- **Violations report** — File → Export Violations Report exports a PDF table or CSV with all violation pairs, measured/required gaps, severity, and override justifications
+- **Satellite underlay** — View → Load Satellite Image imports a JPEG/PNG; loads asynchronously without blocking the UI; opacity slider 0–100%
 - **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)

@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-4 complete. Tail-dragger tail-swing arcs, extended/retracted gear, display-type zone renderers (Taxi-Only corridor, Military Static, Ramp Show), CVD pattern fills, QAccessible, en.ts baseline. 58/58 tests pass.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-5 complete. PDF export (libharu, 6 paper sizes, title block, QR code, CMYK, violations page), satellite underlay (async), violations CSV report, ExportOptions interface. 68/68 tests pass.
 
 ---
 
@@ -139,7 +139,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
 | `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — empty for no-radius entry; 16-vertex poly for PT-17; center near tail; radius matches; gear-extended envelope > gear-retracted; rear extension ≥ minTurnRadiusFt |
-| **Total** | **58 + 1 bench** | |
+| `arld/tests/test_pdf_exporter.cpp` | 10 | PdfExporter creates file; file non-empty; starts with %PDF; paper sizes correct; CMYK conversion; ViolationReportExporter CSV header + rows |
+| **Total** | **68 + 1 bench** | |
 
 ---
 
