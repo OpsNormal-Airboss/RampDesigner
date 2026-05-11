@@ -355,6 +355,9 @@ void AircraftItem::setFuelType(const std::string& s) {
     updateNoSmoking();
 }
 
+void AircraftItem::setArrivalTime(const std::string& t)   { m_arrivalTime   = t; }
+void AircraftItem::setDepartureTime(const std::string& t) { m_departureTime = t; }
+
 void AircraftItem::setGearExtended(bool v) {
     if (m_gearExtended == v) return;
     m_gearExtended = v;
@@ -511,6 +514,16 @@ void AircraftItem::updateAccessibleName() {
 
 void AircraftItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     QMenu menu;
+
+    QAction* propertiesAct = menu.addAction(QStringLiteral("Properties..."));
+    QObject::connect(propertiesAct, &QAction::triggered, [this] {
+        if (scene()) scene()->clearSelection();
+        setSelected(true);
+        if (onPropertiesRequested) onPropertiesRequested();
+    });
+
+    menu.addSeparator();
+
     auto addLabelAction = [&](const QString& text, LabelMode mode) {
         QAction* act = menu.addAction(text);
         act->setCheckable(true);

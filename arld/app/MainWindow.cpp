@@ -367,6 +367,14 @@ void MainWindow::setupPanels() {
         m_propertiesPanel->setAircraft(selected);
     });
 
+    // Wire "Properties..." right-click to raise the panel
+    connect(m_scene, &RampScene::propertiesRequested,
+            this, [this](arld::ui::AircraftItem* item) {
+        m_propertiesPanel->setAircraft(item);
+        m_propertiesPanel->setVisible(true);
+        m_propertiesPanel->raise();
+    });
+
     // Violations panel (bottom dock)
     m_violationsPanel = new ViolationsPanel(m_scene, m_view, this);
     addDockWidget(Qt::BottomDockWidgetArea, m_violationsPanel);

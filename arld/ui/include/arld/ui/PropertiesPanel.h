@@ -29,6 +29,8 @@ private slots:
     void onHeadingChanged(int degrees);
     void onSnapHeading();
     void onGearStateChanged(int index);
+    void onArrivalTimeChanged(const QString& text);
+    void onDepartureTimeChanged(const QString& text);
 
 private:
     AircraftItem* m_current = nullptr;
@@ -42,6 +44,8 @@ private:
     QCheckBox* m_hazmatCheck;
     QSpinBox*  m_headingEdit    = nullptr;
     QPushButton* m_snapHeadingBtn = nullptr;
+    QLineEdit* m_arrivalEdit    = nullptr;
+    QLineEdit* m_departureEdit  = nullptr;
     QWidget*   m_content;
     QWidget*   m_placeholder;
 };

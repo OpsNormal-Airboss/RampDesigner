@@ -77,6 +77,14 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
     m_snapHeadingBtn = new QPushButton(tr("Snap All Selected to This Heading"), m_content);
     contentLayout->addWidget(m_snapHeadingBtn);
 
+    m_arrivalEdit = new QLineEdit(m_content);
+    m_arrivalEdit->setPlaceholderText(tr("e.g. 2026-07-04T08:00"));
+    form->addRow(tr("Arrival Time:"), m_arrivalEdit);
+
+    m_departureEdit = new QLineEdit(m_content);
+    m_departureEdit->setPlaceholderText(tr("e.g. 2026-07-04T17:00"));
+    form->addRow(tr("Departure Time:"), m_departureEdit);
+
     contentLayout->addStretch();
 
     // Build placeholder widget (shown when nothing is selected)
@@ -118,6 +126,10 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
             this, &PropertiesPanel::onSnapHeading);
     connect(m_gearCombo, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &PropertiesPanel::onGearStateChanged);
+    connect(m_arrivalEdit, &QLineEdit::textEdited,
+            this, &PropertiesPanel::onArrivalTimeChanged);
+    connect(m_departureEdit, &QLineEdit::textEdited,
+            this, &PropertiesPanel::onDepartureTimeChanged);
 }
 
 void PropertiesPanel::setAircraft(AircraftItem* item) {
@@ -139,6 +151,8 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_hazmatCheck->blockSignals(true);
     m_headingEdit->blockSignals(true);
     m_gearCombo->blockSignals(true);
+    m_arrivalEdit->blockSignals(true);
+    m_departureEdit->blockSignals(true);
 
     m_nameLabel->setText(QString::fromStdString(item->entry().displayName));
     m_displayTypeCombo->setCurrentIndex(
@@ -157,6 +171,9 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
         m_gearCombo->setCurrentIndex(item->gearExtended() ? 0 : 1);
     }
 
+    m_arrivalEdit->setText(QString::fromStdString(item->arrivalTime()));
+    m_departureEdit->setText(QString::fromStdString(item->departureTime()));
+
     m_displayTypeCombo->blockSignals(false);
     m_tailNumberEdit->blockSignals(false);
     m_ownerEdit->blockSignals(false);
@@ -164,6 +181,8 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_hazmatCheck->blockSignals(false);
     m_headingEdit->blockSignals(false);
     m_gearCombo->blockSignals(false);
+    m_arrivalEdit->blockSignals(false);
+    m_departureEdit->blockSignals(false);
 
     stack->setCurrentIndex(1);  // show content
 }
@@ -206,6 +225,16 @@ void PropertiesPanel::onHeadingChanged(int degrees) {
 void PropertiesPanel::onGearStateChanged(int idx) {
     if (!m_current) return;
     m_current->setGearExtended(idx == 0);
+}
+
+void PropertiesPanel::onArrivalTimeChanged(const QString& text) {
+    if (!m_current) return;
+    m_current->setArrivalTime(text.toStdString());
+}
+
+void PropertiesPanel::onDepartureTimeChanged(const QString& text) {
+    if (!m_current) return;
+    m_current->setDepartureTime(text.toStdString());
 }
 
 void PropertiesPanel::onSnapHeading() {

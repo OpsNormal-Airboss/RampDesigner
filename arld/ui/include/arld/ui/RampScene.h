@@ -95,6 +95,8 @@ signals:
     void aircraftCountChanged(int count);
     // Emitted whenever the scene is dirtied (aircraft moved, placed, boundary edited, etc.).
     void sceneModified();
+    // Emitted when the user requests the Properties panel for a specific aircraft.
+    void propertiesRequested(arld::ui::AircraftItem* item);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;

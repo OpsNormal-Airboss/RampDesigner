@@ -236,6 +236,9 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
         };
         m_undoStack.push(std::make_unique<AlreadyExecuted>(std::move(cmd)));
     };
+    aircraft->onPropertiesRequested = [this, aircraft] {
+        emit propertiesRequested(aircraft);
+    };
 
     struct PlaceCmd : arld::core::ICommand {
         AircraftItem* item;
@@ -420,12 +423,14 @@ arld::core::ProjectData RampScene::toProjectData() const {
         pa.wingspanFt   = item->entry().wingspanFt;
         pa.lengthFt     = item->entry().lengthFt;
         pa.displayType  = item->displayType();
-        pa.tailNumber   = item->tailNumber();
-        pa.owner        = item->owner();
-        pa.fuelType     = item->fuelType();
-        pa.hasHazmat    = item->hasHazmat();
-        pa.gearExtended = item->gearExtended();
-        pa.labelMode    = static_cast<arld::core::PlacedAircraft::LabelMode>(
+        pa.tailNumber    = item->tailNumber();
+        pa.owner         = item->owner();
+        pa.fuelType      = item->fuelType();
+        pa.hasHazmat     = item->hasHazmat();
+        pa.gearExtended  = item->gearExtended();
+        pa.arrivalTime   = item->arrivalTime();
+        pa.departureTime = item->departureTime();
+        pa.labelMode     = static_cast<arld::core::PlacedAircraft::LabelMode>(
             static_cast<int>(item->labelMode()));
         data.aircraft.push_back(std::move(pa));
     }
@@ -479,10 +484,12 @@ void RampScene::loadProjectData(
         aircraft->setFuelType(pa.fuelType);
         aircraft->setHazmat(pa.hasHazmat);
         aircraft->setGearExtended(pa.gearExtended);
+        aircraft->setArrivalTime(pa.arrivalTime);
+        aircraft->setDepartureTime(pa.departureTime);
         aircraft->setLabelMode(static_cast<arld::ui::AircraftItem::LabelMode>(
             static_cast<int>(pa.labelMode)));
 
-        // Wire up command routing (same as placeAircraft).
+        // Wire up command routing and properties callback (same as placeAircraft).
         aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {
             struct AlreadyExecuted : arld::core::ICommand {
                 std::unique_ptr<arld::core::ICommand> inner;
@@ -494,6 +501,9 @@ void RampScene::loadProjectData(
                 std::string describe() const override { return inner->describe(); }
             };
             m_undoStack.push(std::make_unique<AlreadyExecuted>(std::move(cmd)));
+        };
+        aircraft->onPropertiesRequested = [this, aircraft] {
+            emit propertiesRequested(aircraft);
         };
 
         addItem(aircraft);

@@ -44,6 +44,8 @@ public:
 
     // Callback fired when an undoable action is ready (move, rotate).
     std::function<void(std::unique_ptr<arld::core::ICommand>)> onCommandReady;
+    // Callback fired when the user requests the Properties panel for this item.
+    std::function<void()> onPropertiesRequested;
 
     /// Apply a rotation and push an undo command.
     /// fromDeg is the previous rotation; the item should already be at toDeg.
@@ -58,6 +60,11 @@ public:
 
     const std::string& fuelType() const { return m_fuelType; }
     void setFuelType(const std::string& s);
+
+    const std::string& arrivalTime() const   { return m_arrivalTime; }
+    void setArrivalTime(const std::string& t);
+    const std::string& departureTime() const { return m_departureTime; }
+    void setDepartureTime(const std::string& t);
 
     bool hasHazmat() const { return m_hasHazmat; }
     void setHazmat(bool v);
@@ -115,6 +122,8 @@ private:
     std::string m_tailNumber;
     std::string m_owner;
     std::string m_fuelType;
+    std::string m_arrivalTime;
+    std::string m_departureTime;
     bool        m_hasHazmat    = false;
 
     // Gear state (Sprint 1-4-2)
