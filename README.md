@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 0 — PoC](https://img.shields.io/badge/phase-0%20%E2%80%94%20PoC%20Complete-00CC00)](./RUNBOOK.md)
+  [![Phase 1 — Sprint 1/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%201%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -27,13 +27,13 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete — all 5 sprints** |
-| 1 | Production desktop, 75+ aircraft, all display types, satellite underlay | ⬜ Not started |
+| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
+| **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **🟢 In Progress — Sprint 1 of 6** |
 | 2 | 150+ aircraft, full export suite (SVG/PDF/PNG/JPEG), UAT | ⬜ Not started |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
-### Phase 0 Sprint Progress
+### Phase 0 Sprint Progress — ✅ Complete
 
 | Sprint | Goal | Status |
 |--------|------|--------|
@@ -42,6 +42,17 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
 | 0-4 | CGAL clearance zones, real-time violation detection | ✅ Complete |
 | 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ✅ Complete |
+
+### Phase 1 Sprint Progress
+
+| Sprint | Goal | Status |
+|--------|------|--------|
+| 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
+| 1-2 | Violations panel; clearance rule config; display type assignment UI | ⬜ Up next |
+| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Planned |
+| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones | ⬜ Planned |
+| 1-5 | Satellite underlay; grid overlay | ⬜ Planned |
+| 1-6 | PDF/PNG/JPEG export; print dialog | ⬜ Planned |
 
 ## 🟢 What Works Today
 
@@ -62,6 +73,8 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
 - **Project save/load** — File → Save / Open persist the full layout (aircraft placement, rotation, boundary) to `.arld` JSON files; File → New prompts to discard unsaved changes
 - **SVG export** — File → Export SVG produces a scaled diagram with the ramp boundary, all aircraft (colored by display type), and labels
+- **Metric/Imperial toggle** — View → Show in Metric switches all distance displays between feet and metres without data loss
+- **Auto-save** — layout is auto-saved every 60 seconds; crash recovery dialog offered on next launch if previous session ended unexpectedly
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 
@@ -106,7 +119,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 34 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, and `test_project_file.cpp`.
+Current test suite: 39 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, and `test_unit_converter.cpp`.
 
 ## 📋 Documentation
 

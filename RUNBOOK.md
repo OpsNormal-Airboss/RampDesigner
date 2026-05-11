@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 0 complete — all 5 sprints done. Build system, CI, Qt canvas, undo/redo, 20-aircraft library, CGAL clearance engine, SVG export, and JSON project save/load are all operational. 34/34 tests pass. Phase 0 PoC acceptance gate passed.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-1 complete. Clang-tidy CI baseline, CPack packaging, UnitConverter, auto-save/crash-recovery, exporter stubs, 50-aircraft library. 39/39 tests pass.
 
 ---
 
@@ -88,7 +88,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopter rotor, manifest ordering, error handling |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — 8 scenarios (separation, warbird, military, overlap, advisory, rotation, constants) + bench_clearance_200 |
 | `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
-| **Total** | **34 + 1 bench** | |
+| `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay in both units, toFeet round-trip, suffix strings |
+| **Total** | **39 + 1 bench** | |
 
 ---
 
@@ -109,7 +110,7 @@ CI jobs (in order):
 | 1 | **build** — `cmake --preset release && cmake --build` | 🟢 Active |
 | 2 | **test** — `ctest --preset release --output-on-failure` | 🟢 Active |
 | 3 | **license-check** — `python3 scripts/check-licenses.py` | 🟢 Active |
-| 4 | **lint** — clang-tidy static analysis | ⬜ Planned (Phase 1) |
+| 4 | **lint** — clang-tidy static analysis (continue-on-error baseline) | 🟡 Active (Sprint 1-1) |
 | 5 | **schema-validate** — JSON schema validation | ⬜ Planned (Phase 1) |
 
 A PR cannot merge unless build, test, and license-check pass on all three platforms.
