@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://opsnormal.com/arld/schemas/arld-project.schema.json",
+  "title": "Airshow Ramp Layout Designer Project File",
+  "description": "Schema for .arld project files (UTF-8 JSON). Coordinates in feet.",
+  "type": "object",
+  "required": ["arld_version", "schema_version", "metadata", "ramp_boundary", "aircraft"],
+  "additionalProperties": false,
+  "properties": {
+    "arld_version": {
+      "type": "string",
+      "description": "Application version that created this file (semver).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["0.5.0"]
+    },
+    "schema_version": {
+      "type": "integer",
+      "description": "Schema version; must be 1 for this release.",
+      "const": 1
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["title", "created_utc", "modified_utc"],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Human-readable layout title.",
+          "minLength": 1
+        },
+        "created_utc": {
+          "type": "string",
+          "description": "ISO 8601 UTC creation timestamp.",
+          "format": "date-time"
+        },
+        "modified_utc": {
+          "type": "string",
+          "description": "ISO 8601 UTC last-modified timestamp.",
+          "format": "date-time"
+        }
+      }
+    },
+    "ramp_boundary": {
+      "type": "object",
+      "required": ["vertices", "closed"],
+      "additionalProperties": false,
+      "properties": {
+        "vertices": {
+          "type": "array",
+          "description": "Polygon vertices in scene feet.",
+          "items": {
+            "type": "object",
+            "required": ["x", "y"],
+            "additionalProperties": false,
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            }
+          }
+        },
+        "closed": {
+          "type": "boolean",
+          "description": "Whether the boundary polygon is closed."
+        }
+      }
+    },
+    "clearance_rules": {
+      "type": "object",
+      "description": "Optional overrides to the default FAA CoW clearance distances (all in feet).",
+      "additionalProperties": false,
+      "properties": {
+        "static_display_wingtip_ft":    { "type": "number", "minimum": 0 },
+        "warbird_prop_arc_addition_ft": { "type": "number", "minimum": 0 },
+        "taxi_only_corridor_ft":        { "type": "number", "minimum": 0 },
+        "military_static_standoff_ft":  { "type": "number", "minimum": 0 },
+        "hot_ramp_no_smoking_ft":       { "type": "number", "minimum": 0 },
+        "ramp_show_crowd_line_ft":      { "type": "number", "minimum": 0 },
+        "media_platform_barrier_ft":    { "type": "number", "minimum": 0 }
+      }
+    },
+    "aircraft": {
+      "type": "array",
+      "description": "All aircraft placements in this layout.",
+      "items": {
+        "type": "object",
+        "required": [
+          "placement_id", "library_id", "display_name",
+          "center_x", "center_y", "rotation_deg",
+          "wingspan_ft", "length_ft", "display_type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "placement_id": {
+            "type": "string",
+            "description": "UUID v4 uniquely identifying this placement.",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "library_id": {
+            "type": "string",
+            "description": "Aircraft library entry id (matches data/library/<id>.json).",
+            "minLength": 1
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Human-readable name shown in the layout.",
+            "minLength": 1
+          },
+          "center_x": {
+            "type": "number",
+            "description": "Horizontal scene position of aircraft center in feet."
+          },
+          "center_y": {
+            "type": "number",
+            "description": "Vertical scene position of aircraft center in feet (Qt convention: down = positive)."
+          },
+          "rotation_deg": {
+            "type": "number",
+            "description": "Clockwise rotation in degrees (Qt convention).",
+            "minimum": -360,
+            "maximum": 360
+          },
+          "wingspan_ft": {
+            "type": "number",
+            "description": "Aircraft wingspan in feet.",
+            "exclusiveMinimum": 0
+          },
+          "length_ft": {
+            "type": "number",
+            "description": "Aircraft length in feet.",
+            "exclusiveMinimum": 0
+          },
+          "display_type": {
+            "type": "string",
+            "description": "FAA display classification for clearance rule selection.",
+            "enum": [
+              "static_display",
+              "warbird_heritage",
+              "taxi_only",
+              "military_static",
+              "hot_ramp",
+              "media_photo_platform",
+              "ramp_show"
+            ]
+          }
+        }
+      }
+    },
+    "versions": {
+      "type": "array",
+      "description": "Optional version history entries.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version_id":   { "type": "string" },
+          "saved_utc":    { "type": "string", "format": "date-time" },
+          "description":  { "type": "string" }
+        }
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "description": "Optional per-placement override notes keyed by placement_id.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "note":          { "type": "string" },
+          "approved_by":   { "type": "string" },
+          "approved_utc":  { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

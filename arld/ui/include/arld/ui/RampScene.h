@@ -1,8 +1,10 @@
 #pragma once
 #include <arld/core/UndoStack.h>
 #include <arld/core/AircraftLibraryEntry.h>
+#include <arld/core/ProjectFile.h>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <functional>
 #include <vector>
 
 namespace arld::ui {
@@ -32,10 +34,27 @@ public:
     // Trigger an immediate clearance recomputation (normally debounced via timer).
     void recomputeClearance();
 
+    // --- Sprint 0-5: persistence ---
+
+    /// Serialize the current scene state to a ProjectData snapshot.
+    arld::core::ProjectData toProjectData() const;
+
+    /// Restore scene state from @p data.
+    /// @p lookup must return a pointer to the AircraftLibraryEntry for a given library id,
+    /// or nullptr if the id is not found (that aircraft is then skipped).
+    void loadProjectData(
+        const arld::core::ProjectData& data,
+        std::function<const arld::core::AircraftLibraryEntry*(const std::string&)> lookup);
+
+    /// Remove all aircraft and boundary data, clear the undo stack.
+    void clearScene();
+
 signals:
     void editModeChanged(EditMode mode);
     // Emitted after each clearance evaluation; count = number of violation pairs.
     void violationCountChanged(int count);
+    // Emitted whenever the scene is dirtied (aircraft moved, placed, boundary edited, etc.).
+    void sceneModified();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;

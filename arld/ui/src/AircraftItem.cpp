@@ -2,6 +2,7 @@
 #include <arld/ui/ClearanceZoneItem.h>
 #include <arld/core/ICommand.h>
 #include <arld/core/ClearanceEngine.h>
+#include <arld/core/ProjectFile.h>
 #include <QGuiApplication>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -112,7 +113,8 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
                            QGraphicsItem* parent)
     : QGraphicsItemGroup(parent)
     , m_entry(entry)
-    , m_displayType(entry.defaultDisplayType) {
+    , m_displayType(entry.defaultDisplayType)
+    , m_placementId(arld::core::ProjectFile::generateUuid()) {
     setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
     setCursor(Qt::SizeAllCursor);
 

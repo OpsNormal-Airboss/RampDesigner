@@ -5,6 +5,7 @@
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
 #include <arld/core/ClearanceEngine.h>
+#include <arld/core/ProjectFile.h>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <cmath>
@@ -221,6 +222,122 @@ void RampScene::recomputeClearance() {
     }
 
     emit violationCountChanged(violationPairs);
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 0-5: clearScene / toProjectData / loadProjectData
+// ---------------------------------------------------------------------------
+
+void RampScene::clearScene() {
+    // Remove all aircraft items from the scene.
+    for (auto* item : m_aircraft) {
+        removeItem(item);
+        delete item;
+    }
+    m_aircraft.clear();
+
+    // Reset boundary.
+    m_boundaryItem->clearBoundary();
+
+    // Clear undo history.
+    m_undoStack.clear();
+}
+
+arld::core::ProjectData RampScene::toProjectData() const {
+    arld::core::ProjectData data;
+    data.arldVersion   = "0.5.0";
+    data.schemaVersion = 1;
+    data.metadata.modifiedUtc = arld::core::ProjectFile::currentUtcTimestamp();
+
+    // Boundary
+    for (int i = 0; i < m_boundaryItem->pointCount(); ++i) {
+        const QPointF p = m_boundaryItem->point(i);
+        data.boundary.vertices.emplace_back(
+            static_cast<float>(p.x()),
+            static_cast<float>(p.y()));
+    }
+    data.boundary.closed = m_boundaryItem->isClosed();
+
+    // Aircraft (visible only — hidden items have been undone)
+    for (const auto* item : m_aircraft) {
+        if (!item->isVisible()) continue;
+        const auto state = item->toAircraftState();
+        arld::core::PlacedAircraft pa;
+        pa.placementId  = item->placementId();
+        pa.libraryId    = item->entry().id;
+        pa.displayName  = item->entry().displayName;
+        pa.centerX      = state.centerX;
+        pa.centerY      = state.centerY;
+        pa.rotationDeg  = state.rotationDeg;
+        pa.wingspanFt   = item->entry().wingspanFt;
+        pa.lengthFt     = item->entry().lengthFt;
+        pa.displayType  = item->displayType();
+        data.aircraft.push_back(std::move(pa));
+    }
+
+    return data;
+}
+
+void RampScene::loadProjectData(
+    const arld::core::ProjectData& data,
+    std::function<const arld::core::AircraftLibraryEntry*(const std::string&)> lookup)
+{
+    clearScene();
+
+    // Restore metadata title so callers can read it back if needed.
+    // (No separate title storage on RampScene; MainWindow reads from data.)
+
+    // Restore boundary.
+    for (const auto& [x, y] : data.boundary.vertices)
+        m_boundaryItem->addPoint(QPointF(static_cast<double>(x), static_cast<double>(y)));
+    if (data.boundary.closed && m_boundaryItem->pointCount() >= 3)
+        m_boundaryItem->closePolygon();
+
+    // Restore aircraft (no undo push — this is a load, not a user action).
+    for (const auto& pa : data.aircraft) {
+        const auto* entry = lookup(pa.libraryId);
+        if (!entry) continue;   // library entry not found; skip gracefully
+
+        const QString svgPath =
+            QString(":/library/silhouettes/%1")
+                .arg(QString::fromStdString(entry->silhouetteSvg));
+
+        auto* aircraft = new AircraftItem(*entry, svgPath);
+
+        // Position: center_x/center_y are the scene-space center of the aircraft.
+        // AircraftItem's transform origin is m_localCenter (local coords).
+        // We need to set item pos such that mapToScene(m_localCenter) == center.
+        // After construction, mapToScene(m_localCenter) == pos() + m_localCenter (rotation=0).
+        // So: pos() = center - m_localCenter.
+        // We retrieve m_localCenter via childrenBoundingRect().center().
+        const QRectF br = aircraft->childrenBoundingRect();
+        const QPointF localCenter = br.center();
+        aircraft->setPos(
+            QPointF(static_cast<double>(pa.centerX), static_cast<double>(pa.centerY))
+            - localCenter);
+        aircraft->setRotation(static_cast<double>(pa.rotationDeg));
+        aircraft->setDisplayType(pa.displayType);
+        aircraft->setPlacementId(pa.placementId);
+
+        // Wire up command routing (same as placeAircraft).
+        aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {
+            struct AlreadyExecuted : arld::core::ICommand {
+                std::unique_ptr<arld::core::ICommand> inner;
+                bool done = false;
+                explicit AlreadyExecuted(std::unique_ptr<arld::core::ICommand> c)
+                    : inner(std::move(c)) {}
+                void execute() override { if (done) inner->execute(); done = true; }
+                void undo()    override { inner->undo(); }
+                std::string describe() const override { return inner->describe(); }
+            };
+            m_undoStack.push(std::make_unique<AlreadyExecuted>(std::move(cmd)));
+        };
+
+        addItem(aircraft);
+        m_aircraft.push_back(aircraft);
+    }
+
+    recomputeClearance();
 }
 
 } // namespace arld::ui

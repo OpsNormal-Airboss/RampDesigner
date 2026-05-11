@@ -7,11 +7,13 @@ add_executable(arld_tests
     test_undo.cpp
     test_aircraft_library.cpp
     test_clearance.cpp
+    test_project_file.cpp
 )
 
 target_link_libraries(arld_tests
     PRIVATE
         arld_core
+        arld_export
         Catch2::Catch2WithMain
 )
 

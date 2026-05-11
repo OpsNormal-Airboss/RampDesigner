@@ -17,6 +17,7 @@ public:
     void removeLastPoint();
     void moveVertex(int index, QPointF pos);
     void closePolygon();
+    void clearBoundary();
 
     bool isClosed() const { return m_closed; }
     int pointCount() const { return m_points.size(); }

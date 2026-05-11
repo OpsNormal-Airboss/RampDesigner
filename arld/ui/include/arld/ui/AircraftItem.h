@@ -4,6 +4,7 @@
 #include <QGraphicsItemGroup>
 #include <functional>
 #include <memory>
+#include <string>
 
 namespace arld::core { class ICommand; }
 
@@ -19,6 +20,10 @@ public:
                  QGraphicsItem* parent = nullptr);
 
     const arld::core::AircraftLibraryEntry& entry() const { return m_entry; }
+
+    // Unique placement identifier (UUID v4), assigned at construction.
+    std::string placementId() const { return m_placementId; }
+    void setPlacementId(const std::string& id) { m_placementId = id; }
 
     void setDisplayType(arld::core::DisplayType dt);
     arld::core::DisplayType displayType() const { return m_displayType; }
@@ -44,6 +49,7 @@ private:
 
     arld::core::AircraftLibraryEntry m_entry;
     arld::core::DisplayType m_displayType;
+    std::string m_placementId;
     QPointF m_localCenter;     // bounding rect centre in local item coords
     QPointF m_dragStartPos;
     ClearanceZoneItem* m_clearanceItem = nullptr;

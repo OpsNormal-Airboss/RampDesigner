@@ -1,5 +1,6 @@
 #pragma once
 #include <QMainWindow>
+#include <QString>
 
 class QAction;
 class QLabel;
@@ -21,16 +22,28 @@ private:
     void setupToolBar();
     void setupStatusBar();
     void setupLibraryPanel();
+    void setupFileActions();
     void updateUndoRedoActions();
     void updateScaleLabel(double denominator);
     void updateViolationLabel(int count);
+    void updateWindowTitle();
+
+    // File menu slots
+    void newProject();
+    void openProject();
+    void saveProject();
+    void saveProjectAs();
+    void exportSvg();
 
     arld::ui::RampScene* m_scene;
-    arld::ui::RampView* m_view;
+    arld::ui::RampView*  m_view;
     arld::ui::LibraryPanel* m_libraryPanel = nullptr;
-    QAction* m_undoAction = nullptr;
-    QAction* m_redoAction = nullptr;
-    QAction* m_drawBoundaryAction = nullptr;
-    QLabel* m_scaleLabel = nullptr;
-    QLabel* m_violationLabel = nullptr;
+    QAction* m_undoAction          = nullptr;
+    QAction* m_redoAction          = nullptr;
+    QAction* m_drawBoundaryAction  = nullptr;
+    QLabel*  m_scaleLabel          = nullptr;
+    QLabel*  m_violationLabel      = nullptr;
+
+    QString m_currentFilePath;
+    bool    m_dirty = false;
 };

@@ -124,6 +124,14 @@ void RampBoundaryItem::closePolygon() {
     rebuildPath();
 }
 
+void RampBoundaryItem::clearBoundary() {
+    qDeleteAll(m_handles);
+    m_handles.clear();
+    m_points.clear();
+    m_closed = false;
+    rebuildPath();
+}
+
 void RampBoundaryItem::onVertexMoved(int index, QPointF scenePos) {
     if (index < 0 || index >= m_points.size()) return;
     m_points[index] = scenePos;
