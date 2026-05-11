@@ -97,13 +97,17 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
     j["arld_version"]  = "1.1.0";
     j["schema_version"] = 2;
 
-    j["metadata"] = {
+    json meta = {
         {"title",        data.metadata.title},
         {"created_utc",  data.metadata.createdUtc.empty()
                              ? currentUtcTimestamp()
                              : data.metadata.createdUtc},
         {"modified_utc", currentUtcTimestamp()}
     };
+    // Optional show metadata — only write when non-empty.
+    if (!data.metadata.showDate.empty())  meta["show_date"]  = data.metadata.showDate;
+    if (!data.metadata.showVenue.empty()) meta["show_venue"] = data.metadata.showVenue;
+    j["metadata"] = meta;
 
     // Boundary
     json vertices = json::array();
@@ -191,6 +195,8 @@ ProjectData ProjectFile::load(const std::string& path) {
     if (j.contains("metadata") && j["metadata"].is_object()) {
         const auto& meta = j["metadata"];
         data.metadata.title       = meta.value("title",        "Untitled Layout");
+        data.metadata.showDate    = meta.value("show_date",    std::string(""));
+        data.metadata.showVenue   = meta.value("show_venue",   std::string(""));
         data.metadata.createdUtc  = meta.value("created_utc",  "");
         data.metadata.modifiedUtc = meta.value("modified_utc", "");
     }

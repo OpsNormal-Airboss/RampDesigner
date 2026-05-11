@@ -3,6 +3,7 @@
 #include <arld/ui/ClearanceZoneItem.h>
 #include <arld/ui/GridOverlayItem.h>
 #include <arld/ui/RampBoundaryItem.h>
+#include <arld/ui/SatelliteUnderlayItem.h>
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
 #include <arld/core/ClearanceEngine.h>
@@ -68,6 +69,9 @@ RampScene::RampScene(QObject* parent)
     m_gridOverlay = new GridOverlayItem();
     addItem(m_gridOverlay);
 
+    m_satelliteItem = new SatelliteUnderlayItem();
+    addItem(m_satelliteItem);
+
     // Debounce clearance recomputation: wait 80 ms after the last scene change
     // before running the O(N²) check so dragging doesn't block the UI.
     m_clearanceTimer.setSingleShot(true);
@@ -102,6 +106,14 @@ void RampScene::setGridVisible(bool visible) {
 
 void RampScene::setGridSpacingFt(int spacingFt) {
     if (m_gridOverlay) m_gridOverlay->setSpacingFt(spacingFt);
+}
+
+void RampScene::setSatelliteImage(const QString& path) {
+    if (m_satelliteItem) m_satelliteItem->loadImage(path);
+}
+
+void RampScene::setSatelliteOpacity(float opacity) {
+    if (m_satelliteItem) m_satelliteItem->setOpacity(opacity);
 }
 
 QPointF RampScene::snapToGrid(QPointF pos, bool freehand) const {

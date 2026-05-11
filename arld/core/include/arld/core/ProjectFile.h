@@ -37,6 +37,8 @@ struct RampBoundaryData {
 
 struct ProjectMetadata {
     std::string title        = "Untitled Layout";
+    std::string showDate;    // optional, e.g. "2026-07-04"
+    std::string showVenue;   // optional, e.g. "EAA AirVenture, Oshkosh WI"
     std::string createdUtc;
     std::string modifiedUtc;
 };

@@ -14,6 +14,7 @@ namespace arld::ui {
 class AircraftItem;
 class GridOverlayItem;
 class RampBoundaryItem;
+class SatelliteUnderlayItem;
 class ScaleBarItem;
 
 enum class EditMode { Select, DrawBoundary };
@@ -37,6 +38,10 @@ public:
     // --- Grid overlay (1-3-7) ---
     void setGridVisible(bool visible);
     void setGridSpacingFt(int spacingFt);
+
+    // --- Satellite underlay (1-5-6) ---
+    void setSatelliteImage(const QString& path);
+    void setSatelliteOpacity(float opacity);
 
     // Trigger an immediate clearance recomputation (normally debounced via timer).
     void recomputeClearance();
@@ -89,9 +94,10 @@ private:
 
     EditMode m_mode = EditMode::Select;
     arld::core::UndoStack m_undoStack;
-    RampBoundaryItem*  m_boundaryItem  = nullptr;
-    ScaleBarItem*      m_scaleBarItem  = nullptr;
-    GridOverlayItem*   m_gridOverlay   = nullptr;
+    RampBoundaryItem*          m_boundaryItem  = nullptr;
+    ScaleBarItem*              m_scaleBarItem  = nullptr;
+    GridOverlayItem*           m_gridOverlay   = nullptr;
+    SatelliteUnderlayItem*     m_satelliteItem = nullptr;
 
     std::vector<AircraftItem*>  m_aircraft;       // all placed (possibly hidden) aircraft
     QTimer m_clearanceTimer;                       // debounce: fires 80 ms after last scene change

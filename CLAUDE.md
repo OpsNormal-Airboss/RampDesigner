@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 1, Sprint 1-3 complete. Library browser with search/filter/thumbnails, custom aircraft dialog with SVG sanitization, heading controls, grid overlay, fit-to-window, recent files, 75-aircraft library. 52/52 tests pass.
+**Current status:** Phase 1, Sprint 1-5 complete. PDF export via libharu (all ANSI/Letter/Tabloid sizes, landscape/portrait, font embedding, CMYK colors, QR code, display-type legend, violations report page), ViolationReportExporter CSV, satellite underlay with async image loading, project metadata dialog (show date/venue), ExportOptions struct on IExporter. 68/68 tests pass.
 
 ## 📋 Post-Sprint Documentation
 
@@ -57,9 +57,9 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
 | 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat; schema migration | ✅ Complete |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ✅ Complete |
-| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ⬜ Up next |
-| 1-5 | Satellite underlay; undo/redo improvements | ⬜ Planned |
-| 1-6 | PDF export (libharu); PNG/JPEG export (stb); print dialog | ⬜ Planned |
+| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ✅ Complete |
+| 1-5 | PDF export (libharu+libqrencode); ViolationReport CSV; satellite underlay; project metadata | ✅ Complete |
+| 1-6 | PNG/JPEG export (stb); print dialog | ⬜ Up next |
 
 ## 🔧 Tech Stack
 
@@ -137,6 +137,7 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug \
   -DQt6SvgWidgets_DIR=/opt/homebrew/lib/cmake/Qt6SvgWidgets \
   -DQt6Widgets_DIR=/opt/homebrew/lib/cmake/Qt6Widgets \
   -DQt6Core_DIR=/opt/homebrew/lib/cmake/Qt6Core \
+  -DQt6Concurrent_DIR=/opt/homebrew/lib/cmake/Qt6Concurrent \
   -B build/mac-debug .
 
 # Run all tests
@@ -210,7 +211,9 @@ RampView    : QGraphicsView
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay Imperial/Metric, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — script, foreignObject, XXE/DOCTYPE, on* attrs, javascript: href, clean passthrough, multiline |
-| **Total** | **52 + 1 bench** | |
+| `arld/tests/test_tail_swing.cpp` | 5 | tailSwingPolygon — 16-vertex, radius, empty when unset, rear centre, PT-17 |
+| `arld/tests/test_pdf_exporter.cpp` | 9 | PdfExporter creates/%PDF magic/non-empty/violations/landscape; ViolationReportExporter CSV creates/header/rows/override/empty |
+| **Total** | **68 + 1 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

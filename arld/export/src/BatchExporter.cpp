@@ -7,9 +7,10 @@ void BatchExporter::addExporter(std::unique_ptr<IExporter> exp) {
 }
 
 void BatchExporter::exportLayout(const arld::core::ProjectData& data,
-                                 const std::string& outputPath) {
+                                 const std::string& outputPath,
+                                 const ExportOptions& options) {
     for (auto& exporter : m_exporters) {
-        exporter->exportLayout(data, outputPath);
+        exporter->exportLayout(data, outputPath, options);
     }
 }
 

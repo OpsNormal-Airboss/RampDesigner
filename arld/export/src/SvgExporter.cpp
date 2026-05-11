@@ -72,7 +72,8 @@ struct BBox {
 // SvgExporter::exportLayout
 // ---------------------------------------------------------------------------
 void SvgExporter::exportLayout(const arld::core::ProjectData& data,
-                                const std::string& outputPath) {
+                                const std::string& outputPath,
+                                const ExportOptions& /*options*/) {
     constexpr double kPadding = 100.0;   // feet of margin around content
     constexpr double kMaxPx   = 2000.0;  // max SVG dimension (px)
 

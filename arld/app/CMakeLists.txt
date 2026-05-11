@@ -1,4 +1,4 @@
-find_package(Qt6 6.7 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 6.7 REQUIRED COMPONENTS Core Concurrent Widgets Svg SvgWidgets)
 
 qt_add_executable(arld
     main.cpp
@@ -12,7 +12,10 @@ target_link_libraries(arld
         arld_ui
         arld_export
         Qt6::Core
+        Qt6::Concurrent
         Qt6::Widgets
+        Qt6::Svg
+        Qt6::SvgWidgets
 )
 
 set_target_properties(arld PROPERTIES

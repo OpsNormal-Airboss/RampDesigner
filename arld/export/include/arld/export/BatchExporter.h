@@ -13,7 +13,8 @@ public:
 
     /// Calls exportLayout() on each registered exporter with the same outputPath.
     void exportLayout(const arld::core::ProjectData& data,
-                      const std::string& outputPath) override;
+                      const std::string& outputPath,
+                      const ExportOptions& options = ExportOptions{}) override;
 
 private:
     std::vector<std::unique_ptr<IExporter>> m_exporters;

@@ -7,7 +7,8 @@ namespace arld::export_ {
 class JpegExporter : public IExporter {
 public:
     void exportLayout(const arld::core::ProjectData& data,
-                      const std::string& outputPath) override;
+                      const std::string& outputPath,
+                      const ExportOptions& options = ExportOptions{}) override;
 };
 
 } // namespace arld::export_

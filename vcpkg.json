@@ -6,6 +6,7 @@
   "dependencies": [
     "cgal",
     "nlohmann-json",
-    "catch2"
+    "catch2",
+    "libharu"
   ]
 }

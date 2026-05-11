@@ -1,4 +1,4 @@
-find_package(Qt6 6.7 REQUIRED COMPONENTS Core Widgets Svg SvgWidgets)
+find_package(Qt6 6.7 REQUIRED COMPONENTS Core Concurrent Widgets Svg SvgWidgets)
 
 add_library(arld_ui STATIC
     include/arld/ui/AircraftItem.h
@@ -13,6 +13,7 @@ add_library(arld_ui STATIC
     include/arld/ui/RampScene.h
     include/arld/ui/RampView.h
     include/arld/ui/ScaleBarItem.h
+    include/arld/ui/SatelliteUnderlayItem.h
     include/arld/ui/ViolationsPanel.h
     src/AircraftItem.cpp
     src/ClearanceOverrideDialog.cpp
@@ -25,6 +26,7 @@ add_library(arld_ui STATIC
     src/RampBoundaryItem.cpp
     src/RampScene.cpp
     src/RampView.cpp
+    src/SatelliteUnderlayItem.cpp
     src/ScaleBarItem.cpp
     src/ViolationsPanel.cpp
     ../data/library/aircraft_library.qrc
@@ -40,6 +42,7 @@ target_link_libraries(arld_ui
     PUBLIC
         arld_core
         Qt6::Core
+        Qt6::Concurrent
         Qt6::Widgets
         Qt6::Svg
         Qt6::SvgWidgets

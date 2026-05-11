@@ -8,23 +8,36 @@
 #include <arld/ui/AircraftItem.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UnitConverter.h>
+#include <arld/export/PdfExporter.h>
 #include <arld/export/SvgExporter.h>
+#include <arld/export/ViolationReportExporter.h>
 #include <QAction>
 #include <QActionGroup>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFormLayout>
+#include <QHBoxLayout>
 #include <QKeySequence>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QRadioButton>
 #include <QSettings>
+#include <QSlider>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QStringList>
 #include <QToolBar>
+#include <QVBoxLayout>
+#include <QWidgetAction>
 
 using arld::ui::EditMode;
 using arld::ui::LibraryPanel;
@@ -84,6 +97,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         if (btn == QMessageBox::Yes) {
             try {
                 auto data = arld::core::ProjectFile::load(m_autoSavePath.toStdString());
+                m_projectMetadata = data.metadata;
                 auto lookup = [this](const std::string& id) -> const arld::core::AircraftLibraryEntry* {
                     return m_libraryPanel->entryById(id);
                 };
@@ -185,6 +199,38 @@ void MainWindow::setupMenuBar() {
     addSpacing(tr("25 ft"),  25);
     addSpacing(tr("50 ft"),  50);
     addSpacing(tr("100 ft"), 100);
+
+    // Satellite underlay controls (1-5-6)
+    viewMenu->addSeparator();
+    viewMenu->addAction(tr("Load &Satellite Image..."), this, [this] {
+        const QString path = QFileDialog::getOpenFileName(
+            this, tr("Load Satellite Image"), QString(),
+            tr("Image Files (*.png *.jpg *.jpeg *.tif *.tiff *.bmp);;All Files (*)"));
+        if (!path.isEmpty())
+            m_scene->setSatelliteImage(path);
+    });
+
+    // Opacity slider in a widget action
+    auto* opacityLabel = new QLabel(tr("  Satellite Opacity:"));
+    viewMenu->addAction(tr("Satellite Opacity"), opacityLabel, nullptr); // placeholder label
+
+    auto* opacitySlider = new QSlider(Qt::Horizontal);
+    opacitySlider->setMinimum(0);
+    opacitySlider->setMaximum(100);
+    opacitySlider->setValue(80);
+    opacitySlider->setMinimumWidth(120);
+    connect(opacitySlider, &QSlider::valueChanged, this, [this](int value) {
+        m_scene->setSatelliteOpacity(value / 100.0f);
+    });
+
+    auto* opacityAction = new QWidgetAction(this);
+    auto* sliderWidget = new QWidget();
+    auto* sliderLayout = new QHBoxLayout(sliderWidget);
+    sliderLayout->setContentsMargins(8, 2, 8, 2);
+    sliderLayout->addWidget(new QLabel(tr("Satellite Opacity:")));
+    sliderLayout->addWidget(opacitySlider);
+    opacityAction->setDefaultWidget(sliderWidget);
+    viewMenu->addAction(opacityAction);
 }
 
 void MainWindow::setupFileActions() {
@@ -205,7 +251,11 @@ void MainWindow::setupFileActions() {
     fm->addAction(tr("&Save"),      this, &MainWindow::saveProject,   QKeySequence::Save);
     fm->addAction(tr("Save &As..."), this, &MainWindow::saveProjectAs, QKeySequence::SaveAs);
     fm->addSeparator();
+    fm->addAction(tr("Project &Metadata..."), this, &MainWindow::editProjectMetadata);
+    fm->addSeparator();
     fm->addAction(tr("Export &SVG..."), this, &MainWindow::exportSvg);
+    fm->addAction(tr("Export &PDF..."), this, &MainWindow::exportPdf);
+    fm->addAction(tr("Export &Violations Report..."), this, &MainWindow::exportViolationsReport);
     fm->addSeparator();
     m_recentFilesMenu = fm->addMenu(tr("&Recent Projects"));
     updateRecentFilesMenu();
@@ -325,6 +375,8 @@ void MainWindow::autoSave() {
     }
     try {
         auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
+        data.metadata.modifiedUtc = arld::core::ProjectFile::currentUtcTimestamp();
         arld::core::ProjectFile::save(m_autoSavePath.toStdString(), data);
     } catch (...) {
         // Silently swallow errors — auto-save is best-effort.
@@ -345,6 +397,7 @@ void MainWindow::newProject() {
     }
     m_scene->clearScene();
     m_currentFilePath.clear();
+    m_projectMetadata = arld::core::ProjectMetadata{};
     m_dirty = false;
     updateWindowTitle();
     updateUndoRedoActions();
@@ -373,6 +426,7 @@ void MainWindow::openProject() {
             return m_libraryPanel->entryById(id);
         };
         m_scene->loadProjectData(data, lookup);
+        m_projectMetadata = data.metadata;
 
         m_currentFilePath = path;
         m_dirty = false;
@@ -393,6 +447,7 @@ void MainWindow::saveProject() {
     }
     try {
         auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
         if (data.metadata.title == "Untitled Layout" && !m_currentFilePath.isEmpty())
             data.metadata.title = QFileInfo(m_currentFilePath).baseName().toStdString();
         if (data.metadata.createdUtc.empty())
@@ -425,12 +480,181 @@ void MainWindow::exportSvg() {
 
     try {
         auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
         arld::export_::SvgExporter exporter;
         exporter.exportLayout(data, path.toStdString());
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Export Failed"),
                               tr("Could not export SVG:\n%1").arg(e.what()));
     }
+}
+
+void MainWindow::exportPdf() {
+    // --- Paper size / orientation dialog ---
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Export PDF"));
+    auto* layout = new QFormLayout(&dlg);
+
+    auto* sizeCombo = new QComboBox();
+    sizeCombo->addItems({tr("Letter"), tr("Tabloid"), tr("ANSI-C"), tr("ANSI-D"),
+                         tr("ANSI-E"), tr("ANSI-E1")});
+    sizeCombo->setCurrentIndex(3); // ANSI-D default
+    layout->addRow(tr("Paper Size:"), sizeCombo);
+
+    auto* portraitRadio  = new QRadioButton(tr("Portrait"));
+    auto* landscapeRadio = new QRadioButton(tr("Landscape"));
+    landscapeRadio->setChecked(true);
+    auto* orientGroup = new QWidget();
+    auto* orientLayout = new QHBoxLayout(orientGroup);
+    orientLayout->setContentsMargins(0, 0, 0, 0);
+    orientLayout->addWidget(portraitRadio);
+    orientLayout->addWidget(landscapeRadio);
+    layout->addRow(tr("Orientation:"), orientGroup);
+
+    auto* incViolCheck = new QCheckBox(tr("Include Violations Report page"));
+    layout->addRow(incViolCheck);
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addRow(buttons);
+
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export PDF"), QString(),
+        tr("PDF Files (*.pdf);;All Files (*)"));
+    if (path.isEmpty()) return;
+
+    try {
+        auto data = m_scene->toProjectData();
+        data.metadata = m_projectMetadata;
+
+        static const arld::export_::ExportOptions::PaperSize sizes[] = {
+            arld::export_::ExportOptions::PaperSize::Letter,
+            arld::export_::ExportOptions::PaperSize::Tabloid,
+            arld::export_::ExportOptions::PaperSize::ANSI_C,
+            arld::export_::ExportOptions::PaperSize::ANSI_D,
+            arld::export_::ExportOptions::PaperSize::ANSI_E,
+            arld::export_::ExportOptions::PaperSize::ANSI_E1,
+        };
+
+        arld::export_::ExportOptions opts;
+        opts.paperSize   = sizes[sizeCombo->currentIndex()];
+        opts.orientation = landscapeRadio->isChecked()
+                           ? arld::export_::ExportOptions::Orientation::Landscape
+                           : arld::export_::ExportOptions::Orientation::Portrait;
+        opts.showName  = m_projectMetadata.title;
+        opts.showDate  = m_projectMetadata.showDate;
+        opts.showVenue = m_projectMetadata.showVenue;
+        opts.arldFilePath = m_currentFilePath.toStdString();
+
+        if (incViolCheck->isChecked()) {
+            opts.includeViolations = true;
+            opts.violations = m_scene->lastViolations();
+            opts.overrides  = m_scene->overrides();
+        }
+
+        arld::export_::PdfExporter exporter;
+        exporter.exportLayout(data, path.toStdString(), opts);
+
+        QMessageBox::information(this, tr("Export Successful"),
+                                 tr("PDF exported to:\n%1").arg(path));
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Export Failed"),
+                              tr("Could not export PDF:\n%1").arg(e.what()));
+    }
+}
+
+void MainWindow::exportViolationsReport() {
+    // Ask: PDF or CSV?
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Export Violations Report"));
+    auto* layout = new QVBoxLayout(&dlg);
+    layout->addWidget(new QLabel(tr("Export format:")));
+    auto* csvRadio  = new QRadioButton(tr("CSV (comma-separated)"));
+    auto* pdfRadio  = new QRadioButton(tr("PDF (additional page)"));
+    csvRadio->setChecked(true);
+    layout->addWidget(csvRadio);
+    layout->addWidget(pdfRadio);
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addWidget(buttons);
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    const bool exportCsv = csvRadio->isChecked();
+
+    if (exportCsv) {
+        const QString path = QFileDialog::getSaveFileName(
+            this, tr("Export Violations CSV"), QString(),
+            tr("CSV Files (*.csv);;All Files (*)"));
+        if (path.isEmpty()) return;
+        try {
+            arld::export_::ViolationReportExporter::exportCsv(
+                m_scene->lastViolations(),
+                m_scene->overrides(),
+                path.toStdString());
+            QMessageBox::information(this, tr("Export Successful"),
+                                     tr("Violations report exported to:\n%1").arg(path));
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Export Failed"),
+                                  tr("Could not export CSV:\n%1").arg(e.what()));
+        }
+    } else {
+        // PDF: export layout with violations page
+        const QString path = QFileDialog::getSaveFileName(
+            this, tr("Export Violations PDF"), QString(),
+            tr("PDF Files (*.pdf);;All Files (*)"));
+        if (path.isEmpty()) return;
+        try {
+            auto data = m_scene->toProjectData();
+            data.metadata = m_projectMetadata;
+
+            arld::export_::ExportOptions opts;
+            opts.includeViolations = true;
+            opts.violations = m_scene->lastViolations();
+            opts.overrides  = m_scene->overrides();
+            opts.showName   = m_projectMetadata.title;
+            opts.showDate   = m_projectMetadata.showDate;
+            opts.showVenue  = m_projectMetadata.showVenue;
+
+            arld::export_::PdfExporter exporter;
+            exporter.exportLayout(data, path.toStdString(), opts);
+            QMessageBox::information(this, tr("Export Successful"),
+                                     tr("Violations PDF exported to:\n%1").arg(path));
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Export Failed"),
+                                  tr("Could not export PDF:\n%1").arg(e.what()));
+        }
+    }
+}
+
+void MainWindow::editProjectMetadata() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Project Metadata"));
+    auto* layout = new QFormLayout(&dlg);
+
+    auto* titleEdit = new QLineEdit(QString::fromStdString(m_projectMetadata.title));
+    auto* dateEdit  = new QLineEdit(QString::fromStdString(m_projectMetadata.showDate));
+    auto* venueEdit = new QLineEdit(QString::fromStdString(m_projectMetadata.showVenue));
+
+    layout->addRow(tr("Show Name:"),  titleEdit);
+    layout->addRow(tr("Show Date:"),  dateEdit);
+    layout->addRow(tr("Show Venue:"), venueEdit);
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addRow(buttons);
+
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    m_projectMetadata.title     = titleEdit->text().toStdString();
+    m_projectMetadata.showDate  = dateEdit->text().toStdString();
+    m_projectMetadata.showVenue = venueEdit->text().toStdString();
+    m_dirty = true;
+    updateWindowTitle();
 }
 
 // ---------------------------------------------------------------------------
@@ -490,6 +714,7 @@ void MainWindow::updateRecentFilesMenu() {
                     return m_libraryPanel->entryById(id);
                 };
                 m_scene->loadProjectData(data, lookup);
+                m_projectMetadata = data.metadata;
                 m_currentFilePath = path;
                 m_dirty = false;
                 updateWindowTitle();

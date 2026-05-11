@@ -1,4 +1,5 @@
 #pragma once
+#include <arld/core/ProjectFile.h>
 #include <QMainWindow>
 #include <QString>
 #include <QTimer>
@@ -6,6 +7,7 @@
 class QAction;
 class QLabel;
 class QMenu;
+class QSlider;
 
 namespace arld::ui {
 class LibraryPanel;
@@ -43,6 +45,9 @@ private:
     void saveProject();
     void saveProjectAs();
     void exportSvg();
+    void exportPdf();
+    void exportViolationsReport();
+    void editProjectMetadata();
 
     // View menu slots (1-3-8)
     void fitToWindow();
@@ -70,4 +75,7 @@ private:
 
     QString m_currentFilePath;
     bool    m_dirty = false;
+
+    // Project metadata (show-specific fields stored in MainWindow, not RampScene).
+    arld::core::ProjectMetadata m_projectMetadata;
 };
