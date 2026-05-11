@@ -124,10 +124,14 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     , m_displayType(entry.defaultDisplayType)
     , m_placementId(arld::core::ProjectFile::generateUuid()) {
     setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
+    // Allow child items (rotation handle) to receive their own mouse events
+    // rather than having the group intercept them all.
+    setHandlesChildEvents(false);
     setCursor(Qt::SizeAllCursor);
 
     // SVG silhouette scaled so 1 scene unit = 1 foot.
     m_svgItem = new QGraphicsSvgItem(svgResourcePath, this);
+    m_svgItem->setAcceptedMouseButtons(Qt::NoButton);
     const QSizeF svgSize = m_svgItem->boundingRect().size();
     if (svgSize.width() > 0 && m_entry.wingspanFt > 0) {
         const double scaleF = m_entry.wingspanFt / svgSize.width();
