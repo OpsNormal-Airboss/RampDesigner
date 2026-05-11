@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "north-american-p51-d",
+  "display_name": "P-51D Mustang",
+  "manufacturer": "North American Aviation",
+  "model": "P-51",
+  "variant": "D",
+  "category": "WARBIRD",
+  "wingspan_ft": 37.0,
+  "length_ft": 32.3,
+  "tail_height_ft": 13.8,
+  "prop_arc_ft": 11.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "north-american-p51-d.svg",
+  "data_sources": [
+    "Jane's All the World's Aircraft 1945–46",
+    "USAAF T.O. 01-60J-2 Pilot's Operating Instructions P-51D",
+    "Mustang: The Story of the P-51 Fighter, Robert Gruenhagen, 1969"
+  ]
+}

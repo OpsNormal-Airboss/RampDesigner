@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "republic-p47-d",
+  "display_name": "P-47D Thunderbolt",
+  "manufacturer": "Republic Aviation",
+  "model": "P-47",
+  "variant": "D",
+  "category": "WARBIRD",
+  "wingspan_ft": 40.9,
+  "length_ft": 36.1,
+  "tail_height_ft": 14.2,
+  "prop_arc_ft": 14.0,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "republic-p47-d.svg",
+  "data_sources": [
+    "USAAF T.O. 01-65BC-1 Pilot's Operating Instructions P-47D",
+    "Jane's All the World's Aircraft 1945–46",
+    "Republic P-47 Thunderbolt, Roger Freeman, Jane's, 1982"
+  ]
+}

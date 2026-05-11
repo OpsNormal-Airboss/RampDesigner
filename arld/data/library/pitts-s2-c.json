@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "pitts-s2-c",
+  "display_name": "Pitts S-2C",
+  "manufacturer": "Aviat Aircraft",
+  "model": "Pitts S-2",
+  "variant": "C",
+  "category": "AEROBATIC",
+  "wingspan_ft": 20.0,
+  "length_ft": 17.9,
+  "tail_height_ft": 6.5,
+  "prop_arc_ft": 5.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "pitts-s2-c.svg",
+  "data_sources": [
+    "Aviat Aircraft Pitts S-2C Pilot's Operating Handbook, Aviat Aircraft, 1999",
+    "FAA Type Certificate Data Sheet A2SO, FAA, 2001",
+    "Pitts Aerobatics, Charlie Hillard, Kalmbach Books, 1982"
+  ]
+}

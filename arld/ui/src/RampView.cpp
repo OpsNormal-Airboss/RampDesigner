@@ -1,7 +1,10 @@
 #include <arld/ui/RampView.h>
 #include <arld/ui/RampScene.h>
 #include <arld/core/Config.h>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QKeyEvent>
+#include <QMimeData>
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QWheelEvent>
@@ -20,6 +23,7 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setFocusPolicy(Qt::StrongFocus);
     setBackgroundBrush(QColor(220, 225, 230));
+    setAcceptDrops(true);
 }
 
 void RampView::setRampScene(RampScene* scene) {
@@ -136,6 +140,32 @@ void RampView::resizeEvent(QResizeEvent* event) {
 void RampView::scrollContentsBy(int dx, int dy) {
     QGraphicsView::scrollContentsBy(dx, dy);
     notifySceneOverlay();
+}
+
+void RampView::dragEnterEvent(QDragEnterEvent* event) {
+    if (event->mimeData()->hasFormat("application/x-arld-aircraft-id"))
+        event->acceptProposedAction();
+    else
+        event->ignore();
+}
+
+void RampView::dragMoveEvent(QDragMoveEvent* event) {
+    if (event->mimeData()->hasFormat("application/x-arld-aircraft-id"))
+        event->acceptProposedAction();
+    else
+        event->ignore();
+}
+
+void RampView::dropEvent(QDropEvent* event) {
+    if (!event->mimeData()->hasFormat("application/x-arld-aircraft-id")) {
+        event->ignore();
+        return;
+    }
+    const QString id = QString::fromUtf8(
+        event->mimeData()->data("application/x-arld-aircraft-id"));
+    const QPointF scenePos = mapToScene(event->position().toPoint());
+    emit aircraftDropped(id, scenePos);
+    event->acceptProposedAction();
 }
 
 } // namespace arld::ui

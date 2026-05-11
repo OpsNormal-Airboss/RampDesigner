@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-martin-f35-a",
+  "display_name": "F-35A Lightning II",
+  "manufacturer": "Lockheed Martin",
+  "model": "F-35",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 35.0,
+  "length_ft": 51.4,
+  "tail_height_ft": 14.4,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-martin-f35-a.svg",
+  "data_sources": [
+    "USAF T.O. 1F-35A-1 Flight Manual F-35A",
+    "Jane's All the World's Aircraft 2015–16",
+    "F-35 Lightning II: Design and Development, Steve Davies, Osprey, 2011"
+  ]
+}

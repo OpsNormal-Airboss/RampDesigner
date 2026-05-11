@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "mcdonnell-douglas-f4-e",
+  "display_name": "F-4E Phantom II",
+  "manufacturer": "McDonnell Douglas",
+  "model": "F-4",
+  "variant": "E",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.4,
+  "length_ft": 63.0,
+  "tail_height_ft": 16.6,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mcdonnell-douglas-f4-e.svg",
+  "data_sources": [
+    "USAF T.O. 1F-4E-1 Flight Manual F-4E",
+    "Jane's All the World's Aircraft 1972–73",
+    "McDonnell Douglas F-4 Phantom, Jon Lake, Aerospace Publishing, 1992"
+  ]
+}

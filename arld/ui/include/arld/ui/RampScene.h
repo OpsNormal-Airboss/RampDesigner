@@ -1,9 +1,11 @@
 #pragma once
 #include <arld/core/UndoStack.h>
+#include <arld/core/AircraftLibraryEntry.h>
 #include <QGraphicsScene>
 
 namespace arld::ui {
 
+class AircraftItem;
 class RampBoundaryItem;
 class ScaleBarItem;
 
@@ -19,6 +21,10 @@ public:
     EditMode editMode() const { return m_mode; }
 
     arld::core::UndoStack& undoStack() { return m_undoStack; }
+
+    // Place an aircraft from the library at the given scene position.
+    // The position is the aircraft's geometric centre.
+    void placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPointF scenePos);
 
     // Called by RampView on every zoom change.
     void updateOverlay(double pixelsPerFt, QPointF scaleBarScenePos);

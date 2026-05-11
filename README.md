@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 0 — PoC](https://img.shields.io/badge/phase-0%20%E2%80%94%20PoC%20Sprint%202%2F5-00CC00)](./RUNBOOK.md)
+  [![Phase 0 — PoC](https://img.shields.io/badge/phase-0%20%E2%80%94%20PoC%20Sprint%203%2F5-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -39,8 +39,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |--------|------|--------|
 | 0-1 | CMake/vcpkg scaffold, CI matrix, `Config.h`, smoke tests | ✅ Complete |
 | 0-2 | Qt canvas — pan/zoom, boundary drawing, undo/redo framework | ✅ Complete |
-| 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ⬜ Up next |
-| 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Pending |
+| 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
+| 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Up next |
 | 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Pending |
 
 ## 🟢 What Works Today
@@ -54,6 +54,9 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Snap-to-grid** — 5 ft grid by default; hold Shift to draw freehand
 - **Scale bar** — live overlay showing correct footage at any zoom level
 - **Undo/redo** — 100-level history; `Ctrl+Z` / `Ctrl+Y` (or `Cmd+Z` / `Cmd+Shift+Z` on macOS)
+- **Aircraft library panel** — 20 aircraft across all major categories (WWII warbirds, jet fighters, heavy transports, bombers, aerobatic) with accurate dimensional data
+- **Drag-and-drop placement** — drag from library panel onto canvas; silhouettes render at true geographic scale (1 scene unit = 1 ft)
+- **Aircraft rotation** — click to select, drag the rotation handle to rotate; snaps to 45° (or hold Shift for 1° precision); fully undoable
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 

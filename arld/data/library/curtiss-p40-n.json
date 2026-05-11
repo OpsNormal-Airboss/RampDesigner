@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "curtiss-p40-n",
+  "display_name": "P-40N Warhawk",
+  "manufacturer": "Curtiss-Wright",
+  "model": "P-40",
+  "variant": "N",
+  "category": "WARBIRD",
+  "wingspan_ft": 37.4,
+  "length_ft": 33.4,
+  "tail_height_ft": 12.4,
+  "prop_arc_ft": 11.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "curtiss-p40-n.svg",
+  "data_sources": [
+    "USAAF T.O. 01-25CN-1 Pilot's Operating Instructions P-40N",
+    "Jane's All the World's Aircraft 1945–46",
+    "Curtiss P-40 in Action, Ernest McDowell, Squadron/Signal Publications, 1976"
+  ]
+}

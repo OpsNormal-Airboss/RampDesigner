@@ -28,7 +28,7 @@ public:
     // Called by VertexHandle during drag (live visual update, no undo entry).
     void onVertexMoved(int index, QPointF scenePos);
     // Called by VertexHandle on mouse-release to push the undo command.
-    void onVertexDragFinished(int index);
+    void onVertexDragFinished(int index, QPointF dragStart);
 
 private:
     void rebuildPath();

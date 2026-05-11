@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "grumman-f6f-5",
+  "display_name": "F6F-5 Hellcat",
+  "manufacturer": "Grumman",
+  "model": "F6F",
+  "variant": "5",
+  "category": "WARBIRD",
+  "wingspan_ft": 42.9,
+  "length_ft": 33.7,
+  "tail_height_ft": 14.5,
+  "prop_arc_ft": 13.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "grumman-f6f-5.svg",
+  "data_sources": [
+    "Naval Air Training and Operating Procedures Standardization (NATOPS) F6F-5 Pilot's Handbook",
+    "Jane's All the World's Aircraft 1945–46",
+    "Hellcat: The F6F in World War II, Barrett Tillman, 1979"
+  ]
+}

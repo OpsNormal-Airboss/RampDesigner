@@ -17,14 +17,22 @@
       "displayName": "macOS Debug",
       "inherits": "base",
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" },
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+      "environment": { "PATH": "/opt/homebrew/bin:/usr/local/bin:$penv{PATH}" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_PREFIX_PATH": "$env{Qt6_DIR}"
+      }
     },
     {
       "name": "mac-release",
       "displayName": "macOS Release",
       "inherits": "base",
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" },
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+      "environment": { "PATH": "/opt/homebrew/bin:/usr/local/bin:$penv{PATH}" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "$env{Qt6_DIR}"
+      }
     },
     {
       "name": "linux-debug",

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "north-american-b25-j",
+  "display_name": "B-25J Mitchell",
+  "manufacturer": "North American Aviation",
+  "model": "B-25",
+  "variant": "J",
+  "category": "BOMBER",
+  "wingspan_ft": 67.6,
+  "length_ft": 52.8,
+  "tail_height_ft": 15.9,
+  "prop_arc_ft": 12.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "north-american-b25-j.svg",
+  "data_sources": [
+    "USAAF T.O. 01-60GF-1 Pilot's Flight Operating Instructions B-25J",
+    "Jane's All the World's Aircraft 1945–46",
+    "North American B-25 Mitchell, Jerry Scutts, Osprey, 1993"
+  ]
+}

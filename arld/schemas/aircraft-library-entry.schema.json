@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/OpsNormal-Airboss/RampDesigner/schemas/aircraft-library-entry.v1.json",
+  "title": "AircraftLibraryEntry",
+  "description": "A single entry in the ARLD aircraft library.",
+  "type": "object",
+  "required": [
+    "schema_version", "id", "display_name", "manufacturer", "model",
+    "category", "wingspan_ft", "length_ft", "tail_height_ft",
+    "default_display_type", "silhouette_svg", "data_sources"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version; always 1 for this version."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+){1,4}$",
+      "description": "Permanent unique ID: {manufacturer}-{model}-{variant}. Never reassigned."
+    },
+    "display_name": { "type": "string" },
+    "manufacturer":  { "type": "string" },
+    "model":         { "type": "string" },
+    "variant":       { "type": "string" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "WARBIRD", "JET_FIGHTER", "HEAVY_TRANSPORT", "BOMBER",
+        "GENERAL_AVIATION", "AEROBATIC", "HELICOPTER", "BUSINESS_JET"
+      ]
+    },
+    "wingspan_ft":     { "type": "number", "exclusiveMinimum": 0 },
+    "length_ft":       { "type": "number", "exclusiveMinimum": 0 },
+    "tail_height_ft":  { "type": "number", "exclusiveMinimum": 0 },
+    "prop_arc_ft": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Propeller arc diameter. Only present for piston/turboprop aircraft."
+    },
+    "rotor_diameter_ft": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Main rotor diameter. Only present for helicopters."
+    },
+    "default_display_type": {
+      "type": "string",
+      "enum": [
+        "STATIC_DISPLAY", "WARBIRD_HERITAGE", "TAXI_ONLY",
+        "MILITARY_STATIC", "HOT_RAMP", "MEDIA_PLATFORM", "RAMP_SHOW"
+      ]
+    },
+    "silhouette_svg": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+\\.svg$",
+      "description": "SVG filename in the silhouettes/ subdirectory."
+    },
+    "data_sources": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "At least three published sources verifying dimensional data."
+    }
+  }
+}

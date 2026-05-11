@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <arld/ui/LibraryPanel.h>
 #include <arld/ui/RampScene.h>
 #include <arld/ui/RampView.h>
 #include <QAction>
@@ -10,12 +11,13 @@
 #include <QToolBar>
 
 using arld::ui::EditMode;
+using arld::ui::LibraryPanel;
 using arld::ui::RampScene;
 using arld::ui::RampView;
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setWindowTitle(tr("Airshow Ramp Layout Designer"));
-    resize(1280, 800);
+    resize(1440, 900);
 
     m_scene = new RampScene(this);
     m_view  = new RampView(this);
@@ -28,6 +30,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupMenuBar();
     setupToolBar();
     setupStatusBar();
+    setupLibraryPanel();
     updateUndoRedoActions();
 }
 
@@ -90,6 +93,19 @@ void MainWindow::updateUndoRedoActions() {
             ? tr("&Redo %1").arg(QString::fromStdString(stack.redoText()))
             : tr("&Redo"));
     }
+}
+
+void MainWindow::setupLibraryPanel() {
+    m_libraryPanel = new LibraryPanel(this);
+    addDockWidget(Qt::LeftDockWidgetArea, m_libraryPanel);
+
+    // When the user drops an aircraft onto the canvas, look up the entry
+    // in the library panel and place it on the scene.
+    connect(m_view, &RampView::aircraftDropped,
+            this, [this](const QString& id, QPointF scenePos) {
+        const auto* entry = m_libraryPanel->entryById(id.toStdString());
+        if (entry) m_scene->placeAircraft(*entry, scenePos);
+    });
 }
 
 void MainWindow::updateScaleLabel(double denominator) {

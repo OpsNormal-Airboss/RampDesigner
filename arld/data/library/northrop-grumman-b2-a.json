@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "northrop-grumman-b2-a",
+  "display_name": "B-2A Spirit",
+  "manufacturer": "Northrop Grumman",
+  "model": "B-2",
+  "variant": "A",
+  "category": "BOMBER",
+  "wingspan_ft": 172.0,
+  "length_ft": 69.0,
+  "tail_height_ft": 17.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "northrop-grumman-b2-a.svg",
+  "data_sources": [
+    "USAF T.O. 1B-2A-1 Flight Manual B-2A",
+    "Jane's All the World's Aircraft 2000–01",
+    "B-2 Spirit: The Stealth Bomber, Steve Pace, Motorbooks, 1999"
+  ]
+}

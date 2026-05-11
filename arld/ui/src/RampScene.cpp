@@ -1,4 +1,5 @@
 #include <arld/ui/RampScene.h>
+#include <arld/ui/AircraftItem.h>
 #include <arld/ui/RampBoundaryItem.h>
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
@@ -107,6 +108,70 @@ void RampScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
 
 void RampScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsScene::mouseMoveEvent(event);
+}
+
+void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPointF scenePos) {
+    const QString svgPath =
+        QString(":/library/silhouettes/%1").arg(QString::fromStdString(entry.silhouetteSvg));
+
+    auto* aircraft = new AircraftItem(entry, svgPath);
+
+    // Centre the aircraft bounding rect on scenePos.
+    aircraft->setPos(scenePos);
+    const QRectF br = aircraft->childrenBoundingRect();
+    aircraft->setPos(scenePos - br.center());
+
+    // Wire up the command callback so moves/rotations are undoable.
+    aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {
+        struct AlreadyExecuted : arld::core::ICommand {
+            std::unique_ptr<arld::core::ICommand> inner;
+            bool done = false;
+            explicit AlreadyExecuted(std::unique_ptr<arld::core::ICommand> c)
+                : inner(std::move(c)) {}
+            void execute() override { if (done) inner->execute(); done = true; }
+            void undo()    override { inner->undo(); }
+            std::string describe() const override { return inner->describe(); }
+        };
+        m_undoStack.push(std::make_unique<AlreadyExecuted>(std::move(cmd)));
+    };
+
+    // Wrap placement itself as an undoable command.
+    struct PlaceCommand : arld::core::ICommand {
+        RampScene* scene;
+        AircraftItem* item;
+        bool added = false;
+        PlaceCommand(RampScene* s, AircraftItem* a) : scene(s), item(a) {}
+        void execute() override {
+            if (!added) { scene->addItem(item); added = true; }
+            else item->setVisible(true);
+        }
+        void undo() override { item->setVisible(false); }
+        std::string describe() const override { return "Place Aircraft"; }
+    };
+
+    addItem(aircraft);
+    // Push a command that undoes the placement (hides/shows the item).
+    // The item was already added visually, so use AlreadyExecuted wrapper.
+    struct AlreadyExecuted : arld::core::ICommand {
+        std::unique_ptr<arld::core::ICommand> inner;
+        bool done = false;
+        explicit AlreadyExecuted(std::unique_ptr<arld::core::ICommand> c)
+            : inner(std::move(c)) {}
+        void execute() override { if (done) inner->execute(); done = true; }
+        void undo()    override { inner->undo(); }
+        std::string describe() const override { return inner->describe(); }
+    };
+
+    struct PlaceCmd : arld::core::ICommand {
+        AircraftItem* item;
+        explicit PlaceCmd(AircraftItem* a) : item(a) {}
+        void execute() override { item->setVisible(true); }
+        void undo()    override { item->setVisible(false); }
+        std::string describe() const override { return "Place Aircraft"; }
+    };
+
+    m_undoStack.push(std::make_unique<AlreadyExecuted>(
+        std::make_unique<PlaceCmd>(aircraft)));
 }
 
 } // namespace arld::ui

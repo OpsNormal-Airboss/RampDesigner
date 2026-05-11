@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "boeing-b17-g",
+  "display_name": "B-17G Flying Fortress",
+  "manufacturer": "Boeing",
+  "model": "B-17",
+  "variant": "G",
+  "category": "BOMBER",
+  "wingspan_ft": 103.8,
+  "length_ft": 74.9,
+  "tail_height_ft": 19.1,
+  "prop_arc_ft": 13.2,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "boeing-b17-g.svg",
+  "data_sources": [
+    "USAAF T.O. 01-20EJ-1 Pilot's Operating Instructions B-17G",
+    "Jane's All the World's Aircraft 1945–46",
+    "Boeing B-17 Flying Fortress, Roger Freeman, Osprey, 1983"
+  ]
+}

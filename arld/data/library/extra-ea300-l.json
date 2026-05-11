@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "extra-ea300-l",
+  "display_name": "Extra EA-300L",
+  "manufacturer": "Extra Aircraft",
+  "model": "EA-300",
+  "variant": "L",
+  "category": "AEROBATIC",
+  "wingspan_ft": 26.3,
+  "length_ft": 23.3,
+  "tail_height_ft": 8.4,
+  "prop_arc_ft": 6.2,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "extra-ea300-l.svg",
+  "data_sources": [
+    "Extra Aircraft EA-300L Flight Manual, Extra Flugzeugbau GmbH, 2003",
+    "Jane's All the World's Aircraft 2005–06",
+    "Extra 300L Type Certificate Data Sheet EASA.A.062, EASA, 2009"
+  ]
+}

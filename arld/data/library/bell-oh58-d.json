@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "bell-oh58-d",
+  "display_name": "OH-58D Kiowa Warrior",
+  "manufacturer": "Bell Helicopter",
+  "model": "OH-58",
+  "variant": "D",
+  "category": "HELICOPTER",
+  "wingspan_ft": 35.0,
+  "length_ft": 40.9,
+  "tail_height_ft": 12.5,
+  "rotor_diameter_ft": 35.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "bell-oh58-d.svg",
+  "data_sources": [
+    "US Army TM 1-1520-248-10 Operator's Manual OH-58D",
+    "Jane's All the World's Aircraft 2000–01",
+    "Bell OH-58 Kiowa, Duncan Curtis, Crowood Press, 2000"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "boeing-c17-a",
+  "display_name": "C-17A Globemaster III",
+  "manufacturer": "Boeing",
+  "model": "C-17",
+  "variant": "A",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 169.8,
+  "length_ft": 174.1,
+  "tail_height_ft": 55.1,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-c17-a.svg",
+  "data_sources": [
+    "USAF T.O. 1C-17A-1 Flight Manual C-17A",
+    "Jane's All the World's Aircraft 2000–01",
+    "Boeing C-17 Globemaster III, Robert Dorr, Osprey, 1995"
+  ]
+}

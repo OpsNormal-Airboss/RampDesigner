@@ -19,6 +19,10 @@ public:
 signals:
     void scaleChanged(double denominator);
 
+signals:
+    // Emitted when an aircraft is dropped onto the canvas.
+    void aircraftDropped(const QString& aircraftId, QPointF scenePos);
+
 protected:
     void wheelEvent(QWheelEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
@@ -27,6 +31,9 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void scrollContentsBy(int dx, int dy) override;
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
 
 private:
     void applyScale();

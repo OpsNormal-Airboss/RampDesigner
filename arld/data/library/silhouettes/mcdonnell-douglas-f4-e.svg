@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.4 63">
+  <polygon points="20.2,51 28.7,52.6 28.7,58.2 20.2,59" fill="#6a6a6a"/>
+  <polygon points="18.2,51 9.7,52.6 9.7,58.2 18.2,59" fill="#6a6a6a"/>
+  <ellipse cx="23.2" cy="31.6" rx="1.5" ry="4.8" fill="#3a3a3a"/>
+  <ellipse cx="15.2" cy="31.6" rx="1.5" ry="4.8" fill="#3a3a3a"/>
+  <polygon points="21.7,28 38.4,37 38.4,38 21.7,40" fill="#5e5e5e"/>
+  <polygon points="16.7,28 0,37 0,38 16.7,40" fill="#5e5e5e"/>
+  <path d="M 19.2,0 C 20.45,8.505 21.7,19.845 21.7,28.35 L 21.325,63 L 19.2,63 L 17.075,63 L 16.7,28.35 C 16.7,19.845 17.95,8.505 19.2,0 Z" fill="#4a4a4a"/>
+</svg>

@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 0 (C++ PoC) — Sprints 0-1 and 0-2 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, and boundary drawing are all implemented. Next up is Sprint 0-3 (20-aircraft library + drag-and-drop placement).
+**Current status:** Phase 0 (C++ PoC) — Sprints 0-1, 0-2, and 0-3 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, boundary drawing, 20-aircraft library, and drag-and-drop placement are all implemented. Next up is Sprint 0-4 (CGAL clearance zones + violation detection).
 
 ## 📋 Post-Sprint Documentation
 
@@ -38,7 +38,7 @@ After completing each sprint, update the following files to reflect the current 
 |--------|------|--------|
 | 0-1 | CMake/vcpkg scaffold, CI matrix, Config.h, smoke tests | ✅ Complete |
 | 0-2 | Qt canvas prototype — pan/zoom, boundary drawing, undo/redo | ✅ Complete |
-| 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ⬜ Not started |
+| 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
 | 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Not started |
 | 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Not started |
 
@@ -102,19 +102,36 @@ Supporting directories:
 vcpkg install
 
 # Install Qt 6.7 separately (see CONTRIBUTING.md for platform-specific instructions)
+# macOS (Homebrew): brew install qt qtsvg
+# Set Qt6_DIR for CMake to find Qt: export Qt6_DIR=/opt/homebrew/lib/cmake/Qt6
 
 # Configure + build
 cmake --preset linux-debug      # or mac-debug / win-debug
 cmake --build --preset linux-debug
+
+# macOS local build (if cmake --preset mac-debug fails to find Qt):
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+  -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
+  -DQt6_DIR=/opt/homebrew/lib/cmake/Qt6 \
+  -DQt6Svg_DIR=/opt/homebrew/lib/cmake/Qt6Svg \
+  -DQt6SvgWidgets_DIR=/opt/homebrew/lib/cmake/Qt6SvgWidgets \
+  -DQt6Widgets_DIR=/opt/homebrew/lib/cmake/Qt6Widgets \
+  -DQt6Core_DIR=/opt/homebrew/lib/cmake/Qt6Core \
+  -B build/mac-debug .
 
 # Run all tests
 ctest --preset linux-debug --output-on-failure
 
 # Run a single test by name pattern
 ctest --preset linux-debug -R "UndoStack"
+ctest --preset linux-debug -R "AircraftLibraryParser"
 
 # Run license checker
 python3 scripts/check-licenses.py
+
+# Regenerate SVG silhouettes (after changing aircraft parameters)
+python3 scripts/generate-silhouettes.py
 ```
 
 CMakePresets.json defines six presets: `{mac,linux,win}-{debug,release}`.
@@ -126,9 +143,10 @@ RampScene   : QGraphicsScene
   ├── RampBoundaryItem    : QGraphicsPathItem    ← Sprint 0-2 ✅
   │     └── VertexHandle  : QGraphicsEllipseItem  (child, draggable)
   ├── ScaleBarItem        : QGraphicsItem         ← Sprint 0-2 ✅ (ItemIgnoresTransformations)
-  ├── AircraftItem        : QGraphicsItemGroup    ← Sprint 0-3 (pending)
-  │     ├── SilhouetteItem  : QGraphicsSvgItem
-  │     └── ClearanceZoneItem : QGraphicsPathItem
+  ├── AircraftItem        : QGraphicsItemGroup    ← Sprint 0-3 ✅
+  │     ├── QGraphicsSvgItem (silhouette, scaled to wingspan in scene-ft)
+  │     └── RotationHandle  : QGraphicsEllipseItem (ItemIgnoresTransformations; visible when selected)
+  ├── ClearanceZoneItem   : QGraphicsPathItem     ← Sprint 0-4 (pending)
   ├── GridOverlayItem     : QGraphicsItem         ← Sprint 0-2+ (pending)
   └── AnnotationItem      : QGraphicsTextItem     ← Phase 1 (pending)
 
@@ -144,9 +162,22 @@ RampView    : QGraphicsView
 
 - `arld/core/include/arld/core/ICommand.h` — pure interface (`execute`, `undo`, `describe`)
 - `arld/core/include/arld/core/UndoStack.h` — 100-level stack, `onChanged` callback, zero Qt dependency
-- Commands in `arld/ui/` anonymous namespaces: `BoundaryAddPointCommand`, `MoveVertexCommand`
+- Commands in `arld/ui/` anonymous namespaces: `BoundaryAddPointCommand`, `MoveVertexCommand`, `MoveAircraftCommand`, `RotateAircraftCommand`, `PlaceCmd`
 - Wired to `Ctrl+Z` / `Ctrl+Y` (all platforms) via `QKeySequence::Undo` / `QKeySequence::Redo`
-- Vertex-drag commands use an `AlreadyExecutedWrapper` so `push()` doesn't re-apply a change already applied visually
+- Commands already applied visually (drag-end) use a local `AlreadyExecutedWrapper` struct that skips the first `execute()` call
+
+## ✈️ Aircraft Library (as built — Sprint 0-3)
+
+- **Data:** `arld/data/library/` — 20 JSON entries + `library_manifest.json` + `silhouettes/` (20 SVGs)
+- **Schema:** `arld/schemas/aircraft-library-entry.schema.json` (Draft-07 JSON Schema)
+- **SVG silhouettes:** generated by `scripts/generate-silhouettes.py` — top-down schematics with viewBox in feet
+- **Core:** `arld/core/include/arld/core/AircraftLibraryEntry.h` — struct with `AircraftCategory` and `DisplayType` enums
+- **Parser:** `arld/core/src/AircraftLibraryParser.cpp` — `parseEntry(jsonStr)` and `parseManifest(jsonStr)` using nlohmann/json; zero Qt dependency
+- **Qt Resources:** `arld/data/library/aircraft_library.qrc` embedded in `arld_ui` via AUTORCC; accessed at `:/library/{id}.json` and `:/library/silhouettes/{id}.svg`
+- **UI:** `arld/ui/src/LibraryPanel.cpp` — `QDockWidget` with `DraggableListWidget`; initiates `application/x-arld-aircraft-id` drags
+- **Drop handling:** `RampView::dropEvent` emits `aircraftDropped(id, scenePos)` → `MainWindow` → `RampScene::placeAircraft(entry, scenePos)` — placement is undoable
+- **AircraftItem:** `arld/ui/src/AircraftItem.cpp` — `QGraphicsItemGroup` containing a `QGraphicsSvgItem` scaled so 1 SVG unit = 1 ft; `RotationHandle` sub-item snaps to 45° (or 1° with Shift)
+- **AUTOMOC:** All Q_OBJECT headers in `arld_ui` are listed explicitly in `target_sources` (not just `.cpp` files) so CMake AUTOMOC finds them
 
 ## 🧪 Test Suite (as built)
 
@@ -154,6 +185,8 @@ RampView    : QGraphicsView
 |------|-------|---------|
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction, Config constants |
 | `arld/tests/test_undo.cpp` | 7 | Full UndoStack behaviour incl. 100-level depth |
+| `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
+| **Total** | **17** | |
 
 ## 📐 CGAL Geometry (Sprint 0-4, pending)
 

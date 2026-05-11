@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "entries": [
+    "north-american-p51-d",
+    "supermarine-spitfire-ixc",
+    "grumman-f6f-5",
+    "curtiss-p40-n",
+    "republic-p47-d",
+    "boeing-b17-g",
+    "north-american-b25-j",
+    "douglas-a26-c",
+    "mcdonnell-douglas-f4-e",
+    "general-dynamics-f16-a",
+    "mcdonnell-douglas-fa18-c",
+    "lockheed-martin-f22-a",
+    "lockheed-martin-f35-a",
+    "northrop-grumman-b2-a",
+    "lockheed-c130-h",
+    "boeing-c17-a",
+    "boeing-b52-h",
+    "extra-ea300-l",
+    "pitts-s2-c",
+    "bell-oh58-d"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "mcdonnell-douglas-fa18-c",
+  "display_name": "F/A-18C Hornet",
+  "manufacturer": "McDonnell Douglas",
+  "model": "F/A-18",
+  "variant": "C",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 40.4,
+  "length_ft": 56.0,
+  "tail_height_ft": 15.3,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mcdonnell-douglas-fa18-c.svg",
+  "data_sources": [
+    "NAVAIR 01-F18AAA-1 NATOPS Flight Manual F/A-18A/B/C/D",
+    "Jane's All the World's Aircraft 1990–91",
+    "McDonnell Douglas F/A-18 Hornet, Randy Jolly & George Hall, Osprey, 1990"
+  ]
+}

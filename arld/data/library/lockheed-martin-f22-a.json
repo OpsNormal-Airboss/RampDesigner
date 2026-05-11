@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-martin-f22-a",
+  "display_name": "F-22A Raptor",
+  "manufacturer": "Lockheed Martin",
+  "model": "F-22",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 44.5,
+  "length_ft": 62.1,
+  "tail_height_ft": 16.7,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-martin-f22-a.svg",
+  "data_sources": [
+    "USAF T.O. 1F-22A-1 Flight Manual F-22A",
+    "Jane's All the World's Aircraft 2005–06",
+    "Lockheed Martin F-22 Raptor, Doug Richardson, Airlife, 2001"
+  ]
+}

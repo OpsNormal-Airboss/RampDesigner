@@ -12,7 +12,8 @@ BLOCKED_PREFIXES = ("GPL-", "AGPL-")
 # Update this table whenever a new dependency is added to vcpkg.json or CMakeLists.
 DEPENDENCY_LICENSES: dict[str, str] = {
     # Runtime / build deps
-    "Qt6 (LGPL dynamic link)":  "LGPL-3.0-only",
+    "Qt6 (LGPL dynamic link)":           "LGPL-3.0-only",
+    "Qt6 SvgWidgets (LGPL dynamic link)": "LGPL-3.0-only",
     "CGAL":                     "LGPL-3.0-or-later",
     "nlohmann-json":             "MIT",
     "Catch2":                    "BSL-1.0",

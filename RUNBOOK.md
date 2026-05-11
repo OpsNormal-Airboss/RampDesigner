@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 0, Sprint 0-2 complete. Build system, CI, Qt canvas, and undo/redo framework are all operational.
+> Updated after each sprint. **Current status:** Phase 0, Sprint 0-3 complete. Build system, CI, Qt canvas, undo/redo framework, 20-aircraft library, and drag-and-drop placement are all operational.
 
 ---
 
@@ -85,7 +85,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 |------|-------|----------------|
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction; Config constant values and ranges |
 | `arld/tests/test_undo.cpp` | 7 | UndoStack push/undo/redo, 100-level limit, redo clearing, callbacks |
-| **Total** | **10** | |
+| `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopter rotor, manifest ordering, error handling |
+| **Total** | **17** | |
 
 ---
 
@@ -172,14 +173,40 @@ cat LICENSES.txt
 
 ## 🗺️ Aircraft Library
 
-The aircraft library lives in `arld/data/library/` — one JSON file per aircraft entry (Sprint 0-3). Entry IDs follow the format `{manufacturer_code}-{model_code}-{variant_code}` (e.g., `north-american-p51-d`).
+The aircraft library lives in `arld/data/library/` — one JSON file per aircraft entry. Entry IDs follow the format `{manufacturer_code}-{model_code}-{variant_code}` (e.g., `north-american-p51-d`). All 20 Phase 0 aircraft are implemented.
+
+### 20 Phase 0 Aircraft (Sprint 0-3)
+
+| ID | Name | Category |
+|----|------|----------|
+| `north-american-p51-d` | P-51D Mustang | Warbird |
+| `supermarine-spitfire-ixc` | Spitfire Mk.IXc | Warbird |
+| `grumman-f6f-5` | F6F-5 Hellcat | Warbird |
+| `curtiss-p40-n` | P-40N Warhawk | Warbird |
+| `republic-p47-d` | P-47D Thunderbolt | Warbird |
+| `boeing-b17-g` | B-17G Flying Fortress | Bomber |
+| `north-american-b25-j` | B-25J Mitchell | Bomber |
+| `douglas-a26-c` | A-26C Invader | Bomber |
+| `mcdonnell-douglas-f4-e` | F-4E Phantom II | Jet Fighter |
+| `general-dynamics-f16-a` | F-16A Fighting Falcon | Jet Fighter |
+| `mcdonnell-douglas-fa18-c` | F/A-18C Hornet | Jet Fighter |
+| `lockheed-martin-f22-a` | F-22A Raptor | Jet Fighter |
+| `lockheed-martin-f35-a` | F-35A Lightning II | Jet Fighter |
+| `northrop-grumman-b2-a` | B-2A Spirit | Bomber |
+| `lockheed-c130-h` | C-130H Hercules | Heavy Transport |
+| `boeing-c17-a` | C-17A Globemaster III | Heavy Transport |
+| `boeing-b52-h` | B-52H Stratofortress | Bomber |
+| `extra-ea300-l` | Extra EA-300L | Aerobatic |
+| `pitts-s2-c` | Pitts S-2C | Aerobatic |
+| `bell-oh58-d` | OH-58D Kiowa Warrior | Helicopter |
 
 ### Adding a New Aircraft Entry
 
-1. Create a new JSON file in `arld/data/library/` conforming to the `AircraftLibraryEntry` schema (see `arld/schemas/`).
-2. Source or create an original SVG silhouette scaled to the published wingspan.
-3. Update `library_manifest.json` with the new entry ID and its SHA-256 file hash.
-4. Cross-reference dimensional data against at least three published sources; note them in the `data_source` field.
+1. Create a new JSON file in `arld/data/library/` conforming to `arld/schemas/aircraft-library-entry.schema.json`.
+2. Run `python3 scripts/generate-silhouettes.py` to generate the SVG, or create an original SVG in `arld/data/library/silhouettes/`.
+3. Add the entry ID to `library_manifest.json` (controls display order).
+4. Add the new JSON and SVG files to `arld/data/library/aircraft_library.qrc`.
+5. Cross-reference dimensional data against at least three published sources; note them in the `data_sources` field.
 
 IDs are permanent — never reassign or reuse a retired entry ID.
 
@@ -218,7 +245,7 @@ cmake --build --preset win-release --target package
 ### Phase 0 → Phase 1 Gate (PoC Sign-Off)
 
 - [x] GitHub Actions CI passes clean builds on all 3 matrix targets
-- [ ] 20 aircraft types in library with correct scaled silhouette rendering *(Sprint 0-3)*
+- [x] 20 aircraft types in library with correct scaled silhouette rendering *(Sprint 0-3 ✅)*
 - [ ] Test layout: 15 aircraft created, saved, reloaded, SVG-exported with no data loss *(Sprint 0-5)*
 - [ ] Clearance violations correctly detected for ≥ 5 scenarios in the test suite *(Sprint 0-4)*
 - [ ] Domain expert completes a 10-aircraft layout in < 20 minutes unassisted *(Sprint 0-5)*

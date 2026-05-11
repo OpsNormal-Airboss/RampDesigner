@@ -43,7 +43,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.7.3'
-          modules: 'qtsvg'
+          modules: 'qtsvg qtsvgwidgets'
           cache: true
 
       - name: Set up vcpkg

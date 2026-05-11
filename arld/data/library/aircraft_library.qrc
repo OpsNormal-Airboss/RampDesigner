@@ -1,0 +1,45 @@
+<RCC>
+  <qresource prefix="/library">
+    <file>library_manifest.json</file>
+    <file>north-american-p51-d.json</file>
+    <file>supermarine-spitfire-ixc.json</file>
+    <file>grumman-f6f-5.json</file>
+    <file>curtiss-p40-n.json</file>
+    <file>republic-p47-d.json</file>
+    <file>boeing-b17-g.json</file>
+    <file>north-american-b25-j.json</file>
+    <file>douglas-a26-c.json</file>
+    <file>mcdonnell-douglas-f4-e.json</file>
+    <file>general-dynamics-f16-a.json</file>
+    <file>mcdonnell-douglas-fa18-c.json</file>
+    <file>lockheed-martin-f22-a.json</file>
+    <file>lockheed-martin-f35-a.json</file>
+    <file>northrop-grumman-b2-a.json</file>
+    <file>lockheed-c130-h.json</file>
+    <file>boeing-c17-a.json</file>
+    <file>boeing-b52-h.json</file>
+    <file>extra-ea300-l.json</file>
+    <file>pitts-s2-c.json</file>
+    <file>bell-oh58-d.json</file>
+    <file>silhouettes/north-american-p51-d.svg</file>
+    <file>silhouettes/supermarine-spitfire-ixc.svg</file>
+    <file>silhouettes/grumman-f6f-5.svg</file>
+    <file>silhouettes/curtiss-p40-n.svg</file>
+    <file>silhouettes/republic-p47-d.svg</file>
+    <file>silhouettes/boeing-b17-g.svg</file>
+    <file>silhouettes/north-american-b25-j.svg</file>
+    <file>silhouettes/douglas-a26-c.svg</file>
+    <file>silhouettes/mcdonnell-douglas-f4-e.svg</file>
+    <file>silhouettes/general-dynamics-f16-a.svg</file>
+    <file>silhouettes/mcdonnell-douglas-fa18-c.svg</file>
+    <file>silhouettes/lockheed-martin-f22-a.svg</file>
+    <file>silhouettes/lockheed-martin-f35-a.svg</file>
+    <file>silhouettes/northrop-grumman-b2-a.svg</file>
+    <file>silhouettes/lockheed-c130-h.svg</file>
+    <file>silhouettes/boeing-c17-a.svg</file>
+    <file>silhouettes/boeing-b52-h.svg</file>
+    <file>silhouettes/extra-ea300-l.svg</file>
+    <file>silhouettes/pitts-s2-c.svg</file>
+    <file>silhouettes/bell-oh58-d.svg</file>
+  </qresource>
+</RCC>

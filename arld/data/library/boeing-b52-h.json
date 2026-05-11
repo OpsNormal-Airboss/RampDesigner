@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "boeing-b52-h",
+  "display_name": "B-52H Stratofortress",
+  "manufacturer": "Boeing",
+  "model": "B-52",
+  "variant": "H",
+  "category": "BOMBER",
+  "wingspan_ft": 185.0,
+  "length_ft": 159.9,
+  "tail_height_ft": 40.8,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-b52-h.svg",
+  "data_sources": [
+    "USAF T.O. 1B-52H-1 Flight Manual B-52H",
+    "Jane's All the World's Aircraft 1985–86",
+    "Boeing B-52 Stratofortress, Alwyn Lloyd, Ian Allan, 1987"
+  ]
+}

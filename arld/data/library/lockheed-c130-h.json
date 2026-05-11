@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-c130-h",
+  "display_name": "C-130H Hercules",
+  "manufacturer": "Lockheed",
+  "model": "C-130",
+  "variant": "H",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 132.6,
+  "length_ft": 97.8,
+  "tail_height_ft": 38.4,
+  "prop_arc_ft": 13.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-c130-h.svg",
+  "data_sources": [
+    "USAF T.O. 1C-130H-1 Flight Manual C-130H",
+    "Jane's All the World's Aircraft 1990–91",
+    "Lockheed C-130 Hercules, Martin Bowman, Crowood Press, 1999"
+  ]
+}

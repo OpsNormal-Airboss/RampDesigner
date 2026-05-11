@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "general-dynamics-f16-a",
+  "display_name": "F-16A Fighting Falcon",
+  "manufacturer": "General Dynamics",
+  "model": "F-16",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 31.0,
+  "length_ft": 49.3,
+  "tail_height_ft": 16.8,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "general-dynamics-f16-a.svg",
+  "data_sources": [
+    "USAF T.O. 1F-16A-1 Flight Manual F-16A/B",
+    "Jane's All the World's Aircraft 1985–86",
+    "General Dynamics F-16 Fighting Falcon, Doug Richardson, Jane's, 1983"
+  ]
+}
