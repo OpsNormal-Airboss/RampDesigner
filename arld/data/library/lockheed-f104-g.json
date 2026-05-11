@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-f104-g",
+  "display_name": "F-104G Starfighter",
+  "manufacturer": "Lockheed Aircraft",
+  "model": "F-104",
+  "variant": "G",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 21.92,
+  "length_ft": 54.77,
+  "tail_height_ft": 13.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-f104-g.svg",
+  "data_sources": [
+    "USAF T.O. 1F-104G-1 Pilot's Operating Instructions F-104G",
+    "Jane's All the World's Aircraft 1963–64",
+    "Starfighter, Rene Francillon, 1988"
+  ],
+  "verified_date": "2026-05-10"
+}

@@ -17,5 +17,8 @@ target_link_libraries(arld
 
 set_target_properties(arld PROPERTIES
     MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_BUNDLE_NAME "ARLD"
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.opsnormal.arld"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1.0"
     WIN32_EXECUTABLE TRUE
 )

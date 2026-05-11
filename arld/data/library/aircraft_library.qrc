@@ -21,6 +21,36 @@
     <file>extra-ea300-l.json</file>
     <file>pitts-s2-c.json</file>
     <file>bell-oh58-d.json</file>
+    <file>vought-f4u-4.json</file>
+    <file>north-american-t6-g.json</file>
+    <file>boeing-pt17.json</file>
+    <file>hawker-hurricane-iic.json</file>
+    <file>yakovlev-yak3.json</file>
+    <file>mitsubishi-a6m5.json</file>
+    <file>de-havilland-mosquito-fb6.json</file>
+    <file>consolidated-b24-j.json</file>
+    <file>north-american-f86-e.json</file>
+    <file>mcdonnell-douglas-f15-c.json</file>
+    <file>mikoyan-mig21-bis.json</file>
+    <file>lockheed-f104-g.json</file>
+    <file>dassault-rafale-c.json</file>
+    <file>douglas-a4-f.json</file>
+    <file>bae-hawk-t1.json</file>
+    <file>northrop-t38-a.json</file>
+    <file>avro-vulcan-b2.json</file>
+    <file>boeing-b29.json</file>
+    <file>boeing-kc135-r.json</file>
+    <file>sukhoi-su26-m.json</file>
+    <file>zivko-edge-540.json</file>
+    <file>extra-ea200.json</file>
+    <file>christen-eagle-ii.json</file>
+    <file>sikorsky-uh60-a.json</file>
+    <file>bell-uh1h.json</file>
+    <file>boeing-ah64-d.json</file>
+    <file>sikorsky-ch53-e.json</file>
+    <file>lockheed-c5-m.json</file>
+    <file>airbus-a400m.json</file>
+    <file>douglas-c47-d.json</file>
     <file>silhouettes/north-american-p51-d.svg</file>
     <file>silhouettes/supermarine-spitfire-ixc.svg</file>
     <file>silhouettes/grumman-f6f-5.svg</file>
@@ -41,5 +71,35 @@
     <file>silhouettes/extra-ea300-l.svg</file>
     <file>silhouettes/pitts-s2-c.svg</file>
     <file>silhouettes/bell-oh58-d.svg</file>
+    <file>silhouettes/vought-f4u-4.svg</file>
+    <file>silhouettes/north-american-t6-g.svg</file>
+    <file>silhouettes/boeing-pt17.svg</file>
+    <file>silhouettes/hawker-hurricane-iic.svg</file>
+    <file>silhouettes/yakovlev-yak3.svg</file>
+    <file>silhouettes/mitsubishi-a6m5.svg</file>
+    <file>silhouettes/de-havilland-mosquito-fb6.svg</file>
+    <file>silhouettes/consolidated-b24-j.svg</file>
+    <file>silhouettes/north-american-f86-e.svg</file>
+    <file>silhouettes/mcdonnell-douglas-f15-c.svg</file>
+    <file>silhouettes/mikoyan-mig21-bis.svg</file>
+    <file>silhouettes/lockheed-f104-g.svg</file>
+    <file>silhouettes/dassault-rafale-c.svg</file>
+    <file>silhouettes/douglas-a4-f.svg</file>
+    <file>silhouettes/bae-hawk-t1.svg</file>
+    <file>silhouettes/northrop-t38-a.svg</file>
+    <file>silhouettes/avro-vulcan-b2.svg</file>
+    <file>silhouettes/boeing-b29.svg</file>
+    <file>silhouettes/boeing-kc135-r.svg</file>
+    <file>silhouettes/sukhoi-su26-m.svg</file>
+    <file>silhouettes/zivko-edge-540.svg</file>
+    <file>silhouettes/extra-ea200.svg</file>
+    <file>silhouettes/christen-eagle-ii.svg</file>
+    <file>silhouettes/sikorsky-uh60-a.svg</file>
+    <file>silhouettes/bell-uh1h.svg</file>
+    <file>silhouettes/boeing-ah64-d.svg</file>
+    <file>silhouettes/sikorsky-ch53-e.svg</file>
+    <file>silhouettes/lockheed-c5-m.svg</file>
+    <file>silhouettes/airbus-a400m.svg</file>
+    <file>silhouettes/douglas-c47-d.svg</file>
   </qresource>
 </RCC>

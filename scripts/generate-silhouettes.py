@@ -428,6 +428,151 @@ aircraft_svgs = {
 
     "pitts-s2-c": lambda: biplane_svg(20.0, 17.9),
     "bell-oh58-d": lambda: helicopter_svg(35.0, 40.9),
+
+    # --- Sprint 1-1: 30 new aircraft ---
+
+    # WARBIRD single-engine props
+    "vought-f4u-4": lambda: se_prop_fighter(
+        "f4u4", 41.0, 33.83, 3.5, 6.8,
+        wing_le=12.5, wing_te=22.0,
+        hstab_span=14.0, hstab_le=28.0, hstab_te=33.0),
+
+    "north-american-t6-g": lambda: se_prop_fighter(
+        "t6g", 42.0, 29.0, 2.5, 5.5,
+        wing_le=9.5, wing_te=18.5,
+        hstab_span=13.5, hstab_le=23.5, hstab_te=28.5),
+
+    "boeing-pt17": lambda: biplane_svg(32.17, 24.42),
+
+    "hawker-hurricane-iic": lambda: se_prop_fighter(
+        "hurricane2c", 40.0, 32.0, 3.5, 6.5,
+        wing_le=12.0, wing_te=21.5,
+        hstab_span=14.5, hstab_le=26.5, hstab_te=31.5),
+
+    "yakovlev-yak3": lambda: se_prop_fighter(
+        "yak3", 30.17, 27.92, 2.5, 5.0,
+        wing_le=10.0, wing_te=18.5,
+        hstab_span=11.0, hstab_le=22.5, hstab_te=27.5),
+
+    "mitsubishi-a6m5": lambda: se_prop_fighter(
+        "a6m5", 36.08, 29.83, 2.8, 5.5,
+        wing_le=11.5, wing_te=20.0,
+        hstab_span=12.5, hstab_le=24.5, hstab_te=29.5),
+
+    # Twin-engine prop (WWII bombers / transports)
+    "de-havilland-mosquito-fb6": lambda: twin_prop_bomber(
+        "mosquito_fb6", 54.17, 40.58, 5.0, 5.5, eng_x=10.0,
+        wing_le=16.0, wing_te=28.0,
+        hstab_span=22.0, hstab_le=33.0, hstab_te=40.0),
+
+    "consolidated-b24-j": lambda: twin_prop_bomber(
+        "b24j", 110.0, 67.17, 8.0, 9.5, eng_x=21.0,
+        wing_le=23.0, wing_te=45.0,
+        hstab_span=42.0, hstab_le=55.0, hstab_te=66.0),
+
+    "boeing-b29": lambda: twin_prop_bomber(
+        "b29", 141.25, 99.0, 10.0, 12.0, eng_x=28.0,
+        wing_le=35.0, wing_te=65.0,
+        hstab_span=52.0, hstab_le=82.0, hstab_te=97.0),
+
+    "douglas-c47-d": lambda: twin_prop_bomber(
+        "c47d", 95.0, 63.83, 6.5, 8.0, eng_x=18.0,
+        wing_le=25.0, wing_te=47.0,
+        hstab_span=38.0, hstab_le=53.0, hstab_te=63.0),
+
+    "airbus-a400m": lambda: twin_prop_bomber(
+        "a400m", 139.08, 148.33, 10.0, 12.0, eng_x=26.0,
+        wing_le=60.0, wing_te=100.0,
+        hstab_span=46.0, hstab_le=124.0, hstab_te=146.0),
+
+    # Swept-wing jet fighters
+    "north-american-f86-e": lambda: swept_jet(
+        "f86e", 37.08, 37.5, 4.0,
+        wing_le_root=16.0, wing_le_tip=24.0,
+        wing_te_root=27.0, wing_te_tip=22.0,
+        hstab_span=14.0, hstab_le=30.0, hstab_te=36.5),
+
+    "mcdonnell-douglas-f15-c": lambda: swept_jet(
+        "f15c", 42.83, 63.83, 5.5,
+        wing_le_root=24.0, wing_le_tip=35.0,
+        wing_te_root=44.0, wing_te_tip=42.0,
+        hstab_span=20.0, hstab_le=52.0, hstab_te=60.0,
+        twin=True, lerx=True),
+
+    "mikoyan-mig21-bis": lambda: swept_jet(
+        "mig21bis", 23.58, 48.17, 3.0,
+        wing_le_root=15.0, wing_le_tip=22.0,
+        wing_te_root=28.0, wing_te_tip=23.0,
+        hstab_span=14.0, hstab_le=36.0, hstab_te=44.0,
+        lerx=True),
+
+    "lockheed-f104-g": lambda: swept_jet(
+        "f104g", 21.92, 54.77, 2.5,
+        wing_le_root=22.0, wing_le_tip=24.0,
+        wing_te_root=30.0, wing_te_tip=22.0,
+        hstab_span=11.0, hstab_le=47.0, hstab_te=53.0),
+
+    "dassault-rafale-c": lambda: swept_jet(
+        "rafale_c", 35.42, 50.08, 4.0,
+        wing_le_root=20.0, wing_le_tip=30.0,
+        wing_te_root=42.0, wing_te_tip=35.0,
+        hstab_span=12.0, hstab_le=40.0, hstab_te=47.0,
+        lerx=True),
+
+    "douglas-a4-f": lambda: swept_jet(
+        "a4f", 27.5, 40.33, 3.0,
+        wing_le_root=14.0, wing_le_tip=22.0,
+        wing_te_root=28.0, wing_te_tip=27.0,
+        hstab_span=12.0, hstab_le=31.0, hstab_te=38.0),
+
+    "bae-hawk-t1": lambda: swept_jet(
+        "hawk_t1", 30.92, 39.42, 3.5,
+        wing_le_root=14.0, wing_le_tip=22.0,
+        wing_te_root=27.0, wing_te_tip=21.0,
+        hstab_span=12.0, hstab_le=30.5, hstab_te=37.5),
+
+    "northrop-t38-a": lambda: swept_jet(
+        "t38a", 25.75, 46.33, 3.0,
+        wing_le_root=18.0, wing_le_tip=25.0,
+        wing_te_root=32.0, wing_te_tip=25.0,
+        hstab_span=12.0, hstab_le=36.0, hstab_te=43.0,
+        twin=True),
+
+    # Large jet transports / bombers
+    "avro-vulcan-b2": lambda: b2_svg_fixed(99.0, 97.0),
+
+    "boeing-kc135-r": lambda: swept_jet(
+        "kc135r", 130.83, 136.25, 8.0,
+        wing_le_root=50.0, wing_le_tip=80.0,
+        wing_te_root=90.0, wing_te_tip=80.0,
+        hstab_span=35.0, hstab_le=110.0, hstab_te=130.0,
+        twin=True),
+
+    "lockheed-c5-m": lambda: c130_svg(222.67, 247.83),
+
+    # Aerobatic single-engine
+    "sukhoi-su26-m": lambda: se_prop_fighter(
+        "su26m", 25.58, 22.17, 2.0, 3.5,
+        wing_le=7.0, wing_te=14.0,
+        hstab_span=8.0, hstab_le=17.5, hstab_te=21.5),
+
+    "zivko-edge-540": lambda: se_prop_fighter(
+        "edge540", 24.33, 18.83, 1.8, 3.0,
+        wing_le=5.5, wing_te=12.5,
+        hstab_span=7.5, hstab_le=14.5, hstab_te=18.5),
+
+    "extra-ea200": lambda: se_prop_fighter(
+        "ea200", 26.51, 22.64, 2.0, 3.5,
+        wing_le=7.0, wing_te=14.5,
+        hstab_span=8.5, hstab_le=17.5, hstab_te=22.0),
+
+    "christen-eagle-ii": lambda: biplane_svg(19.58, 18.0),
+
+    # Helicopters
+    "sikorsky-uh60-a": lambda: helicopter_svg(53.67, 50.83),
+    "bell-uh1h":        lambda: helicopter_svg(48.0, 41.67),
+    "boeing-ah64-d":    lambda: helicopter_svg(48.0, 49.5),
+    "sikorsky-ch53-e":  lambda: helicopter_svg(79.0, 73.33),
 }
 
 # Fix B-2 body

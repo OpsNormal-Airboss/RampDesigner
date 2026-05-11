@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "dassault-rafale-c",
+  "display_name": "Rafale C",
+  "manufacturer": "Dassault Aviation",
+  "model": "Rafale",
+  "variant": "C",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 35.42,
+  "length_ft": 50.08,
+  "tail_height_ft": 17.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "dassault-rafale-c.svg",
+  "data_sources": [
+    "Dassault Aviation Rafale C Product Specification",
+    "Jane's All the World's Aircraft 2010–11",
+    "Rafale, Pierre Gaillard, 2005"
+  ],
+  "verified_date": "2026-05-10"
+}

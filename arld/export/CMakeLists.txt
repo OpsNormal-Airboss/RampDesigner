@@ -6,7 +6,15 @@ find_package(nlohmann_json 3.11 REQUIRED)
 add_library(arld_export STATIC
     include/arld/export/IExporter.h
     include/arld/export/SvgExporter.h
+    include/arld/export/PdfExporter.h
+    include/arld/export/PngExporter.h
+    include/arld/export/JpegExporter.h
+    include/arld/export/BatchExporter.h
     src/SvgExporter.cpp
+    src/PdfExporter.cpp
+    src/PngExporter.cpp
+    src/JpegExporter.cpp
+    src/BatchExporter.cpp
 )
 
 target_include_directories(arld_export PUBLIC

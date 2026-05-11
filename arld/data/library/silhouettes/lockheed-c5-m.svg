@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.67 247.83">
+  <circle cx="125.335" cy="36" r="7" fill="none" stroke="#999999" stroke-width="0.5" stroke-dasharray="4,2"/>
+  <ellipse cx="125.335" cy="47" rx="3.5" ry="10" fill="#3a3a3a"/>
+  <circle cx="141.335" cy="36" r="7" fill="none" stroke="#999999" stroke-width="0.5" stroke-dasharray="4,2"/>
+  <ellipse cx="141.335" cy="47" rx="3.5" ry="10" fill="#3a3a3a"/>
+  <circle cx="97.335" cy="36" r="7" fill="none" stroke="#999999" stroke-width="0.5" stroke-dasharray="4,2"/>
+  <ellipse cx="97.335" cy="47" rx="3.5" ry="10" fill="#3a3a3a"/>
+  <circle cx="81.335" cy="36" r="7" fill="none" stroke="#999999" stroke-width="0.5" stroke-dasharray="4,2"/>
+  <ellipse cx="81.335" cy="47" rx="3.5" ry="10" fill="#3a3a3a"/>
+  <polygon points="112.335,84 137.335,85.8 137.335,92.1 112.335,93" fill="#6a6a6a"/>
+  <polygon points="110.335,84 85.335,85.8 85.335,92.1 110.335,93" fill="#6a6a6a"/>
+  <path d="M 111.335,0 C 114.335,15 117.335,35 117.335,50 L 116.435,247.83 L 111.335,247.83 L 106.235,247.83 L 105.335,50 C 105.335,35 108.335,15 111.335,0 Z" fill="#4a4a4a"/>
+  <polygon points="117.335,36 222.67,41 222.67,57 117.335,58" fill="#5e5e5e"/>
+  <polygon points="105.335,36 0,41 0,57 105.335,58" fill="#5e5e5e"/>
+</svg>

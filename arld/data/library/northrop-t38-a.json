@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "northrop-t38-a",
+  "display_name": "T-38A Talon",
+  "manufacturer": "Northrop",
+  "model": "T-38",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 25.75,
+  "length_ft": 46.33,
+  "tail_height_ft": 12.67,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "northrop-t38-a.svg",
+  "data_sources": [
+    "USAF T.O. 1T-38A-1 Pilot's Operating Instructions T-38A",
+    "Jane's All the World's Aircraft 1966–67",
+    "T-38 Talon: USAF's Supersonic Trainer, Jenkins, 2000"
+  ],
+  "verified_date": "2026-05-10"
+}

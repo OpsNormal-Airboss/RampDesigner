@@ -8,6 +8,7 @@ add_executable(arld_tests
     test_aircraft_library.cpp
     test_clearance.cpp
     test_project_file.cpp
+    test_unit_converter.cpp
 )
 
 target_link_libraries(arld_tests

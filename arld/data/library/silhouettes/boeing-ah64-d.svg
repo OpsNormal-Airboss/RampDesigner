@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 49.5">
+  <circle cx="24" cy="19.2" r="24" fill="none" stroke="#888888" stroke-width="0.7" stroke-dasharray="2.4000000000000004,1.44"/>
+  <path d="M 24,27.225 C 24.625,29.453 25.25,32.422 25.25,34.65 L 25.062,48.015 L 24,48.015 L 22.938,48.015 L 22.75,34.65 C 22.75,32.422 23.375,29.453 24,27.225 Z" fill="#6a6a6a"/>
+  <circle cx="24" cy="47.025" r="4.8" fill="none" stroke="#888888" stroke-width="0.4" stroke-dasharray="1.44,0.96"/>
+  <path d="M 24,5.94 C 25.25,9.355 26.5,13.909 26.5,17.325 L 26.125,30.69 L 24,30.69 L 21.875,30.69 L 21.5,17.325 C 21.5,13.909 22.75,9.355 24,5.94 Z" fill="#4a4a4a"/>
+  <circle cx="24" cy="7.425" r="2.4" fill="#3a3a3a" stroke="#000" stroke-width="0.5"/>
+  <polygon points="27.5,13.86 29,13.86 29,30.69 27.5,30.69" fill="#3a3a3a"/>
+  <polygon points="20.5,13.86 19,13.86 19,30.69 20.5,30.69" fill="#3a3a3a"/>
+</svg>

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "zivko-edge-540",
+  "display_name": "Edge 540",
+  "manufacturer": "Zivko Aeronautics",
+  "model": "Edge",
+  "variant": "540",
+  "category": "AEROBATIC",
+  "wingspan_ft": 24.33,
+  "length_ft": 18.83,
+  "tail_height_ft": 6.67,
+  "prop_arc_ft": 7.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "zivko-edge-540.svg",
+  "data_sources": [
+    "FAA Type Certificate Data Sheet A00003 Edge 540",
+    "Zivko Aeronautics Edge 540 Pilot's Operating Handbook",
+    "Aerobatic Aircraft of the World, Adrian Meredith, 2001"
+  ],
+  "verified_date": "2026-05-10"
+}

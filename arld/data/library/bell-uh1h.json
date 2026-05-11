@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "bell-uh1h",
+  "display_name": "UH-1H Iroquois",
+  "manufacturer": "Bell Helicopter",
+  "model": "UH-1",
+  "variant": "H",
+  "category": "HELICOPTER",
+  "wingspan_ft": 48.0,
+  "length_ft": 41.67,
+  "tail_height_ft": 14.67,
+  "rotor_diameter_ft": 48.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "bell-uh1h.svg",
+  "data_sources": [
+    "Bell Helicopter TM 55-1520-210-10 UH-1H Operator's Manual",
+    "Jane's All the World's Aircraft 1970–71",
+    "Huey: The UH-1 Iroquois, Wayne Mutza, 1999"
+  ],
+  "verified_date": "2026-05-10"
+}

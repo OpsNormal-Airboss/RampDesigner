@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-pt17",
+  "display_name": "PT-17 Stearman",
+  "manufacturer": "Boeing/Stearman",
+  "model": "PT-17",
+  "variant": "",
+  "category": "WARBIRD",
+  "wingspan_ft": 32.17,
+  "length_ft": 24.42,
+  "tail_height_ft": 9.0,
+  "prop_arc_ft": 8.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "boeing-pt17.svg",
+  "data_sources": [
+    "Boeing Stearman Model 75 Pilot's Manual",
+    "Jane's All the World's Aircraft 1939",
+    "Stearman: A Pictorial History, Jim Zazas, 1979"
+  ],
+  "verified_date": "2026-05-10"
+}

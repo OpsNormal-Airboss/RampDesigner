@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "christen-eagle-ii",
+  "display_name": "Christen Eagle II",
+  "manufacturer": "Aviat Aircraft",
+  "model": "Eagle",
+  "variant": "II",
+  "category": "AEROBATIC",
+  "wingspan_ft": 19.58,
+  "length_ft": 18.0,
+  "tail_height_ft": 7.5,
+  "prop_arc_ft": 6.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "christen-eagle-ii.svg",
+  "data_sources": [
+    "FAA Type Certificate Data Sheet A15CE Christen Eagle II",
+    "Aviat Aircraft Eagle II Pilot's Operating Handbook",
+    "Biplane Aerobatics, Alan Cassidy, 1999"
+  ],
+  "verified_date": "2026-05-10"
+}

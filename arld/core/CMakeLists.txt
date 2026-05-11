@@ -7,6 +7,7 @@ add_library(arld_core STATIC
     src/AircraftLibraryParser.cpp
     src/ClearanceEngine.cpp
     src/ProjectFile.cpp
+    src/UnitConverter.cpp
 )
 
 target_include_directories(arld_core

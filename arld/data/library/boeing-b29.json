@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-b29",
+  "display_name": "B-29 Superfortress",
+  "manufacturer": "Boeing",
+  "model": "B-29",
+  "variant": "",
+  "category": "BOMBER",
+  "wingspan_ft": 141.25,
+  "length_ft": 99.0,
+  "tail_height_ft": 27.75,
+  "prop_arc_ft": 16.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "boeing-b29.svg",
+  "data_sources": [
+    "USAAF T.O. 01-20EJ-1 Pilot's Operating Instructions B-29",
+    "Jane's All the World's Aircraft 1945–46",
+    "B-29 Superfortress in Detail, Frederick Johnsen, 1997"
+  ],
+  "verified_date": "2026-05-10"
+}

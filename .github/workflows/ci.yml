@@ -60,6 +60,47 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
+  lint:
+    name: clang-tidy
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build gcc-13 g++-13 clang clang-tidy \
+            libgl1-mesa-dev libglu1-mesa-dev
+          echo "CC=gcc-13"  >> "$GITHUB_ENV"
+          echo "CXX=g++-13" >> "$GITHUB_ENV"
+
+      - name: Install Qt 6.7
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.3'
+          modules: 'qtsvg qtsvgwidgets'
+          cache: true
+
+      - name: Set up vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+
+      - name: Configure (generate compile_commands.json)
+        run: cmake --preset linux-release
+
+      - name: Build (populate compile_commands.json fully)
+        run: cmake --build --preset linux-release
+
+      - name: Run clang-tidy
+        run: |
+          find arld/core/src arld/export/src arld/ui/src arld/app \
+            -name '*.cpp' | sort | \
+          xargs clang-tidy \
+            -p build/linux-release \
+            --config-file=.clang-tidy
+
   license-check:
     name: License Check
     runs-on: ubuntu-22.04

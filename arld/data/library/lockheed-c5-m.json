@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-c5-m",
+  "display_name": "C-5M Super Galaxy",
+  "manufacturer": "Lockheed Martin",
+  "model": "C-5",
+  "variant": "M",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 222.67,
+  "length_ft": 247.83,
+  "tail_height_ft": 65.17,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-c5-m.svg",
+  "data_sources": [
+    "USAF Fact Sheet C-5M Super Galaxy",
+    "Jane's All the World's Aircraft 2010–11",
+    "C-5 Galaxy in Action, David Menard, 1987"
+  ],
+  "verified_date": "2026-05-10"
+}

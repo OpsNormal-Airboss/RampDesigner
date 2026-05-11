@@ -1,6 +1,7 @@
 #pragma once
 #include <QMainWindow>
 #include <QString>
+#include <QTimer>
 
 class QAction;
 class QLabel;
@@ -16,6 +17,10 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget* parent = nullptr);
+    ~MainWindow() override;
+
+private slots:
+    void autoSave();
 
 private:
     void setupMenuBar();
@@ -41,8 +46,13 @@ private:
     QAction* m_undoAction          = nullptr;
     QAction* m_redoAction          = nullptr;
     QAction* m_drawBoundaryAction  = nullptr;
+    QAction* m_metricAction        = nullptr;
     QLabel*  m_scaleLabel          = nullptr;
+    QLabel*  m_unitLabel           = nullptr;
     QLabel*  m_violationLabel      = nullptr;
+
+    QTimer   m_autoSaveTimer;
+    QString  m_autoSavePath;
 
     QString m_currentFilePath;
     bool    m_dirty = false;

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "douglas-a4-f",
+  "display_name": "A-4F Skyhawk",
+  "manufacturer": "Douglas Aircraft",
+  "model": "A-4",
+  "variant": "F",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 27.5,
+  "length_ft": 40.33,
+  "tail_height_ft": 15.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "douglas-a4-f.svg",
+  "data_sources": [
+    "NAVAIR 01-40AVF-1 NATOPS Flight Manual A-4F",
+    "Jane's All the World's Aircraft 1970–71",
+    "Skyhawk: Douglas A-4 Skyhawk, Rene Francillon, 1988"
+  ],
+  "verified_date": "2026-05-10"
+}

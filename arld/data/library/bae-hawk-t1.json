@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "bae-hawk-t1",
+  "display_name": "Hawk T.1",
+  "manufacturer": "British Aerospace",
+  "model": "Hawk",
+  "variant": "T.1",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 30.92,
+  "length_ft": 39.42,
+  "tail_height_ft": 13.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "bae-hawk-t1.svg",
+  "data_sources": [
+    "BAE Systems Hawk T.1 Aircraft Specification",
+    "Jane's All the World's Aircraft 1990–91",
+    "BAe Hawk, Peter Foster, 1996"
+  ],
+  "verified_date": "2026-05-10"
+}

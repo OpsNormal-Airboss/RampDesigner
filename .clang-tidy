@@ -1,0 +1,21 @@
+---
+Checks: >
+  bugprone-*,
+  clang-analyzer-*,
+  cppcoreguidelines-avoid-goto,
+  modernize-use-override,
+  modernize-use-nullptr,
+  performance-*,
+  readability-braces-around-statements,
+  readability-const-return-type,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: 'arld/.*'
+
+CheckOptions:
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: '0'

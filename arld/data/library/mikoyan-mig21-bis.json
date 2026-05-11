@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "mikoyan-mig21-bis",
+  "display_name": "MiG-21bis",
+  "manufacturer": "Mikoyan",
+  "model": "MiG-21",
+  "variant": "bis",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 23.58,
+  "length_ft": 48.17,
+  "tail_height_ft": 13.25,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mikoyan-mig21-bis.svg",
+  "data_sources": [
+    "Soviet VVS MiG-21bis Pilot's Manual",
+    "Jane's All the World's Aircraft 1989–90",
+    "MiG-21, Robert Bingham, 1996"
+  ],
+  "verified_date": "2026-05-10"
+}

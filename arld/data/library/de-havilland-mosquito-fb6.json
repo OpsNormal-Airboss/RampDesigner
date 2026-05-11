@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "de-havilland-mosquito-fb6",
+  "display_name": "Mosquito FB Mk.VI",
+  "manufacturer": "de Havilland Aircraft",
+  "model": "Mosquito",
+  "variant": "FB Mk.VI",
+  "category": "WARBIRD",
+  "wingspan_ft": 54.17,
+  "length_ft": 40.58,
+  "tail_height_ft": 17.5,
+  "prop_arc_ft": 12.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "de-havilland-mosquito-fb6.svg",
+  "data_sources": [
+    "RAF AP 2653C Mosquito FB VI Pilot's Notes",
+    "Jane's All the World's Aircraft 1944–45",
+    "De Havilland Mosquito, A.J. Jackson, 1996"
+  ],
+  "verified_date": "2026-05-10"
+}

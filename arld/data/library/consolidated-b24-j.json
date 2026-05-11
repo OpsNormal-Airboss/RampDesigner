@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "consolidated-b24-j",
+  "display_name": "B-24J Liberator",
+  "manufacturer": "Consolidated Aircraft",
+  "model": "B-24",
+  "variant": "J",
+  "category": "BOMBER",
+  "wingspan_ft": 110.0,
+  "length_ft": 67.17,
+  "tail_height_ft": 18.0,
+  "prop_arc_ft": 11.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "consolidated-b24-j.svg",
+  "data_sources": [
+    "USAAF T.O. 01-5EG-1 Pilot's Operating Instructions B-24J",
+    "Jane's All the World's Aircraft 1944–45",
+    "B-24 Liberator in Action, Larry Davis, 1987"
+  ],
+  "verified_date": "2026-05-10"
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sikorsky-uh60-a",
+  "display_name": "UH-60A Black Hawk",
+  "manufacturer": "Sikorsky Aircraft",
+  "model": "UH-60",
+  "variant": "A",
+  "category": "HELICOPTER",
+  "wingspan_ft": 53.67,
+  "length_ft": 50.83,
+  "tail_height_ft": 16.83,
+  "rotor_diameter_ft": 53.67,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "sikorsky-uh60-a.svg",
+  "data_sources": [
+    "US Army TM 1-1520-237-10 UH-60A Operator's Manual",
+    "Jane's All the World's Aircraft 1990–91",
+    "Sikorsky UH-60 Black Hawk, Wayne Mutza, 2002"
+  ],
+  "verified_date": "2026-05-10"
+}

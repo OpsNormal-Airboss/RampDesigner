@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sukhoi-su26-m",
+  "display_name": "Su-26M",
+  "manufacturer": "Sukhoi Design Bureau",
+  "model": "Su-26",
+  "variant": "M",
+  "category": "AEROBATIC",
+  "wingspan_ft": 25.58,
+  "length_ft": 22.17,
+  "tail_height_ft": 8.67,
+  "prop_arc_ft": 7.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "sukhoi-su26-m.svg",
+  "data_sources": [
+    "Sukhoi Design Bureau Su-26M Product Specification",
+    "Jane's All the World's Aircraft 1990–91",
+    "Sukhoi Su-26, Dmitri Komissarov, 2004"
+  ],
+  "verified_date": "2026-05-10"
+}

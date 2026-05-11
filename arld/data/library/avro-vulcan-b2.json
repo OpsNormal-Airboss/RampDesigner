@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "avro-vulcan-b2",
+  "display_name": "Vulcan B.2",
+  "manufacturer": "Avro",
+  "model": "Vulcan",
+  "variant": "B.2",
+  "category": "BOMBER",
+  "wingspan_ft": 99.0,
+  "length_ft": 97.0,
+  "tail_height_ft": 26.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "avro-vulcan-b2.svg",
+  "data_sources": [
+    "RAF AP 4226 Vulcan B.2 Aircrew Manual",
+    "Jane's All the World's Aircraft 1960–61",
+    "Avro Vulcan: Britain's Famous Delta-Wing V-Bomber, Peter Caygill, 2007"
+  ],
+  "verified_date": "2026-05-10"
+}

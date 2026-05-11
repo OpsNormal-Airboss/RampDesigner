@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "airbus-a400m",
+  "display_name": "A400M Atlas",
+  "manufacturer": "Airbus Defence & Space",
+  "model": "A400M",
+  "variant": "",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 139.08,
+  "length_ft": 148.33,
+  "tail_height_ft": 48.17,
+  "prop_arc_ft": 18.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "airbus-a400m.svg",
+  "data_sources": [
+    "Airbus A400M Atlas Aircraft Characteristics Airport and Maintenance Planning",
+    "Jane's All the World's Aircraft 2013–14",
+    "Airbus A400M: The Soldier's Transport, Patrick Martin, 2017"
+  ],
+  "verified_date": "2026-05-10"
+}

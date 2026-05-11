@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "vought-f4u-4",
+  "display_name": "F4U-4 Corsair",
+  "manufacturer": "Vought Aircraft",
+  "model": "F4U",
+  "variant": "4",
+  "category": "WARBIRD",
+  "wingspan_ft": 41.0,
+  "length_ft": 33.83,
+  "tail_height_ft": 16.08,
+  "prop_arc_ft": 13.33,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "vought-f4u-4.svg",
+  "data_sources": [
+    "NAVAIR 01-45HA-1 Pilot's Handbook F4U-4",
+    "Jane's All the World's Aircraft 1945–46",
+    "Bent-Wing Bird: The F4U Corsair, Tommy Thomason, 2012"
+  ],
+  "verified_date": "2026-05-10"
+}

@@ -22,5 +22,29 @@ add_subdirectory(arld/export)
 add_subdirectory(arld/ui)
 add_subdirectory(arld/app)
 
+# ---------------------------------------------------------------------------
+# CPack packaging
+# ---------------------------------------------------------------------------
+set(CPACK_PACKAGE_NAME "ARLD")
+set(CPACK_PACKAGE_VENDOR "OpsNormal Airboss")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Airshow Ramp Layout Designer")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+
+if(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+elseif(UNIX)
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "OpsNormal Airboss <airboss@pmlairboss.com>")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt6core6, libqt6widgets6, libqt6svg6")
+elseif(WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_NSIS_DISPLAY_NAME "ARLD")
+    set(CPACK_NSIS_PACKAGE_NAME "ARLD")
+endif()
+
+include(CPack)
+
 enable_testing()
 add_subdirectory(arld/tests)

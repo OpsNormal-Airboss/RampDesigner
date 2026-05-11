@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "boeing-ah64-d",
+  "display_name": "AH-64D Apache",
+  "manufacturer": "Boeing",
+  "model": "AH-64",
+  "variant": "D",
+  "category": "HELICOPTER",
+  "wingspan_ft": 48.0,
+  "length_ft": 49.5,
+  "tail_height_ft": 15.25,
+  "rotor_diameter_ft": 48.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-ah64-d.svg",
+  "data_sources": [
+    "US Army TM 1-1520-251-10 AH-64D Operator's Manual",
+    "Jane's All the World's Aircraft 2005–06",
+    "Apache AH-64: Boeing's Attack Helicopter, Wayne Mutza, 2005"
+  ],
+  "verified_date": "2026-05-10"
+}

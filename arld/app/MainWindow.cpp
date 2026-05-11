@@ -3,8 +3,11 @@
 #include <arld/ui/RampScene.h>
 #include <arld/ui/RampView.h>
 #include <arld/core/ProjectFile.h>
+#include <arld/core/UnitConverter.h>
 #include <arld/export/SvgExporter.h>
 #include <QAction>
+#include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QKeySequence>
@@ -12,6 +15,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include <QStatusBar>
 #include <QToolBar>
 
@@ -45,6 +49,43 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupLibraryPanel();
     updateUndoRedoActions();
     updateWindowTitle();
+
+    // --- Story 1-1-4: Auto-save ---
+    m_autoSavePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+                     + "/arld_autosave.arld";
+    QDir().mkpath(QFileInfo(m_autoSavePath).absolutePath());
+    m_autoSaveTimer.setInterval(60000);
+    m_autoSaveTimer.start();
+    connect(&m_autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSave);
+
+    // --- Story 1-1-5: Crash recovery dialog ---
+    if (QFile::exists(m_autoSavePath)) {
+        const auto btn = QMessageBox::question(
+            this, tr("Recover Unsaved Work"),
+            tr("An auto-saved layout was found from a previous session.\nRestore it?"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::Yes);
+        if (btn == QMessageBox::Yes) {
+            try {
+                auto data = arld::core::ProjectFile::load(m_autoSavePath.toStdString());
+                auto lookup = [this](const std::string& id) -> const arld::core::AircraftLibraryEntry* {
+                    return m_libraryPanel->entryById(id);
+                };
+                m_scene->loadProjectData(data, lookup);
+                m_dirty = true;
+                updateWindowTitle();
+                updateUndoRedoActions();
+            } catch (...) {
+                QMessageBox::warning(this, tr("Recovery Failed"),
+                                     tr("Could not restore the auto-saved layout."));
+            }
+        }
+        QFile::remove(m_autoSavePath); // always delete after attempting recovery
+    }
+}
+
+MainWindow::~MainWindow() {
+    QFile::remove(m_autoSavePath);
 }
 
 void MainWindow::setupMenuBar() {
@@ -77,6 +118,19 @@ void MainWindow::setupMenuBar() {
     connect(m_scene, &RampScene::editModeChanged, this, [this](EditMode mode) {
         m_drawBoundaryAction->setChecked(mode == EditMode::DrawBoundary);
     });
+
+    // ---- View menu ----
+    auto* viewMenu = menuBar()->addMenu(tr("&View"));
+    m_metricAction = viewMenu->addAction(tr("Show in &Metric"), this, [this](bool checked) {
+        arld::core::UnitConverter::instance().setUnitSystem(
+            checked ? arld::core::UnitSystem::Metric : arld::core::UnitSystem::Imperial);
+        updateScaleLabel(m_view->scaleDenominator());
+        if (m_unitLabel) {
+            m_unitLabel->setText(tr("Units: %1")
+                .arg(arld::core::UnitConverter::instance().suffix()));
+        }
+    }, QKeySequence(Qt::Key_M));
+    m_metricAction->setCheckable(true);
 }
 
 void MainWindow::setupFileActions() {
@@ -114,6 +168,10 @@ void MainWindow::setupStatusBar() {
     m_violationLabel->setMinimumWidth(160);
     statusBar()->addWidget(m_violationLabel);
     updateViolationLabel(0);
+
+    m_unitLabel = new QLabel(this);
+    statusBar()->addPermanentWidget(m_unitLabel);
+    m_unitLabel->setText(tr("Units: %1").arg(arld::core::UnitConverter::instance().suffix()));
 
     m_scaleLabel = new QLabel(this);
     statusBar()->addPermanentWidget(m_scaleLabel);
@@ -172,6 +230,21 @@ void MainWindow::updateWindowTitle() {
     setWindowTitle(tr("%1%2 — Airshow Ramp Layout Designer")
                        .arg(base)
                        .arg(m_dirty ? "*" : ""));
+}
+
+// ---------------------------------------------------------------------------
+// Auto-save
+// ---------------------------------------------------------------------------
+void MainWindow::autoSave() {
+    if (!m_dirty) {
+        return;
+    }
+    try {
+        auto data = m_scene->toProjectData();
+        arld::core::ProjectFile::save(m_autoSavePath.toStdString(), data);
+    } catch (...) {
+        // Silently swallow errors — auto-save is best-effort.
+    }
 }
 
 // ---------------------------------------------------------------------------

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "sikorsky-ch53-e",
+  "display_name": "CH-53E Super Stallion",
+  "manufacturer": "Sikorsky Aircraft",
+  "model": "CH-53",
+  "variant": "E",
+  "category": "HELICOPTER",
+  "wingspan_ft": 79.0,
+  "length_ft": 73.33,
+  "tail_height_ft": 28.33,
+  "rotor_diameter_ft": 79.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "sikorsky-ch53-e.svg",
+  "data_sources": [
+    "USMC NATOPS NAVAIR 01-230HKC-1 CH-53E Flight Manual",
+    "Jane's All the World's Aircraft 1985–86",
+    "CH-53 Sea Stallion/Super Stallion, Michael O'Leary, 1993"
+  ],
+  "verified_date": "2026-05-10"
+}

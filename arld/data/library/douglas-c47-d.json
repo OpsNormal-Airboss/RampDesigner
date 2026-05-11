@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "douglas-c47-d",
+  "display_name": "C-47D Skytrain",
+  "manufacturer": "Douglas Aircraft",
+  "model": "C-47",
+  "variant": "D",
+  "category": "WARBIRD",
+  "wingspan_ft": 95.0,
+  "length_ft": 63.83,
+  "tail_height_ft": 17.0,
+  "prop_arc_ft": 11.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "douglas-c47-d.svg",
+  "data_sources": [
+    "USAAF T.O. 01-40NC-1 Pilot's Operating Instructions C-47",
+    "Jane's All the World's Aircraft 1944–45",
+    "Douglas C-47 Skytrain in Action, Larry Davis, 1995"
+  ],
+  "verified_date": "2026-05-10"
+}

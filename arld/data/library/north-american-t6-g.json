@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "north-american-t6-g",
+  "display_name": "T-6G Texan",
+  "manufacturer": "North American Aviation",
+  "model": "T-6",
+  "variant": "G",
+  "category": "WARBIRD",
+  "wingspan_ft": 42.0,
+  "length_ft": 29.0,
+  "tail_height_ft": 12.0,
+  "prop_arc_ft": 9.17,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "north-american-t6-g.svg",
+  "data_sources": [
+    "USAAF T.O. 01-60GGA-1 Pilot's Operating Instructions T-6G",
+    "Jane's All the World's Aircraft 1944–45",
+    "The Harvard, AT-6 Texan and SNJ, Peter Caygill, 2005"
+  ],
+  "verified_date": "2026-05-10"
+}

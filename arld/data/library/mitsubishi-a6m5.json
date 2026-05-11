@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "mitsubishi-a6m5",
+  "display_name": "A6M5 Zero",
+  "manufacturer": "Mitsubishi Aircraft",
+  "model": "A6M",
+  "variant": "5",
+  "category": "WARBIRD",
+  "wingspan_ft": 36.08,
+  "length_ft": 29.83,
+  "tail_height_ft": 11.5,
+  "prop_arc_ft": 9.17,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "mitsubishi-a6m5.svg",
+  "data_sources": [
+    "IJNAF Technical Manual A6M5",
+    "Jane's All the World's Aircraft 1944–45",
+    "Zero: The Story of Japan's Air War in the Pacific, Martin Caidin, 2012"
+  ],
+  "verified_date": "2026-05-10"
+}

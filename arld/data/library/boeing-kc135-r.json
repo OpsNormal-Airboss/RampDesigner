@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "boeing-kc135-r",
+  "display_name": "KC-135R Stratotanker",
+  "manufacturer": "Boeing",
+  "model": "KC-135",
+  "variant": "R",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 130.83,
+  "length_ft": 136.25,
+  "tail_height_ft": 41.67,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-kc135-r.svg",
+  "data_sources": [
+    "USAF Fact Sheet KC-135R Stratotanker",
+    "Jane's All the World's Aircraft 2000–01",
+    "Boeing KC-135 Stratotanker, Robert Hopkins, 1997"
+  ],
+  "verified_date": "2026-05-10"
+}
