@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-5 complete. PDF export (libharu, 6 paper sizes, title block, QR code, CMYK, violations page), satellite underlay (async), violations CSV report, ExportOptions interface. 68/68 tests pass.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-6 complete. PNG export (stb_image_write, DPI-scalable, 16384px cap), JPEG export (stb_image_write, quality 1–100, 32767px cap with warning), pure-C++ scanline rasterizer (no Qt in export/), stb_image_write.h vendored at arld/export/third_party/. 77/77 tests pass.
 
 ---
 
@@ -140,7 +140,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
 | `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — empty for no-radius entry; 16-vertex poly for PT-17; center near tail; radius matches; gear-extended envelope > gear-retracted; rear extension ≥ minTurnRadiusFt |
 | `arld/tests/test_pdf_exporter.cpp` | 10 | PdfExporter creates file; file non-empty; starts with %PDF; paper sizes correct; CMYK conversion; ViolationReportExporter CSV header + rows |
-| **Total** | **68 + 1 bench** | |
+| `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
+| **Total** | **77 + 1 bench** | |
 
 ---
 

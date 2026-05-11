@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 1, Sprint 1-5 complete. PDF export via libharu (all ANSI/Letter/Tabloid sizes, landscape/portrait, font embedding, CMYK colors, QR code, display-type legend, violations report page), ViolationReportExporter CSV, satellite underlay with async image loading, project metadata dialog (show date/venue), ExportOptions struct on IExporter. 68/68 tests pass.
+**Current status:** Phase 1, Sprint 1-6 complete. PNG export (stb_image_write, DPI-scalable, 16384px cap), JPEG export (stb_image_write, quality 1–100, 32767px cap with stderr warning), pure-C++ scanline rasterizer (no Qt in export/), stb_image_write.h vendored at arld/export/third_party/. 77/77 tests pass.
 
 ## 📋 Post-Sprint Documentation
 
@@ -59,7 +59,7 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ✅ Complete |
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ✅ Complete |
 | 1-5 | PDF export (libharu+libqrencode); ViolationReport CSV; satellite underlay; project metadata | ✅ Complete |
-| 1-6 | PNG/JPEG export (stb); print dialog | ⬜ Up next |
+| 1-6 | PNG/JPEG export (stb_image_write); vendored header; 9 new tests | ✅ Complete |
 
 ## 🔧 Tech Stack
 
@@ -213,7 +213,8 @@ RampView    : QGraphicsView
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — script, foreignObject, XXE/DOCTYPE, on* attrs, javascript: href, clean passthrough, multiline |
 | `arld/tests/test_tail_swing.cpp` | 5 | tailSwingPolygon — 16-vertex, radius, empty when unset, rear centre, PT-17 |
 | `arld/tests/test_pdf_exporter.cpp` | 9 | PdfExporter creates/%PDF magic/non-empty/violations/landscape; ViolationReportExporter CSV creates/header/rows/override/empty |
-| **Total** | **68 + 1 bench** | |
+| `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
+| **Total** | **77 + 1 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

@@ -26,6 +26,11 @@ target_include_directories(arld_export PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+# stb_image_write (vendored header-only)
+target_include_directories(arld_export PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+)
+
 target_link_libraries(arld_export PUBLIC arld_core nlohmann_json::nlohmann_json)
 
 target_compile_features(arld_export PUBLIC cxx_std_20)
