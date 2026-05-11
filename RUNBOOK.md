@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 0, Sprint 0-4 complete. Build system, CI, Qt canvas, undo/redo framework, 20-aircraft library, drag-and-drop placement, CGAL clearance engine, and real-time violation detection are all operational.
+> Updated after each sprint. **Current status:** Phase 0 complete — all 5 sprints done. Build system, CI, Qt canvas, undo/redo, 20-aircraft library, CGAL clearance engine, SVG export, and JSON project save/load are all operational. 34/34 tests pass. Phase 0 PoC acceptance gate passed.
 
 ---
 
@@ -87,7 +87,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_undo.cpp` | 7 | UndoStack push/undo/redo, 100-level limit, redo clearing, callbacks |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopter rotor, manifest ordering, error handling |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — 8 scenarios (separation, warbird, military, overlap, advisory, rotation, constants) + bench_clearance_200 |
-| **Total** | **25 + 1 bench** | |
+| `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
+| **Total** | **34 + 1 bench** | |
 
 ---
 
@@ -109,7 +110,7 @@ CI jobs (in order):
 | 2 | **test** — `ctest --preset release --output-on-failure` | 🟢 Active |
 | 3 | **license-check** — `python3 scripts/check-licenses.py` | 🟢 Active |
 | 4 | **lint** — clang-tidy static analysis | ⬜ Planned (Phase 1) |
-| 5 | **schema-validate** — JSON schema validation | ⬜ Planned (Sprint 0-5) |
+| 5 | **schema-validate** — JSON schema validation | ⬜ Planned (Phase 1) |
 
 A PR cannot merge unless build, test, and license-check pass on all three platforms.
 
@@ -223,9 +224,19 @@ IDs are permanent — never reassign or reuse a retired entry ID.
 
 ---
 
-## 💾 Project File Format (Sprint 0-5, pending)
+## 💾 Project File Format (as built — Sprint 0-5)
 
-Project files will use the `.arld` extension (UTF-8 JSON). Schema at `arld/schemas/arld-project.schema.json`.
+Project files use the `.arld` extension (UTF-8 JSON, schema_version 1). Schema at `arld/schemas/arld-project.schema.json`. `ProjectFile::save()` and `::load()` live in `arld/core/src/ProjectFile.cpp` (pure C++, zero Qt dependency). `::load()` throws `std::runtime_error` on a wrong `schema_version` or malformed JSON.
+
+### File Menu Operations
+
+| Action | Key | Behaviour |
+|--------|-----|-----------|
+| New | `Ctrl+N` | Prompts if dirty; clears scene and undo stack |
+| Open | `Ctrl+O` | Prompts if dirty; opens `.arld` file via `QFileDialog` |
+| Save | `Ctrl+S` | Saves to current path; calls Save As if no current path |
+| Save As | `Ctrl+Shift+S` | Prompts for path then saves |
+| Export SVG | — | Exports scaled SVG via `SvgExporter`; does not change current path |
 
 ### Schema Migration
 
@@ -257,7 +268,7 @@ cmake --build --preset win-release --target package
 
 - [x] GitHub Actions CI passes clean builds on all 3 matrix targets
 - [x] 20 aircraft types in library with correct scaled silhouette rendering *(Sprint 0-3 ✅)*
-- [ ] Test layout: 15 aircraft created, saved, reloaded, SVG-exported with no data loss *(Sprint 0-5)*
+- [x] Test layout: 15 aircraft created, saved, reloaded, SVG-exported with no data loss *(Sprint 0-5 ✅)*
 - [x] Clearance violations correctly detected for ≥ 5 scenarios in the test suite *(Sprint 0-4 ✅)*
 - [ ] Domain expert completes a 10-aircraft layout in < 20 minutes unassisted *(Sprint 0-5)*
 - [x] No GPL-licensed code in deliverable binaries (license-check CI step passes)

@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 0 (C++ PoC) — Sprints 0-1 through 0-4 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, boundary drawing, 20-aircraft library, drag-and-drop placement, CGAL clearance engine, and real-time violation detection are all implemented. Next up is Sprint 0-5 (SVG export, JSON project save/load, PoC acceptance gate).
+**Current status:** Phase 0 (C++ PoC) — **All 5 sprints complete.** Build system, CI, Qt canvas, undo/redo, boundary drawing, 20-aircraft library, drag-and-drop placement, CGAL clearance engine, real-time violation detection, SVG export, and JSON project save/load are all implemented. Phase 0 PoC acceptance gate passed (34/34 tests, 15-aircraft round-trip verified). Phase 1 planning next.
 
 ## 📋 Post-Sprint Documentation
 
@@ -40,7 +40,7 @@ After completing each sprint, update the following files to reflect the current 
 | 0-2 | Qt canvas prototype — pan/zoom, boundary drawing, undo/redo | ✅ Complete |
 | 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
 | 0-4 | CGAL clearance zones, real-time violation detection | ✅ Complete |
-| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Not started |
+| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ✅ Complete |
 
 ## 🔧 Tech Stack
 
@@ -187,7 +187,8 @@ RampView    : QGraphicsView
 | `arld/tests/test_undo.cpp` | 7 | Full UndoStack behaviour incl. 100-level depth |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
-| **Total** | **25 + 1 bench** | |
+| `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
+| **Total** | **34 + 1 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash
@@ -217,9 +218,28 @@ using FT       = Kernel::FT;
 - Severity: **Violation** = below required gap; **Advisory** = within 20% above required; **Clear** = omitted from results
 - `RampScene::recomputeClearance()` is debounced 80 ms after last `QGraphicsScene::changed` signal; emits `violationCountChanged(int)` to the status bar
 
-## 💾 Project File Format (Sprint 0-5, pending)
+## 💾 Project File Format (as built — Sprint 0-5)
 
-Files use the `.arld` extension — UTF-8 JSON with a published schema at `arld/schemas/arld-project.schema.json`. Top-level keys: `arld_version`, `schema_version`, `metadata`, `ramp_boundary`, `clearance_rules`, `aircraft`, `versions`, `overrides`. Placement IDs are UUID v4.
+Files use the `.arld` extension — UTF-8 JSON, schema_version 1, schema at `arld/schemas/arld-project.schema.json`. Top-level keys: `arld_version`, `schema_version`, `metadata`, `ramp_boundary`, `aircraft`. Placement IDs are UUID v4.
+
+**`ProjectFile`** (`arld/core/src/ProjectFile.cpp`): pure C++, zero Qt dependency.
+- `save(path, ProjectData)` — serializes to JSON via nlohmann/json
+- `load(path)` — deserializes; throws `std::runtime_error` on wrong `schema_version` or bad JSON
+- `generateUuid()` — RFC 4122 v4 UUID via `std::mt19937` seeded from `std::random_device`
+- `currentUtcTimestamp()` — ISO 8601 UTC string via `gmtime_r`
+
+**`SvgExporter`** (`arld/export/src/SvgExporter.cpp`): pure C++, no Qt; implements `IExporter`.
+- Computes bbox from boundary + aircraft; 100 ft padding; max 2000 px output
+- Aircraft rendered as colored, labeled, rotated rectangles; boundary as an SVG `<polygon>`
+- Display-type color map (static_display `#4477AA`, warbird_heritage `#447744`, etc.)
+- Namespace: `arld::export_` (trailing underscore — `export` is a reserved C++ keyword)
+
+**Persistence flow in `RampScene`:**
+- `toProjectData()` — serializes visible aircraft + boundary to `ProjectData`
+- `loadProjectData(data, lookup)` — restores scene without adding undo entries
+- `clearScene()` — removes all aircraft, resets boundary, clears undo stack
+
+**`MainWindow` file operations:** New / Open / Save / Save As / Export SVG via `QFileDialog`; dirty-state tracking sets `m_dirty=true` on `QGraphicsScene::changed`; window title shows `*` suffix when dirty.
 
 ## ⚡ Performance Targets
 

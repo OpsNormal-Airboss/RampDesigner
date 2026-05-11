@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 0 — PoC](https://img.shields.io/badge/phase-0%20%E2%80%94%20PoC%20Sprint%204%2F5-00CC00)](./RUNBOOK.md)
+  [![Phase 0 — PoC](https://img.shields.io/badge/phase-0%20%E2%80%94%20PoC%20Complete-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -27,7 +27,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **🟢 In Progress — Sprint 4 of 5** |
+| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete — all 5 sprints** |
 | 1 | Production desktop, 75+ aircraft, all display types, satellite underlay | ⬜ Not started |
 | 2 | 150+ aircraft, full export suite (SVG/PDF/PNG/JPEG), UAT | ⬜ Not started |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
@@ -41,7 +41,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 0-2 | Qt canvas — pan/zoom, boundary drawing, undo/redo framework | ✅ Complete |
 | 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ✅ Complete |
 | 0-4 | CGAL clearance zones, real-time violation detection | ✅ Complete |
-| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Up next |
+| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ✅ Complete |
 
 ## 🟢 What Works Today
 
@@ -60,6 +60,8 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
+- **Project save/load** — File → Save / Open persist the full layout (aircraft placement, rotation, boundary) to `.arld` JSON files; File → New prompts to discard unsaved changes
+- **SVG export** — File → Export SVG produces a scaled diagram with the ramp boundary, all aircraft (colored by display type), and labels
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 
@@ -104,7 +106,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 25 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, and `test_clearance.cpp`.
+Current test suite: 34 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, and `test_project_file.cpp`.
 
 ## 📋 Documentation
 
