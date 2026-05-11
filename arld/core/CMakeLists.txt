@@ -2,6 +2,7 @@ find_package(nlohmann_json 3.11 REQUIRED)
 
 add_library(arld_core STATIC
     src/Layout.cpp
+    src/UndoStack.cpp
 )
 
 target_include_directories(arld_core

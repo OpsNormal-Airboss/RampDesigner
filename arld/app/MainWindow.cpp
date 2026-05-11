@@ -1,0 +1,97 @@
+#include "MainWindow.h"
+#include <arld/ui/RampScene.h>
+#include <arld/ui/RampView.h>
+#include <QAction>
+#include <QKeySequence>
+#include <QLabel>
+#include <QMenu>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QToolBar>
+
+using arld::ui::EditMode;
+using arld::ui::RampScene;
+using arld::ui::RampView;
+
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    setWindowTitle(tr("Airshow Ramp Layout Designer"));
+    resize(1280, 800);
+
+    m_scene = new RampScene(this);
+    m_view  = new RampView(this);
+    m_view->setRampScene(m_scene);
+    setCentralWidget(m_view);
+
+    // Refresh undo/redo action state whenever the stack changes.
+    m_scene->undoStack().onChanged = [this] { updateUndoRedoActions(); };
+
+    setupMenuBar();
+    setupToolBar();
+    setupStatusBar();
+    updateUndoRedoActions();
+}
+
+void MainWindow::setupMenuBar() {
+    auto* fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(tr("&New"), this, [] {}, QKeySequence::New);
+
+    auto* editMenu = menuBar()->addMenu(tr("&Edit"));
+
+    m_undoAction = editMenu->addAction(tr("&Undo"), this, [this] {
+        m_scene->undoStack().undo();
+    }, QKeySequence::Undo);
+
+    m_redoAction = editMenu->addAction(tr("&Redo"), this, [this] {
+        m_scene->undoStack().redo();
+    }, QKeySequence::Redo);
+
+    auto* drawMenu = menuBar()->addMenu(tr("&Draw"));
+    m_drawBoundaryAction = drawMenu->addAction(tr("Draw &Boundary"), this, [this] {
+        m_scene->setEditMode(
+            m_scene->editMode() == EditMode::DrawBoundary
+                ? EditMode::Select
+                : EditMode::DrawBoundary);
+    }, QKeySequence(Qt::Key_B));
+    m_drawBoundaryAction->setCheckable(true);
+
+    connect(m_scene, &RampScene::editModeChanged, this, [this](EditMode mode) {
+        m_drawBoundaryAction->setChecked(mode == EditMode::DrawBoundary);
+    });
+}
+
+void MainWindow::setupToolBar() {
+    auto* tb = addToolBar(tr("Main"));
+    tb->setMovable(false);
+    tb->addAction(m_undoAction);
+    tb->addAction(m_redoAction);
+    tb->addSeparator();
+    tb->addAction(m_drawBoundaryAction);
+}
+
+void MainWindow::setupStatusBar() {
+    m_scaleLabel = new QLabel(this);
+    statusBar()->addPermanentWidget(m_scaleLabel);
+    updateScaleLabel(m_view->scaleDenominator());
+
+    connect(m_view, &RampView::scaleChanged, this, &MainWindow::updateScaleLabel);
+}
+
+void MainWindow::updateUndoRedoActions() {
+    auto& stack = m_scene->undoStack();
+    if (m_undoAction) {
+        m_undoAction->setEnabled(stack.canUndo());
+        m_undoAction->setText(stack.canUndo()
+            ? tr("&Undo %1").arg(QString::fromStdString(stack.undoText()))
+            : tr("&Undo"));
+    }
+    if (m_redoAction) {
+        m_redoAction->setEnabled(stack.canRedo());
+        m_redoAction->setText(stack.canRedo()
+            ? tr("&Redo %1").arg(QString::fromStdString(stack.redoText()))
+            : tr("&Redo"));
+    }
+}
+
+void MainWindow::updateScaleLabel(double denominator) {
+    m_scaleLabel->setText(tr("Scale  1:%1").arg(static_cast<int>(denominator)));
+}

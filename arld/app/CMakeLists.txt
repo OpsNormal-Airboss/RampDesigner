@@ -2,6 +2,8 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS Core Widgets)
 
 qt_add_executable(arld
     main.cpp
+    MainWindow.cpp
+    MainWindow.h
 )
 
 target_link_libraries(arld

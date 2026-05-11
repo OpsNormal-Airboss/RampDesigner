@@ -4,6 +4,7 @@ include(Catch)
 
 add_executable(arld_tests
     test_smoke.cpp
+    test_undo.cpp
 )
 
 target_link_libraries(arld_tests
