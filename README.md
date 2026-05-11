@@ -12,13 +12,35 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | C++ PoC — 20 aircraft, clearance engine, SVG export, JSON save/load | Planning |
+| **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **In Progress — Sprint 2 of 5** |
 | 1 | Production desktop, 75+ aircraft, all display types, satellite underlay | Not started |
 | 2 | 150+ aircraft, full export suite (SVG/PDF/PNG/JPEG), UAT | Not started |
 | 3 | Public v1.0 desktop release, open-source community edition | Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | Not started |
 
-## Features (Phase 0–3 Desktop)
+### Phase 0 Sprint Progress
+
+| Sprint | Goal | Status |
+|--------|------|--------|
+| 0-1 | CMake/vcpkg scaffold, CI matrix, `Config.h`, smoke tests | ✅ Complete |
+| 0-2 | Qt canvas — pan/zoom, boundary drawing, undo/redo framework | ✅ Complete |
+| 0-3 | 20-aircraft library, SVG silhouettes, drag-and-drop placement | ⬜ Up next |
+| 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Pending |
+| 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Pending |
+
+## What Works Today
+
+The application compiles and runs on macOS, Linux, and Windows. The CI pipeline is green on all three platforms. Current interactive capabilities:
+
+- **Qt window** with menu bar, toolbar (undo/redo), and status bar showing current scale
+- **Interactive canvas** — pan (left/middle click-drag), zoom (scroll wheel, `+`/`-` keys), scale range 1:200–1:5000
+- **Ramp boundary drawing** — press `B` to enter draw mode, click to add vertices, double-click to close; cosmetic 2px blue outline
+- **Vertex editing** — drag any vertex handle to reshape the boundary in real time
+- **Snap-to-grid** — 5 ft grid by default; hold Shift to draw freehand
+- **Scale bar** — live overlay showing correct footage at any zoom level
+- **Undo/redo** — 100-level history; `Ctrl+Z` / `Ctrl+Y` (or `Cmd+Z` / `Cmd+Shift+Z` on macOS)
+
+## Features (Phase 0–3 Desktop, full scope)
 
 - Interactive 2D canvas (Qt 6) with pan, zoom, snap-to-grid, and 100-level undo/redo
 - Aircraft library: 20 types (PoC) → 150+ types (Phase 2) with accurate dimensional data and SVG silhouettes
@@ -31,28 +53,37 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 
 ## Getting Started
 
-> Setup instructions will be added after Sprint 0-1 establishes the CMake/vcpkg baseline.
-
 ### Prerequisites
 
-- CMake 3.28+
-- vcpkg
-- Qt 6.7 (LGPL)
+- **CMake** 3.28+
+- **vcpkg** — set `VCPKG_ROOT` to your vcpkg installation directory
+- **Qt 6.7** (LGPL) — install separately; see platform notes in [CONTRIBUTING.md](./CONTRIBUTING.md)
+- **Ninja** build system
 - A C++20 compiler: Apple Clang 16+ (macOS), GCC 13+ (Linux), or MSVC 2022 (Windows)
 
 ### Build
 
 ```bash
+# Install C++ dependencies (CGAL, nlohmann-json, Catch2)
 vcpkg install
-cmake --preset <platform>-release    # e.g. mac-release, linux-release, win-release
-cmake --build --preset <platform>-release
+
+# Configure
+cmake --preset linux-debug      # or mac-debug / win-debug
+
+# Build
+cmake --build --preset linux-debug
+
+# Run
+./build/linux-debug/arld
 ```
 
 ### Test
 
 ```bash
-ctest --preset <platform>-debug
+ctest --preset linux-debug --output-on-failure
 ```
+
+Current test suite: 10 Catch2 tests across `test_smoke.cpp` and `test_undo.cpp`.
 
 ## Documentation
 
@@ -65,7 +96,7 @@ Planning documents are in [`docs/`](./docs/):
 | `ARLD_Technical_Requirements_v1.0.docx` | Engineering constraints, data schemas, build pipeline |
 | `ARLD_Project_Plan_v1.0.docx` | Sprint-by-sprint delivery schedule, all phases |
 
-See [`RUNBOOK.md`](./RUNBOOK.md) for operational procedures.
+See [`RUNBOOK.md`](./RUNBOOK.md) for build, test, and operational procedures.
 
 ## Architecture
 
@@ -73,12 +104,12 @@ The desktop application is a C++20 Qt 6 application structured into four strictl
 
 ```
 arld/core/      Geometry engine, clearance rules, aircraft library, project I/O (no Qt)
-arld/export/    SVG, PDF, PNG, JPEG exporters
+arld/export/    SVG, PDF, PNG, JPEG exporters (strategy pattern)
 arld/ui/        Qt canvas, toolbar, panels, undo/redo stack
 arld/app/       Application entry point and session management
 ```
 
-All clearance distances (FAA CoW defaults) are defined in `arld/core/Config.h`. Geometry computations use CGAL 5.6. Project files use the open `.arld` JSON format with a published schema.
+All clearance distances (FAA CoW defaults) are defined in `arld/core/include/arld/core/Config.h`. Undo/redo uses the Command pattern via `arld::core::ICommand`. Project files use the open `.arld` JSON format with a published schema (Sprint 0-5).
 
 ## License
 
