@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-3 complete. Library browser (search/filter/thumbnails), custom aircraft dialog with SVG sanitization, heading controls, grid overlay, fit-to-window, recent files, 75-aircraft library. 52/52 tests pass.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-4 complete. Tail-dragger tail-swing arcs, extended/retracted gear, display-type zone renderers (Taxi-Only corridor, Military Static, Ramp Show), CVD pattern fills, QAccessible, en.ts baseline. 58/58 tests pass.
 
 ---
 
@@ -138,7 +138,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay in both units, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
-| **Total** | **52 + 1 bench** | |
+| `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — empty for no-radius entry; 16-vertex poly for PT-17; center near tail; radius matches; gear-extended envelope > gear-retracted; rear extension ≥ minTurnRadiusFt |
+| **Total** | **58 + 1 bench** | |
 
 ---
 

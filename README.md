@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 1 — Sprint 3/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%203%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 1 — Sprint 4/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%204%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -50,7 +50,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
 | 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat | ✅ Complete |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ✅ Complete |
-| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ⬜ Up next |
+| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ✅ Complete |
+| 1-5 | Satellite underlay; PDF export (libharu) | ⬜ Up next |
 | 1-5 | Satellite underlay; PDF export (libharu) | ⬜ Planned |
 | 1-6 | PNG/JPEG export; print dialog; beta release | ⬜ Planned |
 
@@ -70,6 +71,10 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Drag-and-drop placement** — drag from library panel onto canvas; silhouettes render at true geographic scale (1 scene unit = 1 ft)
 - **Aircraft rotation + heading input** — drag the rotation handle (snaps 45° / 1° with Shift) or type an exact 0–359° heading; "Snap All Selected to Heading" button aligns multi-aircraft groups; fully undoable
 - **Grid overlay** — configurable 25/50/100 ft spacing; toggle with `G`; recomputes on zoom
+- **Tail-swing arcs** — tail-dragger aircraft (PT-17, P-51, Spitfire, etc.) display an amber swept-arc polygon showing the tail-swing radius; factored into clearance envelopes
+- **Extended/retracted gear** — aircraft with retractable gear show a gear state toggle (Gear Extended / Retracted) that expands or contracts the clearance zone by 8 ft
+- **Display-type zone rendering** — Taxi-Only shows a narrow corridor shape; Military Static uses a thick red dashed border; Ramp Show uses a thick amber DashDot boundary
+- **CVD accessibility** — clearance zone fills use hatch patterns (diagonal/cross-hatch/horizontal lines) in addition to color, supporting color-vision-deficient users
 - **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
@@ -126,7 +131,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 52 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, and `test_svg_sanitizer.cpp`.
+Current test suite: 58 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, and `test_tail_swing.cpp`.
 
 ## 📋 Documentation
 
