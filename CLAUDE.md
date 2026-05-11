@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 1, Sprint 1-1 complete. Clang-tidy CI baseline, CPack packaging config, UnitConverter ft↔m, 60 s auto-save + crash recovery, exporter stubs (PDF/PNG/JPEG/Batch), and aircraft library expanded to 50 entries. 39/39 tests pass.
+**Current status:** Phase 1, Sprint 1-2 complete. ViolationsPanel, ClearanceRuleSet (FAA CoW + ICAS), clearance override dialog, PropertiesPanel with display type / tail number / hazmat, schema v1→v2 migration. 45/45 tests pass.
 
 ## 📋 Post-Sprint Documentation
 
@@ -47,7 +47,8 @@ After completing each sprint, update the following files to reflect the current 
 | Sprint | Goal | Status |
 |--------|------|--------|
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
-| 1-2 | Violations panel; clearance rule config; display type assignment UI | ⬜ Up next |
+| 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat; schema migration | ✅ Complete |
+| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Up next |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Planned |
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ⬜ Planned |
 | 1-5 | Satellite underlay; grid overlay; undo/redo improvements | ⬜ Planned |
@@ -200,7 +201,8 @@ RampView    : QGraphicsView
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
 | `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay Imperial/Metric, toFeet round-trip, suffix strings |
-| **Total** | **39 + 1 bench** | |
+| `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
+| **Total** | **45 + 1 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

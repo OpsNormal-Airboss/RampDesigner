@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-1 complete. Clang-tidy CI baseline, CPack packaging, UnitConverter, auto-save/crash-recovery, exporter stubs, 50-aircraft library. 39/39 tests pass.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-2 complete. ViolationsPanel, ClearanceRuleSet (FAA CoW + ICAS), clearance overrides, PropertiesPanel, per-aircraft metadata, schema v1→v2 migration. 45/45 tests pass.
 
 ---
 
@@ -89,7 +89,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — 8 scenarios (separation, warbird, military, overlap, advisory, rotation, constants) + bench_clearance_200 |
 | `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay in both units, toFeet round-trip, suffix strings |
-| **Total** | **39 + 1 bench** | |
+| `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
+| **Total** | **45 + 1 bench** | |
 
 ---
 

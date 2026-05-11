@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 1 — Sprint 1/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%201%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 1 — Sprint 2/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%202%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -48,7 +48,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | Sprint | Goal | Status |
 |--------|------|--------|
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
-| 1-2 | Violations panel; clearance rule config; display type assignment UI | ⬜ Up next |
+| 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat | ✅ Complete |
+| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Up next |
 | 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Planned |
 | 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones | ⬜ Planned |
 | 1-5 | Satellite underlay; grid overlay | ⬜ Planned |
@@ -75,6 +76,11 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **SVG export** — File → Export SVG produces a scaled diagram with the ramp boundary, all aircraft (colored by display type), and labels
 - **Metric/Imperial toggle** — View → Show in Metric switches all distance displays between feet and metres without data loss
 - **Auto-save** — layout is auto-saved every 60 seconds; crash recovery dialog offered on next launch if previous session ended unexpectedly
+- **Violations panel** — bottom dock lists all active violations with severity, measured gap, and required gap; click any row to center the view on the offending aircraft pair
+- **Clearance rule configuration** — Tools → Clearance Rules... lets show directors switch between FAA CoW and ICAS Standard templates or set custom per-type distances; custom rules persist in the `.arld` file
+- **Properties panel** — right dock shows display type (all 7 types), tail number, owner, fuel type, and hazmat flag for any selected aircraft; changing display type immediately recalculates clearance zones
+- **Clearance overrides** — violations can be overridden with a justification (min 20 characters); overridden pairs render in orange and are stored in the project file with username and timestamp
+- **Hazmat indicator** — aircraft marked as carrying hazardous materials show a ⚠ warning icon on the canvas
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 
@@ -119,7 +125,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 39 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, and `test_unit_converter.cpp`.
+Current test suite: 45 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, and `test_schema_migration.cpp`.
 
 ## 📋 Documentation
 
