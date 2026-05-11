@@ -10,6 +10,7 @@ add_executable(arld_tests
     test_project_file.cpp
     test_schema_migration.cpp
     test_unit_converter.cpp
+    test_svg_sanitizer.cpp
 )
 
 target_link_libraries(arld_tests

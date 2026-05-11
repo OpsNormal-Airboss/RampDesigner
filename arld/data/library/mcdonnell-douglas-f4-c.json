@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "mcdonnell-douglas-f4-c",
+  "display_name": "F-4C Phantom II",
+  "manufacturer": "McDonnell Douglas",
+  "model": "F-4",
+  "variant": "C",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.4,
+  "length_ft": 58.3,
+  "tail_height_ft": 16.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "mcdonnell-douglas-f4-c.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

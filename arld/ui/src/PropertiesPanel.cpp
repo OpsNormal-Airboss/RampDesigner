@@ -4,11 +4,15 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
+#include <QGraphicsScene>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
+#include <QSpinBox>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <cmath>
 
 namespace arld::ui {
 
@@ -54,6 +58,16 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
     m_hazmatCheck = new QCheckBox(tr("Carries hazardous materials"), m_content);
     contentLayout->addWidget(m_hazmatCheck);
 
+    // --- Heading controls (1-3-5) ---
+    m_headingEdit = new QSpinBox(m_content);
+    m_headingEdit->setRange(0, 359);
+    m_headingEdit->setWrapping(true);
+    m_headingEdit->setSuffix(tr("°"));
+    form->addRow(tr("Heading (°):"), m_headingEdit);
+
+    m_snapHeadingBtn = new QPushButton(tr("Snap All Selected to This Heading"), m_content);
+    contentLayout->addWidget(m_snapHeadingBtn);
+
     contentLayout->addStretch();
 
     // Build placeholder widget (shown when nothing is selected)
@@ -86,6 +100,10 @@ PropertiesPanel::PropertiesPanel(QWidget* parent)
             this, &PropertiesPanel::onFuelTypeChanged);
     connect(m_hazmatCheck, &QCheckBox::toggled,
             this, &PropertiesPanel::onHazmatToggled);
+    connect(m_headingEdit, qOverload<int>(&QSpinBox::valueChanged),
+            this, &PropertiesPanel::onHeadingChanged);
+    connect(m_snapHeadingBtn, &QPushButton::clicked,
+            this, &PropertiesPanel::onSnapHeading);
 }
 
 void PropertiesPanel::setAircraft(AircraftItem* item) {
@@ -105,6 +123,7 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_ownerEdit->blockSignals(true);
     m_fuelTypeEdit->blockSignals(true);
     m_hazmatCheck->blockSignals(true);
+    m_headingEdit->blockSignals(true);
 
     m_nameLabel->setText(QString::fromStdString(item->entry().displayName));
     m_displayTypeCombo->setCurrentIndex(
@@ -113,12 +132,14 @@ void PropertiesPanel::setAircraft(AircraftItem* item) {
     m_ownerEdit->setText(QString::fromStdString(item->owner()));
     m_fuelTypeEdit->setText(QString::fromStdString(item->fuelType()));
     m_hazmatCheck->setChecked(item->hasHazmat());
+    m_headingEdit->setValue(static_cast<int>(std::round(item->rotation())));
 
     m_displayTypeCombo->blockSignals(false);
     m_tailNumberEdit->blockSignals(false);
     m_ownerEdit->blockSignals(false);
     m_fuelTypeEdit->blockSignals(false);
     m_hazmatCheck->blockSignals(false);
+    m_headingEdit->blockSignals(false);
 
     stack->setCurrentIndex(1);  // show content
 }
@@ -127,8 +148,6 @@ void PropertiesPanel::onDisplayTypeChanged(int index) {
     if (!m_current) return;
     using DT = arld::core::DisplayType;
     m_current->setDisplayType(static_cast<DT>(index));
-    // setDisplayType calls rebuildClearancePolygon() + update(), which triggers
-    // the scene changed signal and the debounced recomputeClearance().
 }
 
 void PropertiesPanel::onTailNumberChanged(const QString& text) {
@@ -149,6 +168,34 @@ void PropertiesPanel::onFuelTypeChanged(const QString& text) {
 void PropertiesPanel::onHazmatToggled(bool checked) {
     if (!m_current) return;
     m_current->setHazmat(checked);
+}
+
+void PropertiesPanel::onHeadingChanged(int degrees) {
+    if (!m_current) return;
+    const double fromDeg = m_current->rotation();
+    const double toDeg   = static_cast<double>(degrees);
+    if (std::abs(toDeg - fromDeg) < 0.01) return;
+    m_current->setRotation(toDeg);
+    m_current->commitRotation(fromDeg, toDeg);
+}
+
+void PropertiesPanel::onSnapHeading() {
+    if (!m_current) return;
+    if (!m_current->scene()) return;
+
+    const int heading = m_headingEdit->value();
+
+    // Apply the heading to every selected AircraftItem in the scene.
+    const auto selected = m_current->scene()->selectedItems();
+    for (auto* sceneItem : selected) {
+        auto* ac = qgraphicsitem_cast<AircraftItem*>(sceneItem);
+        if (!ac) continue;
+        const double fromDeg = ac->rotation();
+        const double toDeg   = static_cast<double>(heading);
+        if (std::abs(toDeg - fromDeg) < 0.01) continue;
+        ac->setRotation(toDeg);
+        ac->commitRotation(fromDeg, toDeg);
+    }
 }
 
 } // namespace arld::ui

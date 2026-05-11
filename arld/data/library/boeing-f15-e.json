@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "boeing-f15-e",
+  "display_name": "F-15E Strike Eagle",
+  "manufacturer": "Boeing",
+  "model": "F-15",
+  "variant": "E",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 42.8,
+  "length_ft": 63.8,
+  "tail_height_ft": 18.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-f15-e.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

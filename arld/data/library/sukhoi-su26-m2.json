@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "sukhoi-su26-m2",
+  "display_name": "Sukhoi Su-26M2",
+  "manufacturer": "Sukhoi",
+  "model": "Su-26",
+  "variant": "M2",
+  "category": "AEROBATIC",
+  "wingspan_ft": 25.6,
+  "length_ft": 22.3,
+  "tail_height_ft": 9.5,
+  "prop_arc_ft": 7.2,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "sukhoi-su26-m2.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

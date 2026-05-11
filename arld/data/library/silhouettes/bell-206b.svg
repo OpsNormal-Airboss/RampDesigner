@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.4 31.2">
+  <!-- Bell 206B JetRanger III top-down silhouette -->
+  <!-- Main rotor disk -->
+  <circle cx="16.7" cy="12" r="16.7" fill="none" stroke="#999999" stroke-width="0.35" stroke-dasharray="2.0,1.0"/>
+  <!-- Main rotor blades (2-blade) -->
+  <rect x="0.7" y="11.25" width="32" height="1.5" rx="0.5" fill="#3a3a3a" opacity="0.6"/>
+  <!-- Fuselage (cabin forward) -->
+  <ellipse cx="16.7" cy="12" rx="3.2" ry="6.5" fill="#4a4a4a"/>
+  <!-- Tailboom -->
+  <rect x="15.9" y="17.5" width="1.6" height="12.5" rx="0.5" fill="#5e5e5e"/>
+  <!-- Tail rotor -->
+  <circle cx="16.7" cy="29.5" r="2.5" fill="none" stroke="#999999" stroke-width="0.3" stroke-dasharray="1.0,0.5"/>
+</svg>

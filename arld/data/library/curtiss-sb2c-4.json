@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "curtiss-sb2c-4",
+  "display_name": "SB2C-4 Helldiver",
+  "manufacturer": "Curtiss-Wright",
+  "model": "SB2C",
+  "variant": "4",
+  "category": "WARBIRD",
+  "wingspan_ft": 49.9,
+  "length_ft": 36.8,
+  "tail_height_ft": 14.0,
+  "prop_arc_ft": 11.0,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "curtiss-sb2c-4.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

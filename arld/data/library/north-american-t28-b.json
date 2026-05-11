@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "north-american-t28-b",
+  "display_name": "T-28B Trojan",
+  "manufacturer": "North American Aviation",
+  "model": "T-28",
+  "variant": "B",
+  "category": "WARBIRD",
+  "wingspan_ft": 40.7,
+  "length_ft": 33.0,
+  "tail_height_ft": 12.9,
+  "prop_arc_ft": 8.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "north-american-t28-b.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

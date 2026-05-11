@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "yakovlev-yak9-u",
+  "display_name": "Yak-9U",
+  "manufacturer": "Yakovlev",
+  "model": "Yak-9",
+  "variant": "U",
+  "category": "WARBIRD",
+  "wingspan_ft": 32.2,
+  "length_ft": 28.6,
+  "tail_height_ft": 9.5,
+  "prop_arc_ft": 9.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "yakovlev-yak9-u.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

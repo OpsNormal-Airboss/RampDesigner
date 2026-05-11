@@ -40,6 +40,10 @@ public:
     // Callback fired when an undoable action is ready (move, rotate).
     std::function<void(std::unique_ptr<arld::core::ICommand>)> onCommandReady;
 
+    /// Apply a rotation and push an undo command.
+    /// fromDeg is the previous rotation; the item should already be at toDeg.
+    void commitRotation(double fromDeg, double toDeg);
+
     // Per-aircraft metadata (Sprint 1-2-5 / 1-2-7)
     const std::string& tailNumber() const { return m_tailNumber; }
     void setTailNumber(const std::string& s) { m_tailNumber = s; }

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-sr71-a",
+  "display_name": "SR-71A Blackbird",
+  "manufacturer": "Lockheed",
+  "model": "SR-71",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 55.6,
+  "length_ft": 107.4,
+  "tail_height_ft": 18.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "lockheed-sr71-a.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

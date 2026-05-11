@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64.1 62.8">
+  <!-- F-14D Tomcat top-down silhouette -->
+  <!-- Fuselage -->
+  <rect x="28.85" y="4" width="6.4" height="54.8" rx="2" fill="#4a4a4a"/>
+  <!-- Wings (swept) -->
+  <polygon points="32.05,16 64.1,32 64.1,36 32.05,24" fill="#5e5e5e"/>
+  <polygon points="32.05,16 0,32 0,36 32.05,24" fill="#5e5e5e"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="32.05,50 52,54 52,58 32.05,56" fill="#6a6a6a"/>
+  <polygon points="32.05,50 12,54 12,58 32.05,56" fill="#6a6a6a"/>
+  <!-- Twin tail fins (top view) -->
+  <rect x="27" y="44" width="3.5" height="12" rx="1" fill="#3a3a3a"/>
+  <rect x="33.6" y="44" width="3.5" height="12" rx="1" fill="#3a3a3a"/>
+</svg>

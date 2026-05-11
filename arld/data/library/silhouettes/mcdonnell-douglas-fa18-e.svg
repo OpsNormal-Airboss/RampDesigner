@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44.9 60.2">
+  <!-- F/A-18E Super Hornet top-down silhouette -->
+  <!-- Fuselage -->
+  <rect x="20.25" y="3" width="4.4" height="54.2" rx="2" fill="#4a4a4a"/>
+  <!-- Delta wings -->
+  <polygon points="22.45,18 44.9,36 44.9,40 22.45,28" fill="#5e5e5e"/>
+  <polygon points="22.45,18 0,36 0,40 22.45,28" fill="#5e5e5e"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="22.45,46 38,50 38,54 22.45,52" fill="#6a6a6a"/>
+  <polygon points="22.45,46 7,50 7,54 22.45,52" fill="#6a6a6a"/>
+  <!-- Twin tails (top view) -->
+  <rect x="20" y="42" width="2.5" height="14" rx="1" fill="#3a3a3a"/>
+  <rect x="22.4" y="42" width="2.5" height="14" rx="1" fill="#3a3a3a"/>
+</svg>

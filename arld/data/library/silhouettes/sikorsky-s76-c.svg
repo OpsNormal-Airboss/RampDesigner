@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 43.4">
+  <!-- Sikorsky S-76C+ top-down silhouette -->
+  <!-- Main rotor disk -->
+  <circle cx="22" cy="16" r="22" fill="none" stroke="#999999" stroke-width="0.4" stroke-dasharray="2.5,1.25"/>
+  <!-- Main rotor blades (4-blade cross) -->
+  <rect x="1" y="15.25" width="42" height="1.5" rx="0.5" fill="#3a3a3a" opacity="0.6"/>
+  <rect x="21.25" y="1" width="1.5" height="30" rx="0.5" fill="#3a3a3a" opacity="0.6"/>
+  <!-- Fuselage -->
+  <ellipse cx="22" cy="16" rx="3.8" ry="9" fill="#4a4a4a"/>
+  <!-- Tailboom -->
+  <rect x="21.0" y="24" width="2.0" height="18" rx="0.7" fill="#5e5e5e"/>
+  <!-- Tail rotor -->
+  <circle cx="22" cy="41.5" r="3.0" fill="none" stroke="#999999" stroke-width="0.3" stroke-dasharray="1.2,0.6"/>
+</svg>

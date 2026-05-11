@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "convair-b58-a",
+  "display_name": "B-58A Hustler",
+  "manufacturer": "Convair",
+  "model": "B-58",
+  "variant": "A",
+  "category": "BOMBER",
+  "wingspan_ft": 56.8,
+  "length_ft": 96.8,
+  "tail_height_ft": 31.5,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "convair-b58-a.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

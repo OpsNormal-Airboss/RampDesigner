@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "boeing-e3-a",
+  "display_name": "E-3A Sentry (AWACS)",
+  "manufacturer": "Boeing",
+  "model": "E-3",
+  "variant": "A",
+  "category": "HEAVY_TRANSPORT",
+  "wingspan_ft": 130.9,
+  "length_ft": 145.9,
+  "tail_height_ft": 41.0,
+  "default_display_type": "MILITARY_STATIC",
+  "silhouette_svg": "boeing-e3-a.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

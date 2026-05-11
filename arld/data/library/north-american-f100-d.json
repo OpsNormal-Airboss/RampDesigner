@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "north-american-f100-d",
+  "display_name": "F-100D Super Sabre",
+  "manufacturer": "North American Aviation",
+  "model": "F-100",
+  "variant": "D",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.9,
+  "length_ft": 47.0,
+  "tail_height_ft": 15.0,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "north-american-f100-d.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

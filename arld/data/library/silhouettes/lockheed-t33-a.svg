@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.9 37.6">
+  <!-- T-33A Shooting Star top-down silhouette -->
+  <!-- Fuselage -->
+  <path d="M 19.45,0 C 20.2,3 20.5,8 20.5,14 L 20.5,37.6 L 18.4,37.6 L 18.4,14 C 18.4,8 18.7,3 19.45,0 Z" fill="#4a4a4a"/>
+  <!-- Straight wings -->
+  <polygon points="20.5,14 38.9,17 38.9,20.5 20.5,21" fill="#5e5e5e"/>
+  <polygon points="18.4,14 0,17 0,20.5 18.4,21" fill="#5e5e5e"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="20.5,30 32,32 32,35 20.5,34" fill="#6a6a6a"/>
+  <polygon points="18.4,30 7,32 7,35 18.4,34" fill="#6a6a6a"/>
+</svg>

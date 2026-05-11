@@ -5,6 +5,7 @@
 
 class QAction;
 class QLabel;
+class QMenu;
 
 namespace arld::ui {
 class LibraryPanel;
@@ -43,6 +44,13 @@ private:
     void saveProjectAs();
     void exportSvg();
 
+    // View menu slots (1-3-8)
+    void fitToWindow();
+
+    // Recent files (1-3-8)
+    void addToRecentFiles(const QString& path);
+    void updateRecentFilesMenu();
+
     arld::ui::RampScene*    m_scene;
     arld::ui::RampView*     m_view;
     arld::ui::LibraryPanel*    m_libraryPanel   = nullptr;
@@ -55,6 +63,7 @@ private:
     QLabel*  m_scaleLabel          = nullptr;
     QLabel*  m_unitLabel           = nullptr;
     QLabel*  m_violationLabel      = nullptr;
+    QMenu*   m_recentFilesMenu     = nullptr;
 
     QTimer   m_autoSaveTimer;
     QString  m_autoSavePath;

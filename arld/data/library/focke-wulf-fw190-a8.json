@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "focke-wulf-fw190-a8",
+  "display_name": "Fw 190A-8",
+  "manufacturer": "Focke-Wulf",
+  "model": "Fw 190",
+  "variant": "A-8",
+  "category": "WARBIRD",
+  "wingspan_ft": 34.4,
+  "length_ft": 29.0,
+  "tail_height_ft": 13.0,
+  "prop_arc_ft": 9.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "focke-wulf-fw190-a8.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

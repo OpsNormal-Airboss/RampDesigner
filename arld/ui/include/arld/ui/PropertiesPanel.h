@@ -1,10 +1,12 @@
 #pragma once
 #include <QDockWidget>
 
-class QComboBox;
 class QCheckBox;
-class QLineEdit;
+class QComboBox;
 class QLabel;
+class QLineEdit;
+class QPushButton;
+class QSpinBox;
 
 namespace arld::ui {
 
@@ -24,6 +26,8 @@ private slots:
     void onOwnerChanged(const QString& text);
     void onFuelTypeChanged(const QString& text);
     void onHazmatToggled(bool checked);
+    void onHeadingChanged(int degrees);
+    void onSnapHeading();
 
 private:
     AircraftItem* m_current = nullptr;
@@ -33,6 +37,8 @@ private:
     QLineEdit* m_ownerEdit;
     QLineEdit* m_fuelTypeEdit;
     QCheckBox* m_hazmatCheck;
+    QSpinBox*  m_headingEdit    = nullptr;
+    QPushButton* m_snapHeadingBtn = nullptr;
     QWidget*   m_content;
     QWidget*   m_placeholder;
 };

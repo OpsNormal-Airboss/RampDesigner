@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "de-havilland-dh82a",
+  "display_name": "de Havilland Tiger Moth DH.82A",
+  "manufacturer": "de Havilland",
+  "model": "DH.82A",
+  "variant": "",
+  "category": "WARBIRD",
+  "wingspan_ft": 29.4,
+  "length_ft": 23.9,
+  "tail_height_ft": 8.8,
+  "prop_arc_ft": 7.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "de-havilland-dh82a.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

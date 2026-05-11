@@ -261,4 +261,8 @@ void AircraftItem::finishRotation(double fromDeg, double toDeg) {
     }
 }
 
+void AircraftItem::commitRotation(double fromDeg, double toDeg) {
+    finishRotation(fromDeg, toDeg);
+}
+
 } // namespace arld::ui

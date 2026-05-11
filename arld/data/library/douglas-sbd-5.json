@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "douglas-sbd-5",
+  "display_name": "SBD-5 Dauntless",
+  "manufacturer": "Douglas Aircraft",
+  "model": "SBD",
+  "variant": "5",
+  "category": "WARBIRD",
+  "wingspan_ft": 41.5,
+  "length_ft": 33.1,
+  "tail_height_ft": 13.7,
+  "prop_arc_ft": 9.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "douglas-sbd-5.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

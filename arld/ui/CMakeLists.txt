@@ -5,6 +5,8 @@ add_library(arld_ui STATIC
     include/arld/ui/ClearanceOverrideDialog.h
     include/arld/ui/ClearanceRuleDialog.h
     include/arld/ui/ClearanceZoneItem.h
+    include/arld/ui/CustomAircraftDialog.h
+    include/arld/ui/GridOverlayItem.h
     include/arld/ui/LibraryPanel.h
     include/arld/ui/PropertiesPanel.h
     include/arld/ui/RampBoundaryItem.h
@@ -16,6 +18,8 @@ add_library(arld_ui STATIC
     src/ClearanceOverrideDialog.cpp
     src/ClearanceRuleDialog.cpp
     src/ClearanceZoneItem.cpp
+    src/CustomAircraftDialog.cpp
+    src/GridOverlayItem.cpp
     src/LibraryPanel.cpp
     src/PropertiesPanel.cpp
     src/RampBoundaryItem.cpp

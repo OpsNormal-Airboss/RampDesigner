@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "sikorsky-s76-c",
+  "display_name": "Sikorsky S-76C+",
+  "manufacturer": "Sikorsky Aircraft",
+  "model": "S-76",
+  "variant": "C+",
+  "category": "HELICOPTER",
+  "rotor_diameter_ft": 44.0,
+  "length_ft": 43.4,
+  "tail_height_ft": 14.9,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "sikorsky-s76-c.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

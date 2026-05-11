@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "cap-232",
+  "display_name": "CAP 232",
+  "manufacturer": "Avions Mudry",
+  "model": "CAP",
+  "variant": "232",
+  "category": "AEROBATIC",
+  "wingspan_ft": 26.2,
+  "length_ft": 22.6,
+  "tail_height_ft": 8.2,
+  "prop_arc_ft": 6.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "cap-232.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

@@ -9,6 +9,7 @@ add_library(arld_core STATIC
     src/ClearanceRuleSet.cpp
     src/ProjectFile.cpp
     src/UnitConverter.cpp
+    src/SvgSanitizer.cpp
 )
 
 target_include_directories(arld_core

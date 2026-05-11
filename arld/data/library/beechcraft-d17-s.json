@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "beechcraft-d17-s",
+  "display_name": "Beechcraft Staggerwing D17S",
+  "manufacturer": "Beechcraft",
+  "model": "D17",
+  "variant": "S",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 32.0,
+  "length_ft": 26.4,
+  "tail_height_ft": 8.2,
+  "prop_arc_ft": 7.5,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "beechcraft-d17-s.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

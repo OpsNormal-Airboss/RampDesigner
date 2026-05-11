@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54.2 40">
+  <!-- TBF-1 Avenger top-down silhouette -->
+  <!-- Prop arc -->
+  <circle cx="27.1" cy="5.75" r="5.75" fill="none" stroke="#999999" stroke-width="0.35" stroke-dasharray="1.8,0.9"/>
+  <!-- Fuselage (wide torpedo bomber) -->
+  <path d="M 27.1,0 C 28.3,4 29,10 29,16 L 28.8,40 L 25.4,40 L 25.2,16 C 25.2,10 25.9,4 27.1,0 Z" fill="#4a4a4a"/>
+  <!-- Wings -->
+  <polygon points="29,14 54.2,18 54.2,22 29,22.5" fill="#5e5e5e"/>
+  <polygon points="25.2,14 0,18 0,22 25.2,22.5" fill="#5e5e5e"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="28.8,32.5 42,34.5 42,37.5 28.8,37" fill="#6a6a6a"/>
+  <polygon points="25.2,32.5 12,34.5 12,37.5 25.2,37" fill="#6a6a6a"/>
+</svg>

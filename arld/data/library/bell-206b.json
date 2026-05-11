@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "bell-206b",
+  "display_name": "Bell 206B JetRanger III",
+  "manufacturer": "Bell Helicopter",
+  "model": "206B",
+  "variant": "",
+  "category": "HELICOPTER",
+  "rotor_diameter_ft": 33.4,
+  "length_ft": 31.2,
+  "tail_height_ft": 9.2,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "bell-206b.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

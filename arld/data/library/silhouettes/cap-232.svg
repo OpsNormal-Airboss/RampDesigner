@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26.2 22.6">
+  <!-- CAP 232 top-down silhouette -->
+  <!-- Prop arc -->
+  <circle cx="13.1" cy="3.4" r="3.4" fill="none" stroke="#999999" stroke-width="0.25" stroke-dasharray="1.1,0.55"/>
+  <!-- Fuselage -->
+  <path d="M 13.1,0 C 13.7,2 14.0,5.5 14.0,9 L 13.8,22.6 L 12.4,22.6 L 12.2,9 C 12.2,5.5 12.5,2 13.1,0 Z" fill="#4a4a4a"/>
+  <!-- Low mid-wing -->
+  <polygon points="14.0,8.5 26.2,11 26.2,14 14.0,14" fill="#5e5e5e"/>
+  <polygon points="12.2,8.5 0,11 0,14 12.2,14" fill="#5e5e5e"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="13.8,18 20.5,19.5 20.5,21.5 13.8,21" fill="#6a6a6a"/>
+  <polygon points="12.4,18 5.7,19.5 5.7,21.5 12.4,21" fill="#6a6a6a"/>
+</svg>

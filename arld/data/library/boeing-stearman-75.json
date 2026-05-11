@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "boeing-stearman-75",
+  "display_name": "Boeing Stearman 75 Kaydet",
+  "manufacturer": "Boeing",
+  "model": "Stearman 75",
+  "variant": "",
+  "category": "WARBIRD",
+  "wingspan_ft": 32.2,
+  "length_ft": 24.9,
+  "tail_height_ft": 9.2,
+  "prop_arc_ft": 8.5,
+  "default_display_type": "WARBIRD_HERITAGE",
+  "silhouette_svg": "boeing-stearman-75.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

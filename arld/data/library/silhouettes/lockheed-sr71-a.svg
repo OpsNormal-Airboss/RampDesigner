@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55.6 107.4">
+  <!-- SR-71A Blackbird top-down silhouette (long, narrow delta) -->
+  <!-- Fuselage (very slender) -->
+  <path d="M 27.8,0 C 28.6,8 29.2,20 29.4,35 L 29.4,107.4 L 26.2,107.4 L 26.2,35 C 26.4,20 27.0,8 27.8,0 Z" fill="#2a2a2a"/>
+  <!-- Chine-delta wings (blended into fuselage) -->
+  <polygon points="29.4,20 55.6,70 55.6,80 29.4,60" fill="#3a3a3a"/>
+  <polygon points="26.2,20 0,70 0,80 26.2,60" fill="#3a3a3a"/>
+  <!-- Twin engine nacelles -->
+  <rect x="34.5" y="30" width="4" height="40" rx="1.5" fill="#4a4a4a"/>
+  <rect x="17.1" y="30" width="4" height="40" rx="1.5" fill="#4a4a4a"/>
+  <!-- Twin vertical tails (top view, small) -->
+  <rect x="30.5" y="75" width="2.5" height="20" rx="1" fill="#3a3a3a"/>
+  <rect x="22.6" y="75" width="2.5" height="20" rx="1" fill="#3a3a3a"/>
+</svg>

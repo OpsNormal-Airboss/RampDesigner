@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.9 145.9">
+  <!-- E-3A Sentry AWACS top-down silhouette -->
+  <!-- Fuselage (based on 707) -->
+  <path d="M 65.45,0 C 67,10 68,25 68,45 L 68,145.9 L 62.9,145.9 L 62.9,45 C 62.9,25 63.9,10 65.45,0 Z" fill="#4a4a4a"/>
+  <!-- AWACS rotodome (characteristic disk on top) -->
+  <ellipse cx="65.45" cy="55" rx="9" ry="5" fill="#6a6a6a" stroke="#999" stroke-width="0.5"/>
+  <!-- Wings (swept) -->
+  <polygon points="68,40 130.9,72 130.9,78 68,60" fill="#5e5e5e"/>
+  <polygon points="62.9,40 0,72 0,78 62.9,60" fill="#5e5e5e"/>
+  <!-- Engine pods (4 engines) -->
+  <rect x="76" y="48" width="6" height="18" rx="2" fill="#3a3a3a"/>
+  <rect x="86" y="52" width="6" height="16" rx="2" fill="#3a3a3a"/>
+  <rect x="43" y="48" width="6" height="18" rx="2" fill="#3a3a3a"/>
+  <rect x="39" y="52" width="6" height="16" rx="2" fill="#3a3a3a"/>
+  <!-- Horizontal stabilizers -->
+  <polygon points="68,122 100,128 100,136 68,133" fill="#6a6a6a"/>
+  <polygon points="62.9,122 31,128 31,136 62.9,133" fill="#6a6a6a"/>
+</svg>

@@ -10,6 +10,7 @@
 #include <arld/core/UnitConverter.h>
 #include <arld/export/SvgExporter.h>
 #include <QAction>
+#include <QActionGroup>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -19,8 +20,10 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QSettings>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QStringList>
 #include <QToolBar>
 
 using arld::ui::EditMode;
@@ -147,6 +150,35 @@ void MainWindow::setupMenuBar() {
         }
     }, QKeySequence(Qt::Key_M));
     m_metricAction->setCheckable(true);
+
+    // Fit to Window (1-3-8)
+    viewMenu->addAction(tr("&Fit to Window"), this, &MainWindow::fitToWindow,
+                        QKeySequence(Qt::CTRL | Qt::Key_0));
+
+    // Grid controls (1-3-7)
+    viewMenu->addSeparator();
+
+    auto* showGridAction = viewMenu->addAction(tr("Show &Grid"), this, [this](bool checked) {
+        m_scene->setGridVisible(checked);
+    }, QKeySequence(Qt::Key_G));
+    showGridAction->setCheckable(true);
+    showGridAction->setChecked(true);
+
+    auto* spacingMenu = viewMenu->addMenu(tr("Grid &Spacing"));
+    auto* spacingGroup = new QActionGroup(this);
+    spacingGroup->setExclusive(true);
+
+    auto addSpacing = [&](const QString& label, int ft) {
+        auto* act = spacingMenu->addAction(label, this, [this, ft] {
+            m_scene->setGridSpacingFt(ft);
+        });
+        act->setCheckable(true);
+        spacingGroup->addAction(act);
+        if (ft == 50) act->setChecked(true); // default
+    };
+    addSpacing(tr("25 ft"),  25);
+    addSpacing(tr("50 ft"),  50);
+    addSpacing(tr("100 ft"), 100);
 }
 
 void MainWindow::setupFileActions() {
@@ -168,6 +200,9 @@ void MainWindow::setupFileActions() {
     fm->addAction(tr("Save &As..."), this, &MainWindow::saveProjectAs, QKeySequence::SaveAs);
     fm->addSeparator();
     fm->addAction(tr("Export &SVG..."), this, &MainWindow::exportSvg);
+    fm->addSeparator();
+    m_recentFilesMenu = fm->addMenu(tr("&Recent Projects"));
+    updateRecentFilesMenu();
 }
 
 void MainWindow::setupToolBar() {
@@ -337,6 +372,7 @@ void MainWindow::openProject() {
         m_dirty = false;
         updateWindowTitle();
         updateUndoRedoActions();
+        addToRecentFiles(path);
         if (m_violationsPanel) m_violationsPanel->refresh(m_scene->lastViolations());
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Open Failed"),
@@ -372,6 +408,7 @@ void MainWindow::saveProjectAs() {
 
     m_currentFilePath = path;
     saveProject();
+    addToRecentFiles(path);
 }
 
 void MainWindow::exportSvg() {
@@ -387,5 +424,77 @@ void MainWindow::exportSvg() {
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Export Failed"),
                               tr("Could not export SVG:\n%1").arg(e.what()));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 1-3-8: Fit to Window
+// ---------------------------------------------------------------------------
+void MainWindow::fitToWindow() {
+    const QRectF bounds = m_scene->itemsBoundingRect();
+    if (bounds.isNull()) return;
+    m_view->fitInView(bounds.adjusted(-50, -50, 50, 50), Qt::KeepAspectRatio);
+}
+
+// ---------------------------------------------------------------------------
+// 1-3-8: Recent files
+// ---------------------------------------------------------------------------
+void MainWindow::addToRecentFiles(const QString& path) {
+    if (path.isEmpty()) return;
+    QSettings settings(QStringLiteral("OpsNormal Airboss"), QStringLiteral("ARLD"));
+    QStringList recent = settings.value(QStringLiteral("recentFiles")).toStringList();
+    recent.removeAll(path);
+    recent.prepend(path);
+    while (recent.size() > 10)
+        recent.removeLast();
+    settings.setValue(QStringLiteral("recentFiles"), recent);
+    updateRecentFilesMenu();
+}
+
+void MainWindow::updateRecentFilesMenu() {
+    if (!m_recentFilesMenu) return;
+    m_recentFilesMenu->clear();
+
+    QSettings settings(QStringLiteral("OpsNormal Airboss"), QStringLiteral("ARLD"));
+    const QStringList recent =
+        settings.value(QStringLiteral("recentFiles")).toStringList();
+
+    if (recent.isEmpty()) {
+        auto* empty = m_recentFilesMenu->addAction(tr("No recent projects"));
+        empty->setEnabled(false);
+        return;
+    }
+
+    for (const QString& path : recent) {
+        const QString name = QFileInfo(path).fileName();
+        m_recentFilesMenu->addAction(name, this, [this, path] {
+            // Reuse the openProject logic: prompt if dirty, then load.
+            if (m_dirty) {
+                const auto btn = QMessageBox::question(
+                    this, tr("Open Project"),
+                    tr("The current layout has unsaved changes. Discard them?"),
+                    QMessageBox::Discard | QMessageBox::Cancel,
+                    QMessageBox::Cancel);
+                if (btn != QMessageBox::Discard) return;
+            }
+            try {
+                auto data = arld::core::ProjectFile::load(path.toStdString());
+                auto lookup = [this](const std::string& id)
+                    -> const arld::core::AircraftLibraryEntry* {
+                    return m_libraryPanel->entryById(id);
+                };
+                m_scene->loadProjectData(data, lookup);
+                m_currentFilePath = path;
+                m_dirty = false;
+                updateWindowTitle();
+                updateUndoRedoActions();
+                addToRecentFiles(path);
+                if (m_violationsPanel)
+                    m_violationsPanel->refresh(m_scene->lastViolations());
+            } catch (const std::exception& e) {
+                QMessageBox::critical(this, tr("Open Failed"),
+                                      tr("Could not open project:\n%1").arg(e.what()));
+            }
+        });
     }
 }

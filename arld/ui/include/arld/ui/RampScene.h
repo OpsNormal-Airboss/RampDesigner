@@ -12,6 +12,7 @@
 namespace arld::ui {
 
 class AircraftItem;
+class GridOverlayItem;
 class RampBoundaryItem;
 class ScaleBarItem;
 
@@ -32,6 +33,10 @@ public:
 
     // Called by RampView on every zoom change.
     void updateOverlay(double pixelsPerFt, QPointF scaleBarScenePos);
+
+    // --- Grid overlay (1-3-7) ---
+    void setGridVisible(bool visible);
+    void setGridSpacingFt(int spacingFt);
 
     // Trigger an immediate clearance recomputation (normally debounced via timer).
     void recomputeClearance();
@@ -84,8 +89,9 @@ private:
 
     EditMode m_mode = EditMode::Select;
     arld::core::UndoStack m_undoStack;
-    RampBoundaryItem* m_boundaryItem = nullptr;
-    ScaleBarItem* m_scaleBarItem = nullptr;
+    RampBoundaryItem*  m_boundaryItem  = nullptr;
+    ScaleBarItem*      m_scaleBarItem  = nullptr;
+    GridOverlayItem*   m_gridOverlay   = nullptr;
 
     std::vector<AircraftItem*>  m_aircraft;       // all placed (possibly hidden) aircraft
     QTimer m_clearanceTimer;                       // debounce: fires 80 ms after last scene change

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "lockheed-t33-a",
+  "display_name": "T-33A Shooting Star",
+  "manufacturer": "Lockheed",
+  "model": "T-33",
+  "variant": "A",
+  "category": "JET_FIGHTER",
+  "wingspan_ft": 38.9,
+  "length_ft": 37.6,
+  "tail_height_ft": 11.8,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "lockheed-t33-a.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}

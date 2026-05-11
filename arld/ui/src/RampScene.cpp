@@ -1,6 +1,7 @@
 #include <arld/ui/RampScene.h>
 #include <arld/ui/AircraftItem.h>
 #include <arld/ui/ClearanceZoneItem.h>
+#include <arld/ui/GridOverlayItem.h>
 #include <arld/ui/RampBoundaryItem.h>
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
@@ -64,6 +65,9 @@ RampScene::RampScene(QObject* parent)
     m_scaleBarItem = new ScaleBarItem();
     addItem(m_scaleBarItem);
 
+    m_gridOverlay = new GridOverlayItem();
+    addItem(m_gridOverlay);
+
     // Debounce clearance recomputation: wait 80 ms after the last scene change
     // before running the O(N²) check so dragging doesn't block the UI.
     m_clearanceTimer.setSingleShot(true);
@@ -84,6 +88,20 @@ void RampScene::setEditMode(EditMode mode) {
 void RampScene::updateOverlay(double pixelsPerFt, QPointF scaleBarScenePos) {
     m_scaleBarItem->setPixelsPerFt(pixelsPerFt);
     m_scaleBarItem->setPos(scaleBarScenePos);
+
+    if (m_gridOverlay) {
+        // Pass the full scene rect as the visible region hint;
+        // RampView could pass the viewport rect, but sceneRect() is acceptable.
+        m_gridOverlay->updateForView(pixelsPerFt, sceneRect());
+    }
+}
+
+void RampScene::setGridVisible(bool visible) {
+    if (m_gridOverlay) m_gridOverlay->setVisible(visible);
+}
+
+void RampScene::setGridSpacingFt(int spacingFt) {
+    if (m_gridOverlay) m_gridOverlay->setSpacingFt(spacingFt);
 }
 
 QPointF RampScene::snapToGrid(QPointF pos, bool freehand) const {

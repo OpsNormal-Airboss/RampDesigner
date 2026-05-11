@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "cessna-172-s",
+  "display_name": "Cessna 172S Skyhawk",
+  "manufacturer": "Cessna",
+  "model": "172",
+  "variant": "S",
+  "category": "GENERAL_AVIATION",
+  "wingspan_ft": 36.0,
+  "length_ft": 27.2,
+  "tail_height_ft": 8.9,
+  "prop_arc_ft": 6.2,
+  "default_display_type": "STATIC_DISPLAY",
+  "silhouette_svg": "cessna-172-s.svg",
+  "data_sources": ["Jane's All the World's Aircraft", "manufacturer specifications", "NASM/USAF Museum data"],
+  "verified_date": "2026-05-11"
+}
