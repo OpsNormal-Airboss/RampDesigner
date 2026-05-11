@@ -12,6 +12,7 @@ class UndoHistoryPanel : public QDockWidget {
     Q_OBJECT
 public:
     explicit UndoHistoryPanel(arld::ui::RampScene* scene, QWidget* parent = nullptr);
+    ~UndoHistoryPanel() override;
     void refresh();
 
 private slots:

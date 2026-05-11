@@ -37,6 +37,10 @@ UndoHistoryPanel::UndoHistoryPanel(arld::ui::RampScene* scene, QWidget* parent)
     refresh();
 }
 
+UndoHistoryPanel::~UndoHistoryPanel() {
+    m_scene->undoStack().onChanged = nullptr;
+}
+
 void UndoHistoryPanel::refresh() {
     if (m_refreshing) return;
     m_refreshing = true;

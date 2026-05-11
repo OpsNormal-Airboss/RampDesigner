@@ -230,9 +230,6 @@ void MainWindow::setupMenuBar() {
     });
 
     // Opacity slider in a widget action
-    auto* opacityLabel = new QLabel(tr("  Satellite Opacity:"));
-    viewMenu->addAction(tr("Satellite Opacity"), opacityLabel, nullptr); // placeholder label
-
     auto* opacitySlider = new QSlider(Qt::Horizontal);
     opacitySlider->setMinimum(0);
     opacitySlider->setMaximum(100);

@@ -18,9 +18,6 @@ public:
 
 signals:
     void scaleChanged(double denominator);
-
-signals:
-    // Emitted when an aircraft is dropped onto the canvas.
     void aircraftDropped(const QString& aircraftId, QPointF scenePos);
 
 protected:
