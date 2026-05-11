@@ -6,6 +6,7 @@
   "model": "S-76",
   "variant": "C+",
   "category": "HELICOPTER",
+  "wingspan_ft": 44.0,
   "rotor_diameter_ft": 44.0,
   "length_ft": 43.4,
   "tail_height_ft": 14.9,

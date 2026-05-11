@@ -6,6 +6,7 @@
   "model": "206B",
   "variant": "",
   "category": "HELICOPTER",
+  "wingspan_ft": 33.4,
   "rotor_diameter_ft": 33.4,
   "length_ft": 31.2,
   "tail_height_ft": 9.2,
