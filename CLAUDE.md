@@ -1,14 +1,20 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
+</div>
+
+---
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project
+## 🗺️ Project
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
 **Current status:** Phase 0 (C++ PoC) — Sprints 0-1 and 0-2 complete. The build system, CI pipeline, Qt canvas prototype, undo/redo framework, and boundary drawing are all implemented. Next up is Sprint 0-3 (20-aircraft library + drag-and-drop placement).
 
-## Post-Sprint Documentation
+## 📋 Post-Sprint Documentation
 
 After completing each sprint, update the following files to reflect the current state of the project:
 
@@ -16,7 +22,7 @@ After completing each sprint, update the following files to reflect the current 
 - **README.md** — update the getting started guide, feature summary, and setup instructions
 - **RUNBOOK.md** — update operational procedures, deployment steps, and runbook entries for any new or changed functionality
 
-## Phases
+## 📅 Phases
 
 | Phase | Scope | Timeline |
 |-------|-------|----------|
@@ -26,7 +32,7 @@ After completing each sprint, update the following files to reflect the current 
 | 3 | Public v1.0 release, open-source community edition, commercial tier | Months 13–14 |
 | 4 | SaaS platform (TypeScript/React + AWS) — **pending steering committee approval** | Post Phase 3 |
 
-## Sprint Log (Phase 0)
+## 🟢 Sprint Log (Phase 0)
 
 | Sprint | Goal | Status |
 |--------|------|--------|
@@ -36,7 +42,7 @@ After completing each sprint, update the following files to reflect the current 
 | 0-4 | CGAL clearance zones, real-time violation detection | ⬜ Not started |
 | 0-5 | SVG export, JSON project save/load, PoC acceptance gate | ⬜ Not started |
 
-## Tech Stack
+## 🔧 Tech Stack
 
 **Phases 0–3 (Desktop)**
 - Language: C++20 (Clang 16+, GCC 13+, MSVC 2022)
@@ -55,7 +61,7 @@ After completing each sprint, update the following files to reflect the current 
 - API: Node.js + Fastify on AWS ECS Fargate
 - Auth: Auth0 / Stripe billing
 
-## Module Architecture
+## 🏗️ Module Architecture
 
 Four strictly layered modules — higher layers depend on lower; no reverse dependencies, no circular imports:
 
@@ -79,7 +85,7 @@ Supporting directories:
 - `arld/schemas/` — JSON Schema files (`arld-project.schema.json`, `clearance-ruleset.schema.json`)
 - `arld/tests/` — Catch2 unit/integration tests + performance benchmarks
 
-## Key Design Constraints
+## ⚡ Key Design Constraints
 
 - **No GPL in binaries.** All dependencies must be MIT, BSL, or LGPL (dynamically linked). Verified by `scripts/check-licenses.py` in CI.
 - **`core/` has zero Qt dependency.** It must build and pass tests in a headless environment.
@@ -89,7 +95,7 @@ Supporting directories:
 - **Export via Strategy pattern.** `IExporter::export(const Layout&, const ExportOptions&)` is the sole entry point; format-specific classes implement it.
 - **All inter-layer interfaces are abstract C++ classes** (pure virtual) in the lower layer's public include directory.
 
-## Build and Test Commands
+## 💻 Build and Test Commands
 
 ```bash
 # Install C++ dependencies via vcpkg (CGAL, nlohmann-json, Catch2)
@@ -113,7 +119,7 @@ python3 scripts/check-licenses.py
 
 CMakePresets.json defines six presets: `{mac,linux,win}-{debug,release}`.
 
-## Canvas Architecture (as built)
+## 🖥️ Canvas Architecture (as built)
 
 ```
 RampScene   : QGraphicsScene
@@ -134,7 +140,7 @@ RampView    : QGraphicsView
 
 **Clearance zone colors** (Sprint 0-4): clear = `#22AA44`, advisory = `#DDAA00`, violation = `#CC2222`, override = `#E07000` (fill-opacity 0.25 advisory / 0.40 violation).
 
-## Undo/Redo Framework (as built)
+## ↩️ Undo/Redo Framework (as built)
 
 - `arld/core/include/arld/core/ICommand.h` — pure interface (`execute`, `undo`, `describe`)
 - `arld/core/include/arld/core/UndoStack.h` — 100-level stack, `onChanged` callback, zero Qt dependency
@@ -142,14 +148,14 @@ RampView    : QGraphicsView
 - Wired to `Ctrl+Z` / `Ctrl+Y` (all platforms) via `QKeySequence::Undo` / `QKeySequence::Redo`
 - Vertex-drag commands use an `AlreadyExecutedWrapper` so `push()` doesn't re-apply a change already applied visually
 
-## Test Suite (as built)
+## 🧪 Test Suite (as built)
 
 | File | Tests | Coverage |
 |------|-------|---------|
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction, Config constants |
 | `arld/tests/test_undo.cpp` | 7 | Full UndoStack behaviour incl. 100-level depth |
 
-## CGAL Geometry (Sprint 0-4, pending)
+## 📐 CGAL Geometry (Sprint 0-4, pending)
 
 Required kernel and type aliases will be defined in `arld/core/GeomTypes.h`:
 
@@ -163,11 +169,11 @@ using FT       = Kernel::FT;
 
 Clearance envelopes: `CGAL::minkowski_sum_2()`. Violation detection: `CGAL::do_intersect()` + `CGAL::squared_distance()`. Convex hulls precomputed at library load time.
 
-## Project File Format (Sprint 0-5, pending)
+## 💾 Project File Format (Sprint 0-5, pending)
 
 Files use the `.arld` extension — UTF-8 JSON with a published schema at `arld/schemas/arld-project.schema.json`. Top-level keys: `arld_version`, `schema_version`, `metadata`, `ramp_boundary`, `clearance_rules`, `aircraft`, `versions`, `overrides`. Placement IDs are UUID v4.
 
-## Performance Targets
+## ⚡ Performance Targets
 
 | Scenario | Target |
 |----------|--------|
@@ -176,7 +182,7 @@ Files use the `.arld` extension — UTF-8 JSON with a published schema at `arld/
 | Aircraft library load (150+ entries) | < 500 ms |
 | First-time user: 30-aircraft layout | Completion ≤ 60 min |
 
-## Definition of Done (per sprint story)
+## ✅ Definition of Done (per sprint story)
 
 1. Code merged via reviewed PR with no unresolved comments
 2. All new code covered by Catch2 tests; `core/` coverage ≥ 80%

@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
+</div>
+
+---
+
 # RUNBOOK.md
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
@@ -6,7 +12,7 @@ Operational procedures for building, testing, and releasing the Airshow Ramp Lay
 
 ---
 
-## Build System
+## 🔧 Build System
 
 ARLD uses CMake 3.28 with vcpkg manifest mode. `CMakePresets.json` defines six presets:
 
@@ -54,7 +60,7 @@ cmake --build --preset linux-debug
 
 ---
 
-## Running Tests
+## 🧪 Running Tests
 
 ```bash
 # Run all tests
@@ -83,7 +89,7 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 
 ---
 
-## CI Pipeline
+## ⚙️ CI Pipeline
 
 GitHub Actions runs on every push and pull request. The matrix covers all three platforms simultaneously:
 
@@ -94,17 +100,20 @@ GitHub Actions runs on every push and pull request. The matrix covers all three 
 | `windows-2022` | MSVC 2022 | `jurplel/install-qt-action@v4` |
 
 CI jobs (in order):
-1. **build** — `cmake --preset <platform>-release && cmake --build --preset <platform>-release`
-2. **test** — `ctest --preset <platform>-release --output-on-failure`
-3. **license-check** — runs `scripts/check-licenses.py`; fails if any GPL dependency is detected; generates `LICENSES.txt` artifact
 
-> **Note:** The `lint` (clang-tidy) and `schema-validate` CI jobs are planned but not yet active. They will be added in Sprint 0-3 and 0-5 respectively.
+| # | Job | Status |
+|---|-----|--------|
+| 1 | **build** — `cmake --preset release && cmake --build` | 🟢 Active |
+| 2 | **test** — `ctest --preset release --output-on-failure` | 🟢 Active |
+| 3 | **license-check** — `python3 scripts/check-licenses.py` | 🟢 Active |
+| 4 | **lint** — clang-tidy static analysis | ⬜ Planned (Sprint 0-3) |
+| 5 | **schema-validate** — JSON schema validation | ⬜ Planned (Sprint 0-5) |
 
 A PR cannot merge unless build, test, and license-check pass on all three platforms.
 
 ---
 
-## License Compliance
+## 🔒 License Compliance
 
 No GPL-licensed code may appear in distributable binaries. Permitted licenses: MIT, BSL-1.0, Apache 2.0, LGPL (dynamically linked only).
 
@@ -117,13 +126,13 @@ cat LICENSES.txt
 ```
 
 `scripts/check-licenses.py` maintains a `DEPENDENCY_LICENSES` dict of all known direct and transitive dependencies. When adding a new dependency:
-1. Add it to the dict in `check-licenses.py` with its SPDX identifier.
+1. Add it to the dict with its SPDX identifier.
 2. Verify no `GPL-` or `AGPL-` prefix appears.
 3. Run the checker locally before pushing.
 
 ---
 
-## Development Workflow
+## ✈️ Development Workflow
 
 ### Canvas Keyboard Shortcuts
 
@@ -145,7 +154,6 @@ cat LICENSES.txt
 2. Click to add each vertex — points snap to 5 ft grid by default.
 3. Double-click to close the polygon (requires ≥ 3 points).
 4. Drag any vertex handle to reshape; each move creates an undoable command.
-5. Press `B` again or press Escape to cancel an in-progress boundary.
 
 ### Adding New Undoable Actions
 
@@ -162,7 +170,7 @@ cat LICENSES.txt
 
 ---
 
-## Aircraft Library
+## 🗺️ Aircraft Library
 
 The aircraft library lives in `arld/data/library/` — one JSON file per aircraft entry (Sprint 0-3). Entry IDs follow the format `{manufacturer_code}-{model_code}-{variant_code}` (e.g., `north-american-p51-d`).
 
@@ -177,7 +185,7 @@ IDs are permanent — never reassign or reuse a retired entry ID.
 
 ---
 
-## Project File Format (Sprint 0-5, pending)
+## 💾 Project File Format (Sprint 0-5, pending)
 
 Project files will use the `.arld` extension (UTF-8 JSON). Schema at `arld/schemas/arld-project.schema.json`.
 
@@ -190,7 +198,7 @@ When `schema_version` is incremented:
 
 ---
 
-## Packaging and Release (Phase 1+)
+## 📦 Packaging and Release (Phase 1+)
 
 ```bash
 # macOS — CPack .dmg
@@ -205,7 +213,7 @@ cmake --build --preset win-release --target package
 
 ---
 
-## Phase Gate Checklists
+## 🚦 Phase Gate Checklists
 
 ### Phase 0 → Phase 1 Gate (PoC Sign-Off)
 
@@ -224,7 +232,7 @@ cmake --build --preset win-release --target package
 
 ---
 
-## Sprint Cadence
+## 📅 Sprint Cadence
 
 - Sprint duration: 2 weeks
 - Story sizing: Fibonacci (1, 2, 3, 5, 8, 13)
@@ -236,3 +244,11 @@ cmake --build --preset win-release --target package
 3. CI passes build, test, and license-check on all 3 platforms
 4. Any new user-visible string wrapped in `tr()` and added to the `.ts` translation file
 5. ADR updated if story introduces a new design pattern or library
+
+---
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDot.svg" alt="OpsNormal Airboss" width="36"/>
+  <br/>
+  <sub><em>Start Small. Stay Safe. Fly the Show.</em></sub>
+</div>
