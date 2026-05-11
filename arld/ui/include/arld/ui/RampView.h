@@ -1,5 +1,6 @@
 #pragma once
 #include <QGraphicsView>
+#include <QList>
 
 namespace arld::ui {
 
@@ -41,6 +42,7 @@ private:
     double m_scaleDenominator = 1200.0;
     bool m_panning = false;
     QPoint m_lastPanPos;
+    QList<QGraphicsItem*> m_shiftSelectionSave; // items to preserve across Shift+lasso
 };
 
 } // namespace arld::ui

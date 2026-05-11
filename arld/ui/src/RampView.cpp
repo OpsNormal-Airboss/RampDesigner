@@ -120,21 +120,36 @@ void RampView::mousePressEvent(QMouseEvent* event) {
     }
 
     if (event->button() == Qt::LeftButton) {
-        const bool onItem = (itemAt(event->pos()) != nullptr);
+        // Only items with selection/move capability count as "on item" — this
+        // prevents GridOverlayItem and other passive scene decorations from
+        // blocking rubber-band lasso when the user clicks on empty canvas.
+        const auto itemsHere = items(event->pos());
+        const bool onItem = std::any_of(itemsHere.cbegin(), itemsHere.cend(),
+            [](const QGraphicsItem* i) {
+                const auto f = i->flags();
+                return (f & QGraphicsItem::ItemIsSelectable)
+                    || (f & QGraphicsItem::ItemIsMovable);
+            });
         const bool inSelectMode = !m_rampScene || m_rampScene->editMode() == EditMode::Select;
 
         if (inSelectMode) {
             if (!onItem) {
-                // Left-click on empty canvas: rubber-band lasso selection.
-                // Clear selection unless Shift is held.
-                if (!(event->modifiers() & Qt::ShiftModifier) && m_rampScene)
+                // Left-click on empty canvas: start rubber-band lasso.
+                const bool shiftHeld = event->modifiers() & Qt::ShiftModifier;
+                if (!shiftHeld && m_rampScene)
                     m_rampScene->clearSelection();
+                // With Shift, save current selection so we can merge it back
+                // after the rubber band replaces it.
+                m_shiftSelectionSave = (shiftHeld && m_rampScene)
+                    ? m_rampScene->selectedItems()
+                    : QList<QGraphicsItem*>{};
                 setDragMode(RubberBandDrag);
                 QGraphicsView::mousePressEvent(event);
                 return;
             } else {
                 // Left-click on an item: pass to scene for item interaction.
                 setDragMode(NoDrag);
+                m_shiftSelectionSave.clear();
             }
         }
     }
@@ -162,10 +177,15 @@ void RampView::mouseReleaseEvent(QMouseEvent* event) {
         event->accept();
         return;
     }
+    const bool wasRubberBand = (dragMode() == RubberBandDrag);
     QGraphicsView::mouseReleaseEvent(event);
-    // Reset drag mode back to NoDrag after rubber-band completes.
-    if (dragMode() == RubberBandDrag)
+    if (wasRubberBand) {
         setDragMode(NoDrag);
+        // Merge items saved before Shift+lasso back into selection.
+        for (auto* item : std::as_const(m_shiftSelectionSave))
+            item->setSelected(true);
+        m_shiftSelectionSave.clear();
+    }
 }
 
 void RampView::resizeEvent(QResizeEvent* event) {

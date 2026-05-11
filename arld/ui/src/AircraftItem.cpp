@@ -282,6 +282,14 @@ void AircraftItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
             }
         }
     }
+    // Shift+click: toggle this item's selection without clearing others.
+    if (event->button() == Qt::LeftButton
+        && (event->modifiers() & Qt::ShiftModifier)) {
+        setSelected(!isSelected());
+        event->accept();
+        return;
+    }
+
     m_rotating = false;
     m_dragStartPos = pos();
     QGraphicsItemGroup::mousePressEvent(event);
