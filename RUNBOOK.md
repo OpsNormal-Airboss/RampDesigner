@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 1, Sprint 1-2 complete. ViolationsPanel, ClearanceRuleSet (FAA CoW + ICAS), clearance overrides, PropertiesPanel, per-aircraft metadata, schema v1→v2 migration. 45/45 tests pass.
+> Updated after each sprint. **Current status:** Phase 1, Sprint 1-3 complete. Library browser (search/filter/thumbnails), custom aircraft dialog with SVG sanitization, heading controls, grid overlay, fit-to-window, recent files, 75-aircraft library. 52/52 tests pass.
 
 ---
 
@@ -137,7 +137,8 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay in both units, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
-| **Total** | **45 + 1 bench** | |
+| `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
+| **Total** | **52 + 1 bench** | |
 
 ---
 
@@ -198,6 +199,9 @@ cat LICENSES.txt
 | Middle-click drag | Pan |
 | `Ctrl+Z` / `Cmd+Z` | Undo |
 | `Ctrl+Y` / `Cmd+Shift+Z` | Redo |
+| `Ctrl+0` / `Cmd+0` | Fit to Window (frames ramp with 50 ft margin) |
+| `G` | Toggle grid overlay |
+| `M` | Toggle metric/imperial display |
 | Shift (while drawing/dragging) | Disable snap-to-grid |
 
 ### Boundary Drawing Workflow

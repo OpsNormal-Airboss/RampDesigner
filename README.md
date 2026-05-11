@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 1 — Sprint 2/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%202%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 1 — Sprint 3/6](https://img.shields.io/badge/phase-1%20%E2%80%94%20Sprint%203%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -28,7 +28,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
-| **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **🟢 In Progress — Sprint 1 of 6** |
+| **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **🟢 In Progress — Sprint 3 of 6** |
 | 2 | 150+ aircraft, full export suite (SVG/PDF/PNG/JPEG), UAT | ⬜ Not started |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
@@ -49,11 +49,10 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |--------|------|--------|
 | 1-1 | PoC-to-production refactor; CPack installers; UnitConverter; auto-save; exporter stubs; 50-aircraft library | ✅ Complete |
 | 1-2 | Violations panel; clearance rule config; display type assignment UI; overrides; hazmat | ✅ Complete |
-| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Up next |
-| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ⬜ Planned |
-| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones | ⬜ Planned |
-| 1-5 | Satellite underlay; grid overlay | ⬜ Planned |
-| 1-6 | PDF/PNG/JPEG export; print dialog | ⬜ Planned |
+| 1-3 | Library browser; custom aircraft; heading controls; 75-aircraft library | ✅ Complete |
+| 1-4 | Tail-dragger tail-swing; extended gear; corridor/standoff zones; accessibility | ⬜ Up next |
+| 1-5 | Satellite underlay; PDF export (libharu) | ⬜ Planned |
+| 1-6 | PNG/JPEG export; print dialog; beta release | ⬜ Planned |
 
 ## 🟢 What Works Today
 
@@ -66,9 +65,11 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Snap-to-grid** — 5 ft grid by default; hold Shift to draw freehand
 - **Scale bar** — live overlay showing correct footage at any zoom level
 - **Undo/redo** — 100-level history; `Ctrl+Z` / `Ctrl+Y` (or `Cmd+Z` / `Cmd+Shift+Z` on macOS)
-- **Aircraft library panel** — 20 aircraft across all major categories (WWII warbirds, jet fighters, heavy transports, bombers, aerobatic) with accurate dimensional data
+- **Aircraft library browser** — 75 aircraft with text search, category filter, and 48×48 SVG thumbnail previews; wingspan and length shown in current unit system
+- **Custom aircraft entry** — Add Custom Aircraft... dialog with full dimensional form, SVG sanitization (strips XSS/XXE), and save to local user library
 - **Drag-and-drop placement** — drag from library panel onto canvas; silhouettes render at true geographic scale (1 scene unit = 1 ft)
-- **Aircraft rotation** — click to select, drag the rotation handle to rotate; snaps to 45° (or hold Shift for 1° precision); fully undoable
+- **Aircraft rotation + heading input** — drag the rotation handle (snaps 45° / 1° with Shift) or type an exact 0–359° heading; "Snap All Selected to Heading" button aligns multi-aircraft groups; fully undoable
+- **Grid overlay** — configurable 25/50/100 ft spacing; toggle with `G`; recomputes on zoom
 - **Real-time clearance zones** — each aircraft displays a coloured envelope (green = clear, yellow = advisory, red = violation); recomputed within 80 ms of any change
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
@@ -125,7 +126,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 45 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, and `test_schema_migration.cpp`.
+Current test suite: 52 Catch2 tests across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, and `test_svg_sanitizer.cpp`.
 
 ## 📋 Documentation
 
