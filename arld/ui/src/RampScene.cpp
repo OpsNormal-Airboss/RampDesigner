@@ -381,6 +381,11 @@ void RampScene::clearScene() {
 
     // Clear undo history.
     m_undoStack.clear();
+
+    // Always return to Select mode so that after new/open/snapshot-switch the user
+    // is never left in DrawBoundary mode where every click adds a vertex instead of
+    // moving an existing handle.
+    setEditMode(EditMode::Select);
 }
 
 arld::core::ProjectData RampScene::toProjectData() const {
@@ -579,8 +584,10 @@ void RampScene::setBoundary(const arld::core::RampBoundaryData& boundary) {
     m_boundaryItem->clearBoundary();
     for (const auto& [x, y] : boundary.vertices)
         m_boundaryItem->addPoint(QPointF(static_cast<double>(x), static_cast<double>(y)));
-    if (boundary.closed && m_boundaryItem->pointCount() >= 3)
+    if (boundary.closed && m_boundaryItem->pointCount() >= 3) {
         m_boundaryItem->closePolygon();
+        setEditMode(EditMode::Select);
+    }
 }
 
 } // namespace arld::ui
