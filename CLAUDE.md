@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
+  <img src="../../CompanyTrademarks/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
 </div>
 
 ---

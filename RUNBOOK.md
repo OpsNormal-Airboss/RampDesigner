@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
+  <img src="../../CompanyTrademarks/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
 </div>
 
 ---
@@ -610,7 +610,7 @@ cmake --build --preset win-release --target package
 ---
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/OpsNormal-Airboss/CompanyTrademarks/main/Branding/GreenDot.svg" alt="OpsNormal Airboss" width="36"/>
+  <img src="../../CompanyTrademarks/Branding/GreenDot.svg" alt="OpsNormal Airboss" width="36"/>
   <br/>
   <sub><em>Start Small. Stay Safe. Fly the Show.</em></sub>
 </div>
