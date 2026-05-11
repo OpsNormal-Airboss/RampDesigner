@@ -9,6 +9,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
 #include <QSvgRenderer>
 #include <QAction>
 #include <QColor>
@@ -25,61 +26,18 @@ namespace arld::ui {
 // ---------------------------------------------------------------------------
 // Rotation handle — a small fixed-size circle the user drags to rotate.
 // ---------------------------------------------------------------------------
+// Pure visual indicator — AircraftItem handles all rotation interaction.
 class RotationHandle : public QGraphicsEllipseItem {
 public:
-    explicit RotationHandle(AircraftItem* parent)
-        : QGraphicsEllipseItem(-5, -5, 10, 10, parent)
-        , m_aircraft(parent) {
-        setFlags(ItemIsMovable | ItemSendsGeometryChanges | ItemIgnoresTransformations);
+    explicit RotationHandle(QGraphicsItem* parent)
+        : QGraphicsEllipseItem(-5, -5, 10, 10, parent) {
+        setFlags(ItemIgnoresTransformations);
+        setAcceptedMouseButtons(Qt::NoButton);
         setCursor(Qt::CrossCursor);
         setBrush(QColor(0x00, 0xCC, 0x00, 200));
         setPen(QPen(QColor(0x00, 0x88, 0x00), 1.0));
         setZValue(1.0);
-        setPos(m_aircraft->boundingRect().center().x(), -15.0);
     }
-
-protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override {
-        if (change == ItemPositionChange && scene()) {
-            const QPointF newPos = value.toPointF();
-            const QPointF center = m_aircraft->mapToScene(
-                m_aircraft->boundingRect().center());
-            const QPointF handleScene = m_aircraft->mapToScene(newPos);
-            const double dx = handleScene.x() - center.x();
-            const double dy = handleScene.y() - center.y();
-            double angle = std::atan2(dx, -dy) * 180.0 / M_PI;
-
-            const bool freehand = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
-            if (!freehand)
-                angle = std::round(angle / 45.0) * 45.0;
-            else
-                angle = std::round(angle);  // 1-degree precision
-
-            m_aircraft->setRotation(angle);
-
-            const double radius = 15.0;
-            const double rad = angle * M_PI / 180.0;
-            return QPointF(m_aircraft->boundingRect().center().x() + radius * std::sin(rad),
-                           m_aircraft->boundingRect().center().y() - radius * std::cos(rad));
-        }
-        return QGraphicsEllipseItem::itemChange(change, value);
-    }
-
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
-        m_startAngle = m_aircraft->rotation();
-        QGraphicsEllipseItem::mousePressEvent(event);
-    }
-
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override {
-        QGraphicsEllipseItem::mouseReleaseEvent(event);
-        const double endAngle = m_aircraft->rotation();
-        if (std::abs(endAngle - m_startAngle) > 0.01)
-            m_aircraft->finishRotation(m_startAngle, endAngle);
-    }
-
-private:
-    AircraftItem* m_aircraft;
-    double m_startAngle = 0.0;
 };
 
 // ---------------------------------------------------------------------------
@@ -124,14 +82,10 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     , m_displayType(entry.defaultDisplayType)
     , m_placementId(arld::core::ProjectFile::generateUuid()) {
     setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
-    // Allow child items (rotation handle) to receive their own mouse events
-    // rather than having the group intercept them all.
-    setHandlesChildEvents(false);
     setCursor(Qt::SizeAllCursor);
 
     // SVG silhouette scaled so 1 scene unit = 1 foot.
     m_svgItem = new QGraphicsSvgItem(svgResourcePath, this);
-    m_svgItem->setAcceptedMouseButtons(Qt::NoButton);
     const QSizeF svgSize = m_svgItem->boundingRect().size();
     if (svgSize.width() > 0 && m_entry.wingspanFt > 0) {
         const double scaleF = m_entry.wingspanFt / svgSize.width();
@@ -195,10 +149,10 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     }
     m_labelItem->setDefaultTextColor(QColor(0x22, 0x22, 0x22));
 
-    // Rotation handle — hidden until selected.
-    auto* handle = new RotationHandle(this);
-    handle->setVisible(false);
-    Q_UNUSED(handle);
+    // Rotation handle — hidden until selected; positioned 15 ft above local centre.
+    m_rotationHandle = new RotationHandle(this);
+    m_rotationHandle->setPos(m_localCenter.x(), m_localCenter.y() - 15.0);
+    m_rotationHandle->setVisible(false);
 
     // Accessibility: set tool tip as accessible name.
     updateAccessibleName();
@@ -298,20 +252,68 @@ arld::core::AircraftState AircraftItem::toAircraftState() const {
 
 QVariant AircraftItem::itemChange(GraphicsItemChange change, const QVariant& value) {
     if (change == ItemSelectedChange) {
-        for (auto* child : childItems()) {
-            if (auto* handle = dynamic_cast<RotationHandle*>(child))
-                handle->setVisible(value.toBool());
-        }
+        if (m_rotationHandle)
+            m_rotationHandle->setVisible(value.toBool());
+    }
+    if (change == ItemRotationHasChanged && m_rotationHandle) {
+        const double rad = value.toDouble() * M_PI / 180.0;
+        m_rotationHandle->setPos(
+            m_localCenter.x() + 15.0 * std::sin(rad),
+            m_localCenter.y() - 15.0 * std::cos(rad));
     }
     return QGraphicsItemGroup::itemChange(change, value);
 }
 
 void AircraftItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+    if (event->button() == Qt::LeftButton
+        && m_rotationHandle && m_rotationHandle->isVisible()) {
+        auto* view = qobject_cast<QGraphicsView*>(
+            event->widget() ? event->widget()->parent() : nullptr);
+        if (view) {
+            const QPoint handleVP = view->mapFromScene(mapToScene(m_rotationHandle->pos()));
+            const QPoint clickVP  = view->mapFromScene(event->scenePos());
+            const int dx = clickVP.x() - handleVP.x();
+            const int dy = clickVP.y() - handleVP.y();
+            if (dx*dx + dy*dy <= 36) {  // 6-pixel hit radius
+                m_rotating = true;
+                m_rotateStartAngle = rotation();
+                event->accept();
+                return;
+            }
+        }
+    }
+    m_rotating = false;
     m_dragStartPos = pos();
     QGraphicsItemGroup::mousePressEvent(event);
 }
 
+void AircraftItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+    if (m_rotating) {
+        const QPointF center = mapToScene(m_localCenter);
+        const double dx = event->scenePos().x() - center.x();
+        const double dy = event->scenePos().y() - center.y();
+        double angle = std::atan2(dx, -dy) * 180.0 / M_PI;
+        const bool freehand = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
+        if (!freehand)
+            angle = std::round(angle / 45.0) * 45.0;
+        else
+            angle = std::round(angle);
+        setRotation(angle);
+        event->accept();
+        return;
+    }
+    QGraphicsItemGroup::mouseMoveEvent(event);
+}
+
 void AircraftItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    if (m_rotating) {
+        m_rotating = false;
+        const double endAngle = rotation();
+        if (std::abs(endAngle - m_rotateStartAngle) > 0.01)
+            finishRotation(m_rotateStartAngle, endAngle);
+        event->accept();
+        return;
+    }
     QGraphicsItemGroup::mouseReleaseEvent(event);
     const QPointF endPos = pos();
     if ((endPos - m_dragStartPos).manhattanLength() > 0.01 && onCommandReady) {
@@ -522,10 +524,6 @@ void AircraftItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     addLabelAction(QStringLiteral("Label: Hidden"),       LabelMode::Hidden);
     menu.exec(event->screenPos());
     event->accept();
-}
-
-void AircraftItem::applyRotation(double angleDeg) {
-    setRotation(angleDeg);
 }
 
 void AircraftItem::finishRotation(double fromDeg, double toDeg) {

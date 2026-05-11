@@ -78,6 +78,7 @@ public:
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
 
@@ -102,6 +103,11 @@ private:
     QGraphicsRectItem*       m_lodRect        = nullptr;
     bool                     m_lodSimplified  = false;
 
+    // Rotation handle and state
+    QGraphicsEllipseItem*    m_rotationHandle = nullptr;
+    bool                     m_rotating       = false;
+    double                   m_rotateStartAngle = 0.0;
+
     // No-smoking overlay (Sprint 2-3-3)
     QGraphicsEllipseItem*    m_noSmokingItem  = nullptr;
 
@@ -117,8 +123,6 @@ private:
     // Label mode (Sprint 2-3-4)
     LabelMode   m_labelMode = LabelMode::DisplayName;
 
-    friend class RotationHandle;
-    void applyRotation(double angleDeg);
     void finishRotation(double fromDeg, double toDeg);
 };
 
