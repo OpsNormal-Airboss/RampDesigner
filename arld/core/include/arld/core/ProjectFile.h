@@ -21,6 +21,11 @@ struct PlacedAircraft {
     float wingspanFt   = 0.0f;
     float lengthFt     = 0.0f;
     DisplayType displayType = DisplayType::StaticDisplay;
+    // Per-aircraft metadata (Sprint 1-2-5 / 1-2-7)
+    std::string tailNumber;
+    std::string owner;
+    std::string fuelType;
+    bool        hasHazmat = false;
 };
 
 struct RampBoundaryData {
@@ -34,12 +39,22 @@ struct ProjectMetadata {
     std::string modifiedUtc;
 };
 
+// Clearance override record (Sprint 1-2-6)
+struct ClearanceOverride {
+    std::string placementIdA;
+    std::string placementIdB;
+    std::string justification;   // min 20 chars
+    std::string username;
+    std::string timestampUtc;
+};
+
 struct ProjectData {
-    std::string      arldVersion   = "0.5.0";
-    int              schemaVersion = 1;
+    std::string      arldVersion   = "1.1.0";
+    int              schemaVersion = 2;
     ProjectMetadata  metadata;
     RampBoundaryData boundary;
-    std::vector<PlacedAircraft> aircraft;
+    std::vector<PlacedAircraft>    aircraft;
+    std::vector<ClearanceOverride> overrides;
 };
 
 // ---------------------------------------------------------------------------
@@ -53,6 +68,7 @@ public:
 
     /// Deserialize the project file at @p path.
     /// Throws std::runtime_error on I/O, malformed JSON, or wrong schema_version.
+    /// Supports schema_version 1 (migrated) and 2 (native).
     static ProjectData load(const std::string& path);
 
     /// Generate a RFC 4122 version-4 UUID string.

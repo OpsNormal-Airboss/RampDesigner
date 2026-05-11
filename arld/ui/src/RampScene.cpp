@@ -5,6 +5,7 @@
 #include <arld/ui/ScaleBarItem.h>
 #include <arld/core/Config.h>
 #include <arld/core/ClearanceEngine.h>
+#include <arld/core/ClearanceRuleSet.h>
 #include <arld/core/ProjectFile.h>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
@@ -37,7 +38,8 @@ private:
 // ---------------------------------------------------------------------------
 RampScene::RampScene(QObject* parent)
     : QGraphicsScene(parent)
-    , m_undoStack(arld::core::kUndoHistoryDepth) {
+    , m_undoStack(arld::core::kUndoHistoryDepth)
+    , m_ruleSet(arld::core::ClearanceRuleSet::faaCoW()) {
     setSceneRect(-10000, -10000, 20000, 20000);
 
     m_boundaryItem = new RampBoundaryItem();
@@ -168,6 +170,26 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
         std::make_unique<PlaceCmd>(aircraft)));
 }
 
+void RampScene::setRuleSet(const arld::core::ClearanceRuleSet& rs) {
+    m_ruleSet = rs;
+    recomputeClearance();
+}
+
+void RampScene::addOverride(const arld::core::ClearanceOverride& ov) {
+    m_overrides.push_back(ov);
+    recomputeClearance();
+}
+
+QPointF RampScene::aircraftSceneCenter(const std::string& id) const {
+    for (auto* item : m_aircraft) {
+        if (item->placementId() == id && item->isVisible()) {
+            const auto s = item->toAircraftState();
+            return QPointF(s.centerX, s.centerY);
+        }
+    }
+    return QPointF{};
+}
+
 void RampScene::recomputeClearance() {
     // Collect states for all visible (placed and not undone) aircraft.
     std::vector<arld::core::AircraftState> states;
@@ -183,11 +205,27 @@ void RampScene::recomputeClearance() {
     }
 
     if (states.empty()) {
+        m_lastViolations.clear();
         emit violationCountChanged(0);
+        emit violationsChanged();
         return;
     }
 
-    const auto violations = arld::core::ClearanceEngine::detectViolations(states);
+    auto violations = arld::core::ClearanceEngine::detectViolations(states, m_ruleSet);
+
+    // Apply overrides: change severity from Violation to Overridden for matching pairs.
+    for (auto& v : violations) {
+        if (v.severity != arld::core::ClearanceSeverity::Violation) continue;
+        for (const auto& ov : m_overrides) {
+            if ((ov.placementIdA == v.idA && ov.placementIdB == v.idB) ||
+                (ov.placementIdA == v.idB && ov.placementIdB == v.idA)) {
+                v.severity = arld::core::ClearanceSeverity::Overridden;
+                break;
+            }
+        }
+    }
+
+    m_lastViolations = violations;
 
     // Reset all clearance zones to Clear.
     for (auto* item : visible) {
@@ -195,10 +233,10 @@ void RampScene::recomputeClearance() {
             zone->setStatus(arld::core::ClearanceSeverity::Clear);
     }
 
-    // Build a quick id → AircraftItem* lookup.
+    // Build a quick id → AircraftItem* lookup (by placement id).
     std::unordered_map<std::string, AircraftItem*> lookup;
     for (auto* item : visible)
-        lookup[item->entry().id] = item;
+        lookup[item->placementId()] = item;
 
     // Apply the worst severity per aircraft (a single aircraft can have multiple violations).
     int violationPairs = 0;
@@ -207,10 +245,14 @@ void RampScene::recomputeClearance() {
 
         auto applyWorst = [](ClearanceZoneItem* zone, arld::core::ClearanceSeverity sev) {
             if (!zone) return;
-            // Only upgrade, never downgrade a zone already in a worse state.
             using S = arld::core::ClearanceSeverity;
-            if (sev == S::Violation ||
-                (sev == S::Advisory && zone->status() == S::Clear)) {
+            // Priority: Violation > Overridden > Advisory > Clear
+            const auto cur = zone->status();
+            if (sev == S::Violation) {
+                zone->setStatus(sev);
+            } else if (sev == S::Overridden && cur == S::Clear) {
+                zone->setStatus(sev);
+            } else if (sev == S::Advisory && cur == S::Clear) {
                 zone->setStatus(sev);
             }
         };
@@ -222,6 +264,7 @@ void RampScene::recomputeClearance() {
     }
 
     emit violationCountChanged(violationPairs);
+    emit violationsChanged();
 }
 
 // ---------------------------------------------------------------------------
@@ -235,6 +278,8 @@ void RampScene::clearScene() {
         delete item;
     }
     m_aircraft.clear();
+    m_overrides.clear();
+    m_lastViolations.clear();
 
     // Reset boundary.
     m_boundaryItem->clearBoundary();
@@ -245,8 +290,8 @@ void RampScene::clearScene() {
 
 arld::core::ProjectData RampScene::toProjectData() const {
     arld::core::ProjectData data;
-    data.arldVersion   = "0.5.0";
-    data.schemaVersion = 1;
+    data.arldVersion   = "1.1.0";
+    data.schemaVersion = 2;
     data.metadata.modifiedUtc = arld::core::ProjectFile::currentUtcTimestamp();
 
     // Boundary
@@ -272,8 +317,15 @@ arld::core::ProjectData RampScene::toProjectData() const {
         pa.wingspanFt   = item->entry().wingspanFt;
         pa.lengthFt     = item->entry().lengthFt;
         pa.displayType  = item->displayType();
+        pa.tailNumber   = item->tailNumber();
+        pa.owner        = item->owner();
+        pa.fuelType     = item->fuelType();
+        pa.hasHazmat    = item->hasHazmat();
         data.aircraft.push_back(std::move(pa));
     }
+
+    // Overrides
+    data.overrides = m_overrides;
 
     return data;
 }
@@ -293,6 +345,9 @@ void RampScene::loadProjectData(
     if (data.boundary.closed && m_boundaryItem->pointCount() >= 3)
         m_boundaryItem->closePolygon();
 
+    // Restore overrides.
+    m_overrides = data.overrides;
+
     // Restore aircraft (no undo push — this is a load, not a user action).
     for (const auto& pa : data.aircraft) {
         const auto* entry = lookup(pa.libraryId);
@@ -305,11 +360,6 @@ void RampScene::loadProjectData(
         auto* aircraft = new AircraftItem(*entry, svgPath);
 
         // Position: center_x/center_y are the scene-space center of the aircraft.
-        // AircraftItem's transform origin is m_localCenter (local coords).
-        // We need to set item pos such that mapToScene(m_localCenter) == center.
-        // After construction, mapToScene(m_localCenter) == pos() + m_localCenter (rotation=0).
-        // So: pos() = center - m_localCenter.
-        // We retrieve m_localCenter via childrenBoundingRect().center().
         const QRectF br = aircraft->childrenBoundingRect();
         const QPointF localCenter = br.center();
         aircraft->setPos(
@@ -318,6 +368,10 @@ void RampScene::loadProjectData(
         aircraft->setRotation(static_cast<double>(pa.rotationDeg));
         aircraft->setDisplayType(pa.displayType);
         aircraft->setPlacementId(pa.placementId);
+        aircraft->setTailNumber(pa.tailNumber);
+        aircraft->setOwner(pa.owner);
+        aircraft->setFuelType(pa.fuelType);
+        aircraft->setHazmat(pa.hasHazmat);
 
         // Wire up command routing (same as placeAircraft).
         aircraft->onCommandReady = [this](std::unique_ptr<arld::core::ICommand> cmd) {

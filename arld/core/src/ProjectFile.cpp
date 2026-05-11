@@ -90,12 +90,12 @@ std::string ProjectFile::currentUtcTimestamp() {
 }
 
 // ---------------------------------------------------------------------------
-// Save
+// Save (schema version 2)
 // ---------------------------------------------------------------------------
 void ProjectFile::save(const std::string& path, const ProjectData& data) {
     json j;
-    j["arld_version"]  = data.arldVersion;
-    j["schema_version"] = data.schemaVersion;
+    j["arld_version"]  = "1.1.0";
+    j["schema_version"] = 2;
 
     j["metadata"] = {
         {"title",        data.metadata.title},
@@ -117,7 +117,7 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
     // Aircraft
     json aircraft = json::array();
     for (const auto& ac : data.aircraft) {
-        aircraft.push_back({
+        json acj = {
             {"placement_id",  ac.placementId},
             {"library_id",    ac.libraryId},
             {"display_name",  ac.displayName},
@@ -127,9 +127,28 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
             {"wingspan_ft",   ac.wingspanFt},
             {"length_ft",     ac.lengthFt},
             {"display_type",  displayTypeToString(ac.displayType)}
-        });
+        };
+        // Per-aircraft metadata fields (omit empty strings to keep files clean)
+        if (!ac.tailNumber.empty()) acj["tail_number"] = ac.tailNumber;
+        if (!ac.owner.empty())      acj["owner"]       = ac.owner;
+        if (!ac.fuelType.empty())   acj["fuel_type"]   = ac.fuelType;
+        if (ac.hasHazmat)           acj["has_hazmat"]  = true;
+        aircraft.push_back(std::move(acj));
     }
     j["aircraft"] = aircraft;
+
+    // Overrides
+    json overrides = json::array();
+    for (const auto& ov : data.overrides) {
+        overrides.push_back({
+            {"placement_id_a",  ov.placementIdA},
+            {"placement_id_b",  ov.placementIdB},
+            {"justification",   ov.justification},
+            {"username",        ov.username},
+            {"timestamp_utc",   ov.timestampUtc}
+        });
+    }
+    j["overrides"] = overrides;
 
     std::ofstream ofs(path);
     if (!ofs.is_open())
@@ -140,7 +159,7 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
 }
 
 // ---------------------------------------------------------------------------
-// Load
+// Load (supports schema version 1 migration and version 2)
 // ---------------------------------------------------------------------------
 ProjectData ProjectFile::load(const std::string& path) {
     std::ifstream ifs(path);
@@ -157,13 +176,13 @@ ProjectData ProjectFile::load(const std::string& path) {
     if (!j.contains("schema_version") || !j["schema_version"].is_number_integer())
         throw std::runtime_error("ProjectFile::load: missing or invalid schema_version");
 
-    int schemaVer = j["schema_version"].get<int>();
-    if (schemaVer != 1)
+    int sv = j.value("schema_version", 0);
+    if (sv < 1 || sv > 2)
         throw std::runtime_error("ProjectFile::load: unsupported schema_version: "
-                                 + std::to_string(schemaVer));
+                                 + std::to_string(sv));
 
     ProjectData data;
-    data.schemaVersion = schemaVer;
+    data.schemaVersion = sv;
     data.arldVersion   = j.value("arld_version", "0.0.0");
 
     // Metadata
@@ -201,7 +220,25 @@ ProjectData ProjectFile::load(const std::string& path) {
             pa.lengthFt     = ac.value("length_ft",    0.0f);
             pa.displayType  = displayTypeFromString(
                 ac.value("display_type", std::string("static_display")));
+            // Per-aircraft metadata (v2; use defaults for v1 migration)
+            pa.tailNumber   = ac.value("tail_number", std::string(""));
+            pa.owner        = ac.value("owner",       std::string(""));
+            pa.fuelType     = ac.value("fuel_type",   std::string(""));
+            pa.hasHazmat    = ac.value("has_hazmat",  false);
             data.aircraft.push_back(std::move(pa));
+        }
+    }
+
+    // Overrides (v2 only; empty for v1 migration)
+    if (j.contains("overrides") && j["overrides"].is_array()) {
+        for (const auto& ov : j["overrides"]) {
+            ClearanceOverride co;
+            co.placementIdA  = ov.value("placement_id_a", "");
+            co.placementIdB  = ov.value("placement_id_b", "");
+            co.justification = ov.value("justification",  "");
+            co.username      = ov.value("username",       "");
+            co.timestampUtc  = ov.value("timestamp_utc",  "");
+            data.overrides.push_back(std::move(co));
         }
     }
 

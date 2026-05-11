@@ -38,26 +38,26 @@ static Polygon2 makeRotatedRect(double cx, double cy,
 // ClearanceEngine public API
 // ---------------------------------------------------------------------------
 float ClearanceEngine::requiredClearanceFt(DisplayType dt,
-                                            std::optional<float> propArcFt) {
+                                            std::optional<float> propArcFt,
+                                            const ClearanceRuleSet& rules) {
     switch (dt) {
         case DisplayType::StaticDisplay:
-            return kStaticDisplayWingtip;
+            return rules.staticDisplayWingtipFt;
         case DisplayType::WarbirdHeritage:
-            // prop arc + additional margin (or just the standard wingtip if no arc)
-            return (propArcFt.value_or(0.0f)) + kWarbirdPropArcAddition
-                   + kStaticDisplayWingtip;
+            // prop arc radius + additional bonus margin (or just bonus + static if no arc)
+            return (propArcFt.value_or(0.0f)) + rules.warbirdPropArcBonusFt;
         case DisplayType::TaxiOnly:
-            return kTaxiOnlyCorridor;
+            return rules.taxiOnlyCorridorFt;
         case DisplayType::MilitaryStatic:
-            return kMilitaryStaticStandoff;
+            return rules.militaryStaticStandoffFt;
         case DisplayType::HotRamp:
-            return kHotRampNoSmoking;
+            return rules.hotRampStandoffFt;
         case DisplayType::MediaPhotoPlatform:
-            return kMediaPlatformBarrier;
+            return rules.mediaPhotoPlatformFt;
         case DisplayType::RampShow:
-            return kRampShowCrowdLine;
+            return rules.rampShowCrowdLineFt;
     }
-    return kStaticDisplayWingtip;
+    return rules.staticDisplayWingtipFt;
 }
 
 Polygon2 ClearanceEngine::aircraftFootprint(const AircraftState& s) {
@@ -69,9 +69,10 @@ Polygon2 ClearanceEngine::aircraftFootprint(const AircraftState& s) {
         static_cast<double>(s.rotationDeg));
 }
 
-Polygon2 ClearanceEngine::clearanceEnvelope(const AircraftState& s) {
+Polygon2 ClearanceEngine::clearanceEnvelope(const AircraftState& s,
+                                             const ClearanceRuleSet& rules) {
     const double margin = static_cast<double>(
-        requiredClearanceFt(s.displayType, s.propArcFt));
+        requiredClearanceFt(s.displayType, s.propArcFt, rules));
     return makeRotatedRect(
         static_cast<double>(s.centerX),
         static_cast<double>(s.centerY),
@@ -110,7 +111,8 @@ float ClearanceEngine::minSeparationFt(const Polygon2& a, const Polygon2& b) {
 }
 
 std::vector<ViolationResult> ClearanceEngine::detectViolations(
-    const std::vector<AircraftState>& aircraft) {
+    const std::vector<AircraftState>& aircraft,
+    const ClearanceRuleSet& rules) {
 
     std::vector<ViolationResult> results;
 
@@ -124,9 +126,11 @@ std::vector<ViolationResult> ClearanceEngine::detectViolations(
     for (std::size_t i = 0; i < n; ++i) {
         for (std::size_t j = i + 1; j < n; ++j) {
             const float reqA = requiredClearanceFt(aircraft[i].displayType,
-                                                    aircraft[i].propArcFt);
+                                                    aircraft[i].propArcFt,
+                                                    rules);
             const float reqB = requiredClearanceFt(aircraft[j].displayType,
-                                                    aircraft[j].propArcFt);
+                                                    aircraft[j].propArcFt,
+                                                    rules);
             const float required = std::max(reqA, reqB);
 
             const float sep = minSeparationFt(footprints[i], footprints[j]);

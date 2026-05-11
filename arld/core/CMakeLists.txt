@@ -6,6 +6,7 @@ add_library(arld_core STATIC
     src/UndoStack.cpp
     src/AircraftLibraryParser.cpp
     src/ClearanceEngine.cpp
+    src/ClearanceRuleSet.cpp
     src/ProjectFile.cpp
     src/UnitConverter.cpp
 )

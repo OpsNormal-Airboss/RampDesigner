@@ -163,7 +163,7 @@ void AircraftItem::rebuildClearancePolygon() {
 
 arld::core::AircraftState AircraftItem::toAircraftState() const {
     arld::core::AircraftState s;
-    s.id          = m_entry.id;
+    s.id          = m_placementId;   // use placement ID so pairs are unique
     s.wingspanFt  = m_entry.wingspanFt;
     s.lengthFt    = m_entry.lengthFt;
     s.rotationDeg = static_cast<float>(rotation());
@@ -213,6 +213,31 @@ void AircraftItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 void AircraftItem::setDisplayType(arld::core::DisplayType dt) {
     m_displayType = dt;
     rebuildClearancePolygon();
+    update();
+}
+
+void AircraftItem::setHazmat(bool v) {
+    m_hasHazmat = v;
+    if (v) {
+        if (!m_hazmatIcon) {
+            m_hazmatIcon = new QGraphicsTextItem(QStringLiteral("⚠"), this);
+            QFont f = m_hazmatIcon->font();
+            f.setPointSize(8);
+            f.setBold(true);
+            m_hazmatIcon->setFont(f);
+            m_hazmatIcon->setDefaultTextColor(QColor(0xCC, 0x22, 0x22));
+            m_hazmatIcon->setZValue(1.0);
+        }
+        // Position at top-centre of bounding rect
+        const QRectF br = childrenBoundingRect();
+        const double iconW = m_hazmatIcon->boundingRect().width();
+        m_hazmatIcon->setPos(br.center().x() - iconW / 2.0, br.top());
+        m_hazmatIcon->setVisible(true);
+    } else {
+        if (m_hazmatIcon) {
+            m_hazmatIcon->setVisible(false);
+        }
+    }
     update();
 }
 

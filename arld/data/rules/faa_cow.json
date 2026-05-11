@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "ruleset_id": "faa_cow",
+  "display_name": "FAA Certificate of Waiver (Default)",
+  "distances": {
+    "static_display_wingtip_ft": 25.0,
+    "warbird_prop_arc_bonus_ft": 35.0,
+    "taxi_only_corridor_ft": 50.0,
+    "military_static_standoff_ft": 50.0,
+    "hot_ramp_standoff_ft": 100.0,
+    "media_photo_platform_ft": 15.0,
+    "ramp_show_crowd_line_ft": 200.0
+  }
+}

@@ -8,8 +8,10 @@ class QLabel;
 
 namespace arld::ui {
 class LibraryPanel;
+class PropertiesPanel;
 class RampScene;
 class RampView;
+class ViolationsPanel;
 }
 
 class MainWindow : public QMainWindow {
@@ -27,6 +29,7 @@ private:
     void setupToolBar();
     void setupStatusBar();
     void setupLibraryPanel();
+    void setupPanels();
     void setupFileActions();
     void updateUndoRedoActions();
     void updateScaleLabel(double denominator);
@@ -40,9 +43,11 @@ private:
     void saveProjectAs();
     void exportSvg();
 
-    arld::ui::RampScene* m_scene;
-    arld::ui::RampView*  m_view;
-    arld::ui::LibraryPanel* m_libraryPanel = nullptr;
+    arld::ui::RampScene*    m_scene;
+    arld::ui::RampView*     m_view;
+    arld::ui::LibraryPanel*    m_libraryPanel   = nullptr;
+    arld::ui::PropertiesPanel* m_propertiesPanel = nullptr;
+    arld::ui::ViolationsPanel* m_violationsPanel = nullptr;
     QAction* m_undoAction          = nullptr;
     QAction* m_redoAction          = nullptr;
     QAction* m_drawBoundaryAction  = nullptr;

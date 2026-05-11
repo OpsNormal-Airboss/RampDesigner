@@ -1,7 +1,9 @@
 #pragma once
+#include <arld/core/ClearanceEngine.h>
+#include <arld/core/ClearanceRuleSet.h>
+#include <arld/core/ProjectFile.h>
 #include <arld/core/UndoStack.h>
 #include <arld/core/AircraftLibraryEntry.h>
-#include <arld/core/ProjectFile.h>
 #include <QGraphicsScene>
 #include <QTimer>
 #include <functional>
@@ -34,6 +36,20 @@ public:
     // Trigger an immediate clearance recomputation (normally debounced via timer).
     void recomputeClearance();
 
+    // --- ClearanceRuleSet (Sprint 1-2-2) ---
+    const arld::core::ClearanceRuleSet& ruleSet() const { return m_ruleSet; }
+    void setRuleSet(const arld::core::ClearanceRuleSet& rs);
+
+    // --- Violation results accessor (Sprint 1-2-1) ---
+    const std::vector<arld::core::ViolationResult>& lastViolations() const { return m_lastViolations; }
+
+    // --- Override management (Sprint 1-2-6) ---
+    void addOverride(const arld::core::ClearanceOverride& ov);
+    const std::vector<arld::core::ClearanceOverride>& overrides() const { return m_overrides; }
+
+    // --- ViolationsPanel helper (Sprint 1-2-1) ---
+    QPointF aircraftSceneCenter(const std::string& placementId) const;
+
     // --- Sprint 0-5: persistence ---
 
     /// Serialize the current scene state to a ProjectData snapshot.
@@ -53,6 +69,8 @@ signals:
     void editModeChanged(EditMode mode);
     // Emitted after each clearance evaluation; count = number of violation pairs.
     void violationCountChanged(int count);
+    // Emitted whenever violations change (Sprint 1-2-1).
+    void violationsChanged();
     // Emitted whenever the scene is dirtied (aircraft moved, placed, boundary edited, etc.).
     void sceneModified();
 
@@ -69,8 +87,12 @@ private:
     RampBoundaryItem* m_boundaryItem = nullptr;
     ScaleBarItem* m_scaleBarItem = nullptr;
 
-    std::vector<AircraftItem*> m_aircraft;  // all placed (possibly hidden) aircraft
-    QTimer m_clearanceTimer;                // debounce: fires 80 ms after last scene change
+    std::vector<AircraftItem*>  m_aircraft;       // all placed (possibly hidden) aircraft
+    QTimer m_clearanceTimer;                       // debounce: fires 80 ms after last scene change
+
+    arld::core::ClearanceRuleSet                    m_ruleSet;
+    std::vector<arld::core::ViolationResult>        m_lastViolations;
+    std::vector<arld::core::ClearanceOverride>      m_overrides;
 };
 
 } // namespace arld::ui

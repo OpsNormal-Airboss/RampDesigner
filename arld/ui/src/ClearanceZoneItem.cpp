@@ -42,6 +42,11 @@ void ClearanceZoneItem::updateAppearance() {
                              static_cast<int>(arld::core::kViolationZoneOpacity * 255));
             outline = QColor(0xAA, 0x00, 0x00, 220);
             break;
+        case S::Overridden:
+            fill    = QColor(0xDD, 0x77, 0x00,
+                             static_cast<int>(0.35f * 255));
+            outline = QColor(0xBB, 0x55, 0x00, 210);
+            break;
     }
 
     setBrush(QBrush(fill));

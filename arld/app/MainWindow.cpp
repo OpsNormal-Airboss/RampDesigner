@@ -1,7 +1,11 @@
 #include "MainWindow.h"
+#include <arld/ui/ClearanceRuleDialog.h>
 #include <arld/ui/LibraryPanel.h>
+#include <arld/ui/PropertiesPanel.h>
 #include <arld/ui/RampScene.h>
 #include <arld/ui/RampView.h>
+#include <arld/ui/ViolationsPanel.h>
+#include <arld/ui/AircraftItem.h>
 #include <arld/core/ProjectFile.h>
 #include <arld/core/UnitConverter.h>
 #include <arld/export/SvgExporter.h>
@@ -21,8 +25,10 @@
 
 using arld::ui::EditMode;
 using arld::ui::LibraryPanel;
+using arld::ui::PropertiesPanel;
 using arld::ui::RampScene;
 using arld::ui::RampView;
+using arld::ui::ViolationsPanel;
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setWindowTitle(tr("Airshow Ramp Layout Designer"));
@@ -47,6 +53,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupToolBar();
     setupStatusBar();
     setupLibraryPanel();
+    setupPanels();
     updateUndoRedoActions();
     updateWindowTitle();
 
@@ -117,6 +124,15 @@ void MainWindow::setupMenuBar() {
 
     connect(m_scene, &RampScene::editModeChanged, this, [this](EditMode mode) {
         m_drawBoundaryAction->setChecked(mode == EditMode::DrawBoundary);
+    });
+
+    // ---- Tools menu ----
+    auto* toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    toolsMenu->addAction(tr("Clearance &Rules..."), this, [this] {
+        arld::ui::ClearanceRuleDialog dlg(m_scene->ruleSet(), this);
+        if (dlg.exec() == QDialog::Accepted) {
+            m_scene->setRuleSet(dlg.ruleSet());
+        }
     });
 
     // ---- View menu ----
@@ -208,6 +224,33 @@ void MainWindow::setupLibraryPanel() {
     });
 }
 
+void MainWindow::setupPanels() {
+    // Properties panel (right dock)
+    m_propertiesPanel = new PropertiesPanel(this);
+    addDockWidget(Qt::RightDockWidgetArea, m_propertiesPanel);
+
+    // Wire selection changes to properties panel
+    connect(m_scene, &QGraphicsScene::selectionChanged, this, [this] {
+        arld::ui::AircraftItem* selected = nullptr;
+        const auto items = m_scene->selectedItems();
+        for (auto* item : items) {
+            if (auto* ac = qgraphicsitem_cast<arld::ui::AircraftItem*>(item)) {
+                selected = ac;
+                break;
+            }
+        }
+        m_propertiesPanel->setAircraft(selected);
+    });
+
+    // Violations panel (bottom dock)
+    m_violationsPanel = new ViolationsPanel(m_scene, m_view, this);
+    addDockWidget(Qt::BottomDockWidgetArea, m_violationsPanel);
+
+    connect(m_scene, &RampScene::violationsChanged, this, [this] {
+        m_violationsPanel->refresh(m_scene->lastViolations());
+    });
+}
+
 void MainWindow::updateScaleLabel(double denominator) {
     m_scaleLabel->setText(tr("Scale  1:%1").arg(static_cast<int>(denominator)));
 }
@@ -264,6 +307,7 @@ void MainWindow::newProject() {
     m_dirty = false;
     updateWindowTitle();
     updateUndoRedoActions();
+    if (m_violationsPanel) m_violationsPanel->refresh({});
 }
 
 void MainWindow::openProject() {
@@ -293,6 +337,7 @@ void MainWindow::openProject() {
         m_dirty = false;
         updateWindowTitle();
         updateUndoRedoActions();
+        if (m_violationsPanel) m_violationsPanel->refresh(m_scene->lastViolations());
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Open Failed"),
                               tr("Could not open project:\n%1").arg(e.what()));

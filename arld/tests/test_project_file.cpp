@@ -57,8 +57,8 @@ TEST_CASE("ProjectFile: save and load round-trip preserves all data — 15 aircr
 
     // Build a ProjectData with 15 aircraft covering all display types + varied positions.
     ProjectData orig;
-    orig.arldVersion              = "0.5.0";
-    orig.schemaVersion            = 1;
+    orig.arldVersion              = "1.1.0";
+    orig.schemaVersion            = 2;
     orig.metadata.title           = "Round-Trip Test Layout";
     orig.metadata.createdUtc      = "2026-05-10T10:00:00Z";
     orig.metadata.modifiedUtc     = "2026-05-10T10:00:00Z";
@@ -113,8 +113,8 @@ TEST_CASE("ProjectFile: save and load round-trip preserves all data — 15 aircr
     REQUIRE_NOTHROW(loaded = ProjectFile::load(tmpPath));
 
     // Verify top-level fields.
-    CHECK(loaded.arldVersion   == orig.arldVersion);
-    CHECK(loaded.schemaVersion == 1);
+    CHECK(loaded.arldVersion   == "1.1.0");
+    CHECK(loaded.schemaVersion == 2);
     CHECK(loaded.metadata.title == orig.metadata.title);
     CHECK(loaded.metadata.createdUtc == orig.metadata.createdUtc);
     // modified_utc is updated on save, so just check it's non-empty.
