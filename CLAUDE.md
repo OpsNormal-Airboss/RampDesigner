@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-5 complete. Scale bar variants (imperial/metric/dual) in PNG and PDF exporters; LICENSES.txt with SPDX identifiers. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** Phase 2, Sprint 2-6 complete. `SatelliteUnderlayItem::clear()` (issue #15 fix); `RampView` accessible name/description; dock panel accessible names; `GENERAL_AVIATION` benchmark fix; `SECURITY_REVIEW.md`; `PHASE3_GATE.md`; `CHANGELOG.md`. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -70,6 +70,7 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog; perf benchmarks | ✅ Complete |
 | 2-4 | UAT event 1 bug fixes; snap-heading/nudge batch undo; violation badge; lazy SVG load; auto-update reload; satellite GSD | ✅ Complete |
 | 2-5 | Scale bar variants (imperial/metric/dual) in PNG+PDF; LICENSES.txt; UAT P1/P2 bug triage | ✅ Complete |
+| 2-6 | Security review; license audit; satellite clear fix (#15); benchmark fix; accessibility | ✅ Complete |
 
 ## 🔧 Tech Stack
 

@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2, Sprint 2-5 complete. Scale bar variants (imperial/metric/dual) in PNG and PDF exporters; `ExportOptions::ScaleBarMode` enum; embedded 5×7 bitmap font in PngExporter for scale bar labels; LICENSES.txt with SPDX identifiers for all third-party dependencies; 3 new scale bar Catch2 tests. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 2 complete (all 6 sprints). Sprint 2-6: `SatelliteUnderlayItem::clear()` (issue #15 fix — satellite image now clears on New Project); `RampView` accessible name/description; dock panel accessible names; `GENERAL_AVIATION` benchmark data fix; `SECURITY_REVIEW.md`, `PHASE3_GATE.md`, `CHANGELOG.md`. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
