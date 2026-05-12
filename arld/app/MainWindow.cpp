@@ -330,6 +330,7 @@ void MainWindow::setupFileActions() {
 
 void MainWindow::setupToolBar() {
     auto* tb = addToolBar(tr("Main"));
+    tb->setObjectName(QStringLiteral("MainToolBar"));
     tb->setMovable(false);
     tb->addAction(m_undoAction);
     tb->addAction(m_redoAction);
@@ -534,9 +535,6 @@ void MainWindow::setupPanels() {
             this, [this](QPointF scenePos) {
         m_view->centerOn(scenePos);
     });
-
-    // Set initial dock sizes so the resize handles are functional (issue #21)
-    resizeDocks({m_propertiesPanel}, {260}, Qt::Horizontal);
 
     // Add panel toggle actions to View menu (issue #23)
     QMenu* vm = nullptr;
@@ -939,7 +937,14 @@ void MainWindow::restoreLayout() {
     const QByteArray geo   = settings.value(QStringLiteral("windowGeometry")).toByteArray();
     const QByteArray state = settings.value(QStringLiteral("windowState")).toByteArray();
     if (!geo.isEmpty())   restoreGeometry(geo);
-    if (!state.isEmpty()) restoreState(state);
+    if (!state.isEmpty()) {
+        restoreState(state);
+    } else {
+        // First launch — restoreState won't set sizes, so seed sensible defaults
+        // so all dock splitter handles are draggable (issue #21).
+        resizeDocks({m_propertiesPanel}, {260}, Qt::Horizontal);
+        resizeDocks({m_violationsPanel}, {200}, Qt::Vertical);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {

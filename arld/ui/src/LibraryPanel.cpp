@@ -117,6 +117,7 @@ static int categoryIndex(arld::core::AircraftCategory cat) {
 
 LibraryPanel::LibraryPanel(QWidget* parent)
     : QDockWidget(tr("Aircraft Library"), parent) {
+    setObjectName(QStringLiteral("LibraryPanel"));
 
     auto* container = new QWidget(this);
     auto* vbox = new QVBoxLayout(container);
