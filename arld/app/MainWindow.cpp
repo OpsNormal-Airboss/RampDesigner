@@ -614,11 +614,11 @@ void MainWindow::newProject() {
     }
     m_suppressDirty = true;
     m_scene->clearScene();
-    m_suppressDirty = false;
     m_currentFilePath.clear();
     m_projectMetadata = arld::core::ProjectMetadata{};
     m_dirty = false;
     updateWindowTitle();
+    QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
     updateUndoRedoActions();
     if (m_violationsPanel) m_violationsPanel->refresh({});
 }
@@ -647,7 +647,6 @@ void MainWindow::openProject() {
         };
         m_suppressDirty = true;
         m_scene->loadProjectData(data, lookup);
-        m_suppressDirty = false;
         m_projectMetadata = data.metadata;
         m_currentData = data;
         if (m_versionsPanel) m_versionsPanel->setProjectData(m_currentData);
@@ -655,6 +654,7 @@ void MainWindow::openProject() {
         m_currentFilePath = path;
         m_dirty = false;
         updateWindowTitle();
+        QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
         updateUndoRedoActions();
         addToRecentFiles(path);
         if (m_violationsPanel) m_violationsPanel->refresh(m_scene->lastViolations());
@@ -1362,11 +1362,11 @@ void MainWindow::updateRecentFilesMenu() {
                 };
                 m_suppressDirty = true;
                 m_scene->loadProjectData(data, lookup);
-                m_suppressDirty = false;
                 m_projectMetadata = data.metadata;
                 m_currentFilePath = path;
                 m_dirty = false;
                 updateWindowTitle();
+                QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
                 updateUndoRedoActions();
                 addToRecentFiles(path);
                 if (m_violationsPanel)
