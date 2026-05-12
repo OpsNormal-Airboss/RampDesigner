@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 2 — Sprint 3/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%203%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 2 — Sprint 4/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%204%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -94,7 +94,7 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **SVG named layers** — exported SVGs include Inkscape-compatible `<g id=... inkscape:label=...>` layers for Ramp Boundary, Aircraft, and Annotations; layer-aware editing in Inkscape/Illustrator works out of the box
 - **Violations report** — File → Export Violations Report exports a PDF table or CSV with all violation pairs, measured/required gaps, severity, and override justifications
 - **Satellite underlay** — View → Load Satellite Image imports a JPEG/PNG; loads asynchronously without blocking the UI; opacity slider 0–100%
-- **Geo-referenced tile streaming** — View → Satellite Tiles... opens a dialog to configure a Mapbox access token and tile URL template; clicking "Fetch Tile" downloads HTTPS imagery directly to the underlay layer; non-HTTPS URLs are silently rejected
+- **Geo-referenced tile streaming** — View → Satellite Tiles... opens a dialog to configure a Mapbox access token, lat/lon/zoom, and tile URL template; clicking "Fetch Tile" calls `setGeoreference` with the Web Mercator GSD (156543 m/px × cos(lat) / 2^zoom / 0.3048; ÷2 for @2x tiles) so the tile renders at real-world scale and is centred at the scene origin; non-HTTPS URLs are rejected
 - **Named layout snapshots (versions)** — Versions panel (right dock): click "Save Current..." to snapshot the current scene under a named label; switch to any version, export it as a standalone `.arld`, or select two versions for a side-by-side delta view
 - **Visual change-delta overlay** — comparing two versions highlights Added (green outline), Removed (red ghost), and Moved (amber overlay) aircraft directly on the canvas; clearance evaluation is suppressed during delta view; "Clear" button restores normal view
 - **Minimap** — bottom dock shows a scaled-down overview of the full scene; viewport rectangle drawn in blue; click anywhere to pan the main canvas to that position
@@ -117,7 +117,9 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Hot Ramp no-smoking overlay** — JET-A aircraft assigned to Hot Ramp display a 100 ft red dashed no-smoking circle; activates automatically when display type is Hot Ramp and fuel type contains "Jet"/"JET"/"jet"
 - **Right-click label toggle** — right-click any aircraft to choose label: Display Name, Tail Number, or Hidden; preference is serialized in the project file
 - **Locale-aware inputs** — all `QDoubleSpinBox` widgets use `QLocale::system()` so the decimal separator matches the user's locale
-- **Library update checker** — Help → Check for Library Updates... opens a dialog that fetches a remote manifest over HTTPS and identifies stale library entries; supports download to user data directory
+- **Library update checker** — Help → Check for Library Updates... fetches a remote manifest over HTTPS, identifies stale entries, downloads updates to the user data directory, and automatically reloads the library panel when complete
+- **Arrow-key nudge** — selected aircraft can be nudged with arrow keys (1 ft per press; 5 ft with Shift held); multi-aircraft nudge is a single undoable step via `MacroCommand`
+- **macOS dock violation badge** — the macOS dock tile shows the live violation count as a red badge via native ObjC integration
 - **About dialog** — Help → About ARLD... shows version, build date, copyright, and a "View Licenses..." button that displays NOTICES.txt in a scrollable dialog
 - **NOTICES.txt generation** — `cmake --build --target generate_notices` writes NOTICES.txt with attribution text for all third-party dependencies
 

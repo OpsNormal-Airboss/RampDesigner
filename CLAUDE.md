@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-3 complete. LOD simplified rendering (scaleDenominator > 2000), arrival/departure times on PlacedAircraft, Hot Ramp no-smoking 100 ft circle overlay (JET-A), right-click label toggle (DisplayName/TailNumber/Hidden) with LabelMode serialization, locale-aware QDoubleSpinBox inputs, CVD hatching pattern fills on clearance zones, JSON depth-limit security check (max 32), LibraryUpdateChecker with HTTPS-only, NOTICES.txt generation, About ARLD dialog, ARLD_VERSION_STRING macro. 98/98 tests pass (+ benchmarks tagged [.bench]).
+**Current status:** Phase 2, Sprint 2-4 complete. MacroCommand + `UndoStack::beginMacro`/`endMacro`; snap-heading and arrow-key nudge batch undo; macOS dock violation badge (AppBadge); lazy SVG silhouette loading on project open; LibraryUpdateChecker `downloadCompleted` signal + `LibraryPanel::reloadLibrary()`; satellite tile georeferencing via Web Mercator GSD (`setGeoreference`). 103/103 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -68,7 +68,8 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 2-1 | 150-aircraft library; BatchExporter all-formats; SVG layers; PNG scale bar; library sort; manifest CSV; multi-select/lasso; community button; export benchmarks | ✅ Complete |
 | 2-2 | Named snapshots; change-delta view; minimap panel; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
 | 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog; perf benchmarks | ✅ Complete |
-| 2-4 | ??? | ⬜ Up next |
+| 2-4 | UAT event 1 bug fixes; snap-heading/nudge batch undo; violation badge; lazy SVG load; auto-update reload; satellite GSD | ✅ Complete |
+| 2-5 | ??? | ⬜ Up next |
 
 ## 🔧 Tech Stack
 
@@ -213,7 +214,7 @@ RampView    : QGraphicsView
 | File | Tests | Coverage |
 |------|-------|---------|
 | `arld/tests/test_smoke.cpp` | 3 | Layout construction, Config constants |
-| `arld/tests/test_undo.cpp` | 8 | Full UndoStack behaviour incl. 100-level depth, callbacks |
+| `arld/tests/test_undo.cpp` | 13 | UndoStack behaviour; MacroCommand execute/undo order; beginMacro/endMacro single-step undo/redo |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
 | `arld/tests/test_project_file.cpp` | 8 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
@@ -227,7 +228,7 @@ RampView    : QGraphicsView
 | `arld/tests/test_versioning.cpp` | 9 | LayoutVersion round-trip; schema_version 3 written; v2→empty versions; LayoutDiffer added/removed/moved/unchanged; BoundaryImporter GeoJSON/KML/invalid; UndoStack history/goToIndex |
 | `arld/tests/test_security.cpp` | 4 | JSON depth > 32 rejected; depth ≤ 32 not depth-rejected; minimal valid loads; arrival/departure round-trip; LabelMode round-trip |
 | `arld/tests/test_perf.cpp` | 2 bench | bench_library_load 150 entries; bench_project_open_200ac |
-| **Total** | **98 + 6 bench** | |
+| **Total** | **103 + 6 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

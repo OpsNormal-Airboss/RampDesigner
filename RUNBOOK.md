@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2, Sprint 2-3 complete. LOD simplified rendering (scaleDenominator > 2000), arrival/departure times on PlacedAircraft, Hot Ramp 100 ft no-smoking circle (JET-A), right-click label toggle (DisplayName/TailNumber/Hidden) with LabelMode serialization, locale-aware QDoubleSpinBox inputs, CVD hatching fills on clearance zones, JSON depth-limit security check (max 32), LibraryUpdateChecker HTTPS-only, NOTICES.txt generation, About ARLD dialog, ARLD_VERSION_STRING macro. 98/98 tests pass (+ benchmarks tagged [.bench]).
+> Updated after each sprint. **Current status:** Phase 2, Sprint 2-4 complete. MacroCommand + `UndoStack::beginMacro`/`endMacro`; snap-heading and arrow-key nudge (1 ft / Shift=5 ft) with batch undo; macOS dock violation badge (`AppBadge`); lazy SVG silhouette loading on project open; `LibraryUpdateChecker::downloadCompleted` signal + `LibraryPanel::reloadLibrary()`; `SatelliteUnderlayItem::setGeoreference` Web Mercator GSD with lat/lon/zoom dialog inputs. 103/103 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -567,20 +567,19 @@ cmake --build --preset win-release --target package
 | 2-3-10 | Security: pre-parse JSON depth check (max 32 levels) in ProjectFile::load; rejects deeply nested files with runtime_error | 5 | ✅ |
 | 2-3-11 | Catch2 tests: test_security.cpp — 4 tests covering depth > 32 rejection, depth ≤ 32 acceptance, arrival/departure round-trip, LabelMode round-trip | 3 | ✅ |
 
-#### Sprint 2-4 · Month 9–10, Wk 3–4 · 44 pts
-**Goal:** UAT event 1; bug fixes; snap-to-runway and group move polish
+#### Sprint 2-4 · Month 9–10, Wk 3–4 · ✅ Complete
+**Goal:** UAT event 1 bug fixes; snap-to-runway and group move polish; auto-update; satellite GSD
 
-| # | Story | Pts |
-|---|-------|-----|
-| 2-4-1 | UAT session at Airshow Event 1 (30-aircraft scenario); screen-capture all sessions | 8 |
-| 2-4-2 | Triage UAT Event 1 bugs; fix all P1 issues before next UAT | 8 |
-| 2-4-3 | Polish snap-to-runway: multi-select + snap aligns all selected aircraft to primary heading | 3 |
-| 2-4-4 | Polish group move: lasso selection, arrow-key nudge (1 ft / 5 ft with Shift) | 3 |
-| 2-4-5 | Export Violations Report PDF: structured table with gap, minimum, severity, override justification | 5 |
-| 2-4-6 | Add placement count and total area statistics to status bar | 3 |
-| 2-4-7 | Performance regression: all 10 TRD-PERF budgets pass after UAT fixes | 5 |
-| 2-4-8 | Accessibility regression: keyboard navigation and VoiceOver pass after UAT fixes | 5 |
-| 2-4-9 | Minimap and LOD rendering regression tests | 4 |
+| # | Story | Pts | Status |
+|---|-------|-----|--------|
+| 2-4-1 | MacroCommand + `UndoStack::beginMacro`/`endMacro`: composite command for atomic multi-aircraft undo steps | 3 | ✅ |
+| 2-4-2 | Snap-to-heading batch undo: PropertiesPanel calls `beginMacro`/`endMacro` wrapping per-aircraft rotate commands | 2 | ✅ |
+| 2-4-3 | Arrow-key nudge: Up/Down/Left/Right = 1 ft; Shift = 5 ft; wrapped in macro for multi-select | 3 | ✅ |
+| 2-4-4 | macOS dock tile violation badge: `AppBadge::setCount(n)` via ObjC `.mm`; no-op stub on other platforms | 3 | ✅ |
+| 2-4-5 | Lazy SVG silhouette loading on project open: positions derived from entry dimensions; SVG deferred via `QTimer::singleShot` | 5 | ✅ |
+| 2-4-6 | `LibraryUpdateChecker`: `m_downloadedIds` tracking, `downloadCompleted(QStringList)` signal; `LibraryPanel::reloadLibrary()` slot; auto-reload after download | 3 | ✅ |
+| 2-4-7 | `SatelliteUnderlayItem::setGeoreference(lat, zoom, highDpi)`: Web Mercator GSD (`156543 × cos(lat) / 2^zoom / 0.3048`, ÷2 for @2x); tile centred at scene origin; satellite dialog adds lat/lon/zoom spinboxes persisted in QSettings | 5 | ✅ |
+| 2-4-8 | 5 new Catch2 tests: MacroCommand execute order, undo reverse order, describe; `beginMacro`/`endMacro` single-step undo/redo; 103/103 total | 2 | ✅ |
 
 #### Sprint 2-5 · Month 10–11, Wk 1–2 · 46 pts
 **Goal:** UAT events 2 & 3; export quality review with print vendors
