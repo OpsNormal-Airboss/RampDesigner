@@ -216,7 +216,7 @@ Community edition: Apache 2.0. All dependencies are MIT, BSL, or LGPL (dynamical
 ---
 
 <div align="center">
-  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss" width="40"/>
+  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss"/>
   <br/>
   <sub>An <a href="https://github.com/OpsNormal-Airboss">OpsNormal Airboss</a> project</sub>
 </div>
