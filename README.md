@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../../CompanyTrademarks/Branding/GreenDotAirboss2Line.svg" alt="OpsNormal Airboss" width="360"/>
+  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss" width="360"/>
   <br/>
   <em>Start Small. Stay Safe. Fly the Show.</em>
   <br/><br/>
@@ -216,7 +216,7 @@ Community edition: Apache 2.0. All dependencies are MIT, BSL, or LGPL (dynamical
 ---
 
 <div align="center">
-  <img src="../../CompanyTrademarks/Branding/GreenDot.svg" alt="OpsNormal Airboss" width="40"/>
+  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss" width="40"/>
   <br/>
   <sub>An <a href="https://github.com/OpsNormal-Airboss">OpsNormal Airboss</a> project</sub>
 </div>
