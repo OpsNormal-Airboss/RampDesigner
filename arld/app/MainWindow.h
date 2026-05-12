@@ -5,6 +5,7 @@
 #include <QTimer>
 
 class QAction;
+class QDockWidget;
 class QLabel;
 class QMenu;
 class QSlider;
@@ -53,6 +54,8 @@ private:
     void exportViolationsReport();
     void exportAll();
     void exportAircraftManifest();
+    void exportPng();
+    void exportJpeg();
     void editProjectMetadata();
 
     // View menu slots (1-3-8)
@@ -70,6 +73,10 @@ private:
     void showAboutDialog();
     void showLibraryUpdateDialog();
 
+    void saveLayout();
+    void restoreLayout();
+    void closeEvent(QCloseEvent* event) override;
+
     arld::ui::RampScene*    m_scene;
     arld::ui::RampView*     m_view;
     arld::ui::LibraryPanel*       m_libraryPanel    = nullptr;
@@ -78,6 +85,7 @@ private:
     arld::ui::UndoHistoryPanel*   m_undoHistoryPanel = nullptr;
     arld::ui::VersionsPanel*      m_versionsPanel   = nullptr;
     arld::ui::ViolationsPanel*    m_violationsPanel = nullptr;
+    QDockWidget*                  m_minimapDock     = nullptr;
 
     // Sprint 2-2: current project data (holds versions list)
     arld::core::ProjectData m_currentData;
@@ -90,6 +98,7 @@ private:
     QLabel*  m_violationLabel      = nullptr;
     QLabel*  m_aircraftCountLabel  = nullptr;
     QMenu*   m_recentFilesMenu     = nullptr;
+    QLabel*  m_rulesetLabel        = nullptr;
 
     QTimer   m_autoSaveTimer;
     QString  m_autoSavePath;

@@ -1,4 +1,5 @@
 #include <arld/core/ProjectFile.h>
+#include <arld/core/ClearanceRuleSet.h>
 #include <nlohmann/json.hpp>
 #include <array>
 #include <cstdint>
@@ -188,6 +189,30 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
         j["versions"] = versions;
     }
 
+    // Satellite image (optional — omit when empty)
+    if (!data.satelliteImagePath.empty()) {
+        j["satellite_image"] = {
+            {"path",            data.satelliteImagePath},
+            {"gsd_feet_per_px", data.satelliteGsdFeetPerPixel}
+        };
+    }
+
+    // Clearance ruleset (omit when it is the FAA CoW default to save space)
+    const auto defaultRules = arld::core::ClearanceRuleSet::faaCoW();
+    if (data.clearanceRules.rulesetId != defaultRules.rulesetId) {
+        j["clearance_ruleset"] = {
+            {"ruleset_id",                  data.clearanceRules.rulesetId},
+            {"display_name",                data.clearanceRules.displayName},
+            {"static_display_wingtip_ft",   data.clearanceRules.staticDisplayWingtipFt},
+            {"warbird_prop_arc_bonus_ft",    data.clearanceRules.warbirdPropArcBonusFt},
+            {"taxi_only_corridor_ft",        data.clearanceRules.taxiOnlyCorridorFt},
+            {"military_static_standoff_ft",  data.clearanceRules.militaryStaticStandoffFt},
+            {"hot_ramp_standoff_ft",         data.clearanceRules.hotRampStandoffFt},
+            {"media_photo_platform_ft",      data.clearanceRules.mediaPhotoPlatformFt},
+            {"ramp_show_crowd_line_ft",      data.clearanceRules.rampShowCrowdLineFt}
+        };
+    }
+
     std::ofstream ofs(path);
     if (!ofs.is_open())
         throw std::runtime_error("ProjectFile::save: cannot open file: " + path);
@@ -348,6 +373,27 @@ ProjectData ProjectFile::load(const std::string& path) {
 
             data.versions.push_back(std::move(ver));
         }
+    }
+
+    // Satellite image (optional, Sprint 3-2-3)
+    if (j.contains("satellite_image") && j["satellite_image"].is_object()) {
+        const auto& si = j["satellite_image"];
+        data.satelliteImagePath       = si.value("path",            std::string(""));
+        data.satelliteGsdFeetPerPixel = si.value("gsd_feet_per_px", 0.0);
+    }
+
+    // Clearance ruleset (optional, Sprint 3-2-9)
+    if (j.contains("clearance_ruleset") && j["clearance_ruleset"].is_object()) {
+        const auto& cr = j["clearance_ruleset"];
+        data.clearanceRules.rulesetId                = cr.value("ruleset_id",                   std::string("faa_cow"));
+        data.clearanceRules.displayName              = cr.value("display_name",                 std::string("FAA Certificate of Waiver"));
+        data.clearanceRules.staticDisplayWingtipFt   = cr.value("static_display_wingtip_ft",    25.0f);
+        data.clearanceRules.warbirdPropArcBonusFt    = cr.value("warbird_prop_arc_bonus_ft",     35.0f);
+        data.clearanceRules.taxiOnlyCorridorFt       = cr.value("taxi_only_corridor_ft",         50.0f);
+        data.clearanceRules.militaryStaticStandoffFt = cr.value("military_static_standoff_ft",   50.0f);
+        data.clearanceRules.hotRampStandoffFt        = cr.value("hot_ramp_standoff_ft",         100.0f);
+        data.clearanceRules.mediaPhotoPlatformFt     = cr.value("media_photo_platform_ft",       15.0f);
+        data.clearanceRules.rampShowCrowdLineFt      = cr.value("ramp_show_crowd_line_ft",      200.0f);
     }
 
     return data;

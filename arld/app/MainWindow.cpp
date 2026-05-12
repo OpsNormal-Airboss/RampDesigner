@@ -20,12 +20,15 @@
 #include <arld/core/UnitConverter.h>
 #include <arld/export/AircraftManifestExporter.h>
 #include <arld/export/BatchExporter.h>
+#include <arld/export/JpegExporter.h>
 #include <arld/export/PdfExporter.h>
+#include <arld/export/PngExporter.h>
 #include <arld/export/SvgExporter.h>
 #include <arld/export/ViolationReportExporter.h>
 #include <QAction>
 #include <QActionGroup>
 #include <QCheckBox>
+#include <QCloseEvent>
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDialog>
@@ -95,6 +98,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     updateUndoRedoActions();
     updateWindowTitle();
 
+    connect(m_scene, &RampScene::ruleSetChanged, this, [this](const QString& name) {
+        if (m_rulesetLabel)
+            m_rulesetLabel->setText(tr("Rules: %1").arg(name));
+    });
+
     // Keyboard navigation (1-4-8): Tab order follows visual left→right/top→bottom layout.
     if (m_libraryPanel->focusProxy() && m_propertiesPanel->focusProxy())
         QWidget::setTabOrder(m_libraryPanel->focusProxy(), m_propertiesPanel->focusProxy());
@@ -134,6 +142,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         }
         QFile::remove(m_autoSavePath); // always delete after attempting recovery
     }
+
+    restoreLayout();
 }
 
 MainWindow::~MainWindow() {
@@ -229,8 +239,31 @@ void MainWindow::setupMenuBar() {
         const QString path = QFileDialog::getOpenFileName(
             this, tr("Load Satellite Image"), QString(),
             tr("Image Files (*.png *.jpg *.jpeg *.tif *.tiff *.bmp);;All Files (*)"));
-        if (!path.isEmpty())
-            m_scene->setSatelliteImage(path);
+        if (path.isEmpty()) return;
+        m_scene->setSatelliteImage(path);
+
+        // Ask the user to provide scale information from the image's scale bar (issue #16)
+        QDialog dlg(this);
+        dlg.setWindowTitle(tr("Set Satellite Image Scale"));
+        auto* vlay = new QVBoxLayout(&dlg);
+        vlay->addWidget(new QLabel(tr(
+            "If the satellite image shows a scale bar, enter its dimensions to match\n"
+            "the canvas scale. Leave blank to use the default (1 px = 1 ft).")));
+        auto* form = new QFormLayout;
+        auto* pixSpin = new QDoubleSpinBox; pixSpin->setRange(1, 100000); pixSpin->setValue(100); pixSpin->setSuffix(tr(" px"));
+        auto* ftSpin  = new QDoubleSpinBox; ftSpin->setRange(1, 100000); ftSpin->setValue(100);  ftSpin->setSuffix(tr(" ft"));
+        form->addRow(tr("Scale bar length in image:"), pixSpin);
+        form->addRow(tr("Real-world distance:"),       ftSpin);
+        vlay->addLayout(form);
+        auto* btns = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        connect(btns, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+        connect(btns, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+        vlay->addWidget(btns);
+        if (dlg.exec() == QDialog::Accepted && pixSpin->value() > 0) {
+            const double fpp = ftSpin->value() / pixSpin->value();
+            if (m_scene->satelliteItem())
+                m_scene->satelliteItem()->setFeetPerPixel(fpp);
+        }
     });
 
     // Opacity slider in a widget action
@@ -282,6 +315,8 @@ void MainWindow::setupFileActions() {
     fm->addSeparator();
     fm->addAction(tr("Export &SVG..."), this, &MainWindow::exportSvg);
     fm->addAction(tr("Export &PDF..."), this, &MainWindow::exportPdf);
+    fm->addAction(tr("Export P&NG..."),  this, &MainWindow::exportPng);
+    fm->addAction(tr("Export &JPEG..."), this, &MainWindow::exportJpeg);
     fm->addAction(tr("Export &All Formats..."), this, &MainWindow::exportAll);
     fm->addSeparator();
     fm->addAction(tr("Export &Violations Report..."), this, &MainWindow::exportViolationsReport);
@@ -320,6 +355,12 @@ void MainWindow::setupStatusBar() {
     m_scaleLabel = new QLabel(this);
     statusBar()->addPermanentWidget(m_scaleLabel);
     updateScaleLabel(m_view->scaleDenominator());
+
+    m_rulesetLabel = new QLabel(this);
+    m_rulesetLabel->setMinimumWidth(180);
+    statusBar()->addPermanentWidget(m_rulesetLabel);
+    m_rulesetLabel->setText(tr("Rules: %1").arg(
+        QString::fromStdString(m_scene->ruleSet().displayName)));
 
     connect(m_view,  &RampView::scaleChanged,            this, &MainWindow::updateScaleLabel);
     connect(m_scene, &RampScene::violationCountChanged,  this, &MainWindow::updateViolationLabel);
@@ -480,19 +521,38 @@ void MainWindow::setupPanels() {
     tabifyDockWidget(m_versionsPanel, m_undoHistoryPanel);
 
     // Minimap widget (bottom dock, tabified with violations)
-    auto* minimapDock = new QDockWidget(tr("Minimap"), this);
-    minimapDock->setObjectName(QStringLiteral("MinimapDock"));
+    m_minimapDock = new QDockWidget(tr("Minimap"), this);
+    m_minimapDock->setObjectName(QStringLiteral("MinimapDock"));
     m_minimapWidget = new MinimapWidget(this);
     m_minimapWidget->setScene(m_scene);
     m_minimapWidget->setView(m_view);
-    minimapDock->setWidget(m_minimapWidget);
-    addDockWidget(Qt::BottomDockWidgetArea, minimapDock);
-    tabifyDockWidget(m_violationsPanel, minimapDock);
+    m_minimapDock->setWidget(m_minimapWidget);
+    addDockWidget(Qt::BottomDockWidgetArea, m_minimapDock);
+    tabifyDockWidget(m_violationsPanel, m_minimapDock);
 
     connect(m_minimapWidget, &MinimapWidget::minimapClicked,
             this, [this](QPointF scenePos) {
         m_view->centerOn(scenePos);
     });
+
+    // Set initial dock sizes so the resize handles are functional (issue #21)
+    resizeDocks({m_propertiesPanel}, {260}, Qt::Horizontal);
+
+    // Add panel toggle actions to View menu (issue #23)
+    QMenu* vm = nullptr;
+    for (auto* a : menuBar()->actions()) {
+        if (a->menu() && a->text() == tr("&View")) { vm = a->menu(); break; }
+    }
+    if (vm) {
+        vm->addSeparator();
+        auto* pm = vm->addMenu(tr("&Panels"));
+        pm->addAction(m_libraryPanel->toggleViewAction());
+        pm->addAction(m_propertiesPanel->toggleViewAction());
+        pm->addAction(m_violationsPanel->toggleViewAction());
+        pm->addAction(m_versionsPanel->toggleViewAction());
+        pm->addAction(m_undoHistoryPanel->toggleViewAction());
+        if (m_minimapDock) pm->addAction(m_minimapDock->toggleViewAction());
+    }
 }
 
 void MainWindow::updateScaleLabel(double denominator) {
@@ -733,6 +793,41 @@ void MainWindow::exportPdf() {
     }
 }
 
+void MainWindow::exportPng() {
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ExportPng);
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export PNG"), QString(),
+        tr("PNG Images (*.png);;All Files (*)"));
+    if (path.isEmpty()) return;
+    try {
+        arld::export_::ExportOptions opts;
+        opts.showScaleBar = true;
+        arld::export_::PngExporter{}.exportLayout(
+            m_scene->toProjectData(), path.toStdString(), opts);
+        statusBar()->showMessage(tr("PNG exported: %1").arg(QFileInfo(path).fileName()), 4000);
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Export Failed"),
+                              tr("PNG export failed:\n%1").arg(e.what()));
+    }
+}
+
+void MainWindow::exportJpeg() {
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ExportJpeg);
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export JPEG"), QString(),
+        tr("JPEG Images (*.jpg *.jpeg);;All Files (*)"));
+    if (path.isEmpty()) return;
+    try {
+        arld::export_::ExportOptions opts;
+        arld::export_::JpegExporter{}.exportLayout(
+            m_scene->toProjectData(), path.toStdString(), opts);
+        statusBar()->showMessage(tr("JPEG exported: %1").arg(QFileInfo(path).fileName()), 4000);
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Export Failed"),
+                              tr("JPEG export failed:\n%1").arg(e.what()));
+    }
+}
+
 void MainWindow::exportViolationsReport() {
     // Ask: PDF or CSV?
     QDialog dlg(this);
@@ -831,6 +926,39 @@ void MainWindow::fitToWindow() {
     const QRectF bounds = m_scene->itemsBoundingRect();
     if (bounds.isNull()) return;
     m_view->fitInView(bounds.adjusted(-50, -50, 50, 50), Qt::KeepAspectRatio);
+}
+
+void MainWindow::saveLayout() {
+    QSettings settings(QStringLiteral("OpsNormal Airboss"), QStringLiteral("ARLD"));
+    settings.setValue(QStringLiteral("windowGeometry"), saveGeometry());
+    settings.setValue(QStringLiteral("windowState"),    saveState());
+}
+
+void MainWindow::restoreLayout() {
+    QSettings settings(QStringLiteral("OpsNormal Airboss"), QStringLiteral("ARLD"));
+    const QByteArray geo   = settings.value(QStringLiteral("windowGeometry")).toByteArray();
+    const QByteArray state = settings.value(QStringLiteral("windowState")).toByteArray();
+    if (!geo.isEmpty())   restoreGeometry(geo);
+    if (!state.isEmpty()) restoreState(state);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    if (m_dirty) {
+        const auto btn = QMessageBox::question(
+            this, tr("Unsaved Changes"),
+            tr("The current layout has unsaved changes. Save before closing?"),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+            QMessageBox::Save);
+        if (btn == QMessageBox::Save) {
+            saveProject();
+            if (m_dirty) { event->ignore(); return; } // save was cancelled
+        } else if (btn == QMessageBox::Cancel) {
+            event->ignore();
+            return;
+        }
+    }
+    saveLayout();
+    event->accept();
 }
 
 // ---------------------------------------------------------------------------

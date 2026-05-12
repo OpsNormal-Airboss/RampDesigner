@@ -100,6 +100,8 @@ signals:
     void sceneModified();
     // Emitted when the user requests the Properties panel for a specific aircraft.
     void propertiesRequested(arld::ui::AircraftItem* item);
+    // Emitted when the active clearance ruleset changes (Sprint 3-2-9).
+    void ruleSetChanged(const QString& displayName);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
@@ -116,6 +118,7 @@ private:
     ScaleBarItem*              m_scaleBarItem  = nullptr;
     GridOverlayItem*           m_gridOverlay   = nullptr;
     SatelliteUnderlayItem*     m_satelliteItem = nullptr;
+    QString                    m_satelliteImagePath;
 
     std::vector<AircraftItem*>  m_aircraft;       // all placed (possibly hidden) aircraft
     QTimer m_clearanceTimer;                       // debounce: fires 80 ms after last scene change

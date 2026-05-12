@@ -36,6 +36,17 @@ void SatelliteUnderlayItem::setOpacity(float opacity) {
     update();
 }
 
+void SatelliteUnderlayItem::setFeetPerPixel(double feetPerPixel) {
+    m_feetPerPixel = feetPerPixel;
+    if (!m_image.isNull()) {
+        prepareGeometryChange();
+        const double w = m_image.width()  * m_feetPerPixel;
+        const double h = m_image.height() * m_feetPerPixel;
+        m_rect = QRectF(-w / 2.0, -h / 2.0, w, h);
+        update();
+    }
+}
+
 void SatelliteUnderlayItem::setGeoreference(double latDeg, int zoomLevel, bool highDpi) {
     // Web Mercator GSD: metres per pixel at zoom 0 = 156543.03392 m/px at the equator
     // Scaled by cos(lat) for latitude, divided by 2^zoom for tile level.

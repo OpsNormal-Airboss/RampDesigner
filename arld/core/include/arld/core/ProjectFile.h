@@ -1,5 +1,6 @@
 #pragma once
 #include <arld/core/AircraftLibraryEntry.h>
+#include <arld/core/ClearanceRuleSet.h>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -70,13 +71,19 @@ struct LayoutVersion {
 };
 
 struct ProjectData {
-    std::string      arldVersion   = "1.1.0";
+    std::string      arldVersion   = "1.1.1";
     int              schemaVersion = 2;
     ProjectMetadata  metadata;
     RampBoundaryData boundary;
     std::vector<PlacedAircraft>    aircraft;
     std::vector<ClearanceOverride> overrides;
     std::vector<LayoutVersion>     versions;  // named snapshots (Sprint 2-2)
+
+    // Satellite image persistence (Sprint 3-2-3)
+    std::string satelliteImagePath;         // absolute or relative path; empty = no image loaded
+    double      satelliteGsdFeetPerPixel = 0.0; // 0.0 = use image pixels as 1 ft each (default)
+    // Active clearance ruleset (Sprint 3-2-9)
+    arld::core::ClearanceRuleSet clearanceRules;  // default = faaCoW()
 };
 
 // ---------------------------------------------------------------------------

@@ -289,6 +289,44 @@ TEST_CASE("SvgExporter: SVG output contains expected aircraft IDs", "[svg_export
     fs::remove(tmpPath);
 }
 
+TEST_CASE("ProjectFile: satellite image path round-trips", "[project_file]") {
+    arld::core::ProjectData data;
+    data.satelliteImagePath       = "/tmp/test_satellite.png";
+    data.satelliteGsdFeetPerPixel = 2.5;
+    const std::string path = (std::filesystem::temp_directory_path() / "arld_sat_test.arld").string();
+    arld::core::ProjectFile::save(path, data);
+    const auto loaded = arld::core::ProjectFile::load(path);
+    REQUIRE(loaded.satelliteImagePath == "/tmp/test_satellite.png");
+    REQUIRE(loaded.satelliteGsdFeetPerPixel == Catch::Approx(2.5));
+    std::filesystem::remove(path);
+}
+
+TEST_CASE("ProjectFile: custom clearance rules round-trip", "[project_file]") {
+    arld::core::ProjectData data;
+    data.clearanceRules.rulesetId              = "custom_test";
+    data.clearanceRules.displayName            = "Custom Test Rules";
+    data.clearanceRules.staticDisplayWingtipFt = 30.0f;
+    data.clearanceRules.hotRampStandoffFt      = 150.0f;
+    const std::string path = (std::filesystem::temp_directory_path() / "arld_rules_test.arld").string();
+    arld::core::ProjectFile::save(path, data);
+    const auto loaded = arld::core::ProjectFile::load(path);
+    REQUIRE(loaded.clearanceRules.rulesetId              == "custom_test");
+    REQUIRE(loaded.clearanceRules.displayName            == "Custom Test Rules");
+    REQUIRE(loaded.clearanceRules.staticDisplayWingtipFt == Catch::Approx(30.0f));
+    REQUIRE(loaded.clearanceRules.hotRampStandoffFt      == Catch::Approx(150.0f));
+    std::filesystem::remove(path);
+}
+
+TEST_CASE("ProjectFile: faa_cow rules not written when default", "[project_file]") {
+    arld::core::ProjectData data; // default clearanceRules = faaCoW
+    const std::string path = (std::filesystem::temp_directory_path() / "arld_default_rules.arld").string();
+    arld::core::ProjectFile::save(path, data);
+    std::ifstream f(path);
+    std::string content((std::istreambuf_iterator<char>(f)), {});
+    REQUIRE(content.find("clearance_ruleset") == std::string::npos);
+    std::filesystem::remove(path);
+}
+
 TEST_CASE("SvgExporter: empty layout produces valid SVG", "[svg_exporter]") {
     arld::core::ProjectData data;
     data.metadata.title       = "Empty";

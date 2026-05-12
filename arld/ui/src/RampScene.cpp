@@ -11,6 +11,7 @@
 #include <arld/core/MacroCommand.h>
 #include <arld/core/ProjectFile.h>
 #include <QApplication>
+#include <QFile>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPen>
@@ -132,6 +133,7 @@ void RampScene::setGridSpacingFt(int spacingFt) {
 
 void RampScene::setSatelliteImage(const QString& path) {
     if (m_satelliteItem) m_satelliteItem->loadImage(path);
+    m_satelliteImagePath = path;
 }
 
 void RampScene::setSatelliteOpacity(float opacity) {
@@ -268,6 +270,7 @@ void RampScene::placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPo
 
 void RampScene::setRuleSet(const arld::core::ClearanceRuleSet& rs) {
     m_ruleSet = rs;
+    emit ruleSetChanged(QString::fromStdString(rs.displayName));
     recomputeClearance();
 }
 
@@ -390,6 +393,7 @@ void RampScene::clearScene() {
 
     // Clear satellite underlay image and abort any in-progress fetch.
     if (m_satelliteItem) m_satelliteItem->clear();
+    m_satelliteImagePath.clear();
 
     // Always return to Select mode so that after new/open/snapshot-switch the user
     // is never left in DrawBoundary mode where every click adds a vertex instead of
@@ -441,6 +445,12 @@ arld::core::ProjectData RampScene::toProjectData() const {
 
     // Overrides
     data.overrides = m_overrides;
+
+    // Satellite image path
+    data.satelliteImagePath = m_satelliteImagePath.toStdString();
+    data.satelliteGsdFeetPerPixel = m_satelliteItem ? m_satelliteItem->feetPerPixel() : 0.0;
+    // Active clearance ruleset
+    data.clearanceRules = m_ruleSet;
 
     return data;
 }
@@ -515,6 +525,21 @@ void RampScene::loadProjectData(
         // Schedule deferred SVG load (fires after loadProjectData returns).
         aircraft->loadSvgDeferred(svgPath);
     }
+
+    // Restore satellite image if path is present (Sprint 3-2-3)
+    if (!data.satelliteImagePath.empty()) {
+        const QString imgPath = QString::fromStdString(data.satelliteImagePath);
+        if (QFile::exists(imgPath)) {
+            if (m_satelliteItem) {
+                if (data.satelliteGsdFeetPerPixel > 0.0)
+                    m_satelliteItem->setFeetPerPixel(data.satelliteGsdFeetPerPixel);
+                m_satelliteItem->loadImage(imgPath);
+            }
+            m_satelliteImagePath = imgPath;
+        }
+    }
+    // Restore clearance ruleset (Sprint 3-2-9)
+    setRuleSet(data.clearanceRules);
 
     emit aircraftCountChanged(static_cast<int>(m_aircraft.size()));
     recomputeClearance();

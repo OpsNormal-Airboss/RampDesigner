@@ -89,7 +89,7 @@ void ViolationsPanel::refresh(const std::vector<arld::core::ViolationResult>& vi
     }
 
     // Remove any previous span
-    m_table->setSpan(0, 0, 1, 1);
+    m_table->clearSpans();
 
     m_table->setRowCount(static_cast<int>(violations.size()));
     for (int row = 0; row < static_cast<int>(violations.size()); ++row) {

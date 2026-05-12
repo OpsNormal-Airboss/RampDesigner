@@ -310,8 +310,8 @@ void AircraftItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         const double dx = event->scenePos().x() - center.x();
         const double dy = event->scenePos().y() - center.y();
         double angle = std::atan2(dx, -dy) * 180.0 / M_PI;
-        const bool freehand = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
-        if (!freehand)
+        const bool snap45 = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
+        if (snap45)
             angle = std::round(angle / 45.0) * 45.0;
         else
             angle = std::round(angle);
