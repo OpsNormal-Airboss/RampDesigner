@@ -28,17 +28,16 @@ jobs:
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
-          sudo apt-get install -y ninja-build gcc-13 g++-13 \
+          sudo apt-get install -y ninja-build gcc-12 g++-12 \
             libgl1-mesa-dev libglu1-mesa-dev \
-            autoconf automake libtool
-          echo "CC=gcc-13"  >> "$GITHUB_ENV"
-          echo "CXX=g++-13" >> "$GITHUB_ENV"
+            autoconf autoconf-archive automake libtool
+          echo "CC=gcc-12"  >> "$GITHUB_ENV"
+          echo "CXX=g++-12" >> "$GITHUB_ENV"
 
       - name: Install Ninja (macOS)
         if: runner.os == 'macOS'
-        run: brew install ninja autoconf automake libtool
+        run: brew install ninja autoconf autoconf-archive automake libtool
 
       # Qt 6.7 installed via pre-built binaries for CI performance.
       # qtsvg / qtsvgwidgets are included in the Qt 6.7 base desktop install
@@ -89,17 +88,16 @@ jobs:
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
-          sudo apt-get install -y ninja-build gcc-13 g++-13 \
+          sudo apt-get install -y ninja-build gcc-12 g++-12 \
             libgl1-mesa-dev libglu1-mesa-dev \
-            autoconf automake libtool
-          echo "CC=gcc-13"  >> "$GITHUB_ENV"
-          echo "CXX=g++-13" >> "$GITHUB_ENV"
+            autoconf autoconf-archive automake libtool
+          echo "CC=gcc-12"  >> "$GITHUB_ENV"
+          echo "CXX=g++-12" >> "$GITHUB_ENV"
 
       - name: Install Ninja (macOS)
         if: runner.os == 'macOS'
-        run: brew install ninja autoconf automake libtool
+        run: brew install ninja autoconf autoconf-archive automake libtool
 
       - name: Install Qt 6.7
         uses: jurplel/install-qt-action@v4
@@ -158,13 +156,12 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
-          sudo apt-get install -y ninja-build gcc-13 g++-13 clang clang-tidy \
+          sudo apt-get install -y ninja-build gcc-12 g++-12 clang clang-tidy \
             libgl1-mesa-dev libglu1-mesa-dev \
-            autoconf automake libtool
-          echo "CC=gcc-13"  >> "$GITHUB_ENV"
-          echo "CXX=g++-13" >> "$GITHUB_ENV"
+            autoconf autoconf-archive automake libtool
+          echo "CC=gcc-12"  >> "$GITHUB_ENV"
+          echo "CXX=g++-12" >> "$GITHUB_ENV"
 
       - name: Install Qt 6.7
         uses: jurplel/install-qt-action@v4
