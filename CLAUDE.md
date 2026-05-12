@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes. Fixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. 110/110 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Hotfixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, fully undoable (#26). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -203,7 +203,7 @@ RampView    : QGraphicsView
 
 - `arld/core/include/arld/core/ICommand.h` — pure interface (`execute`, `undo`, `describe`)
 - `arld/core/include/arld/core/UndoStack.h` — 100-level stack, `onChanged` callback, zero Qt dependency
-- Commands in `arld/ui/` anonymous namespaces: `BoundaryAddPointCommand`, `MoveVertexCommand`, `MoveAircraftCommand`, `RotateAircraftCommand`, `PlaceCmd`
+- Commands in `arld/ui/` anonymous namespaces: `BoundaryAddPointCommand`, `MoveVertexCommand`, `MoveAircraftCommand`, `RotateAircraftCommand`, `PlaceCmd`, `DeleteAircraftCmd`
 - Wired to `Ctrl+Z` / `Ctrl+Y` (all platforms) via `QKeySequence::Undo` / `QKeySequence::Redo`
 - Commands already applied visually (drag-end) use a local `AlreadyExecutedWrapper` struct that skips the first `execute()` call
 
@@ -304,7 +304,7 @@ Files use the `.arld` extension — UTF-8 JSON, schema_version 1/2/3, schema at 
 - `loadProjectData(data, lookup)` — restores scene without adding undo entries
 - `clearScene()` — removes all aircraft, resets boundary, clears undo stack
 
-**`MainWindow` file operations:** New / Open / Save / Save As / Export SVG via `QFileDialog`; dirty-state tracking sets `m_dirty=true` on `QGraphicsScene::changed`; window title shows `*` suffix when dirty.
+**`MainWindow` file operations:** New / Open / Save / Save As / Export SVG via `QFileDialog`; dirty-state tracking via undo stack `onChanged`; window title shows `*` suffix when dirty. Edit → Delete Selected (greyed when nothing selected) calls `RampScene::deleteSelected()`; also bound to Delete/Backspace in `RampView::keyPressEvent`.
 
 ## ⚡ Performance Targets
 

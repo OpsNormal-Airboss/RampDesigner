@@ -72,6 +72,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 3-1 | v1.0.0 version bump; opt-in telemetry (local only); GitHub Pages; USER_GUIDE.md; PR/CLA template | ✅ Complete |
 | 3-2 | UAT fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export PNG/JPEG (#20), dock resize (#21), satellite scale (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
 | 3-2 hotfixes | Re-fix: dock resize root cause + violations panel resize (#21), objectName for saveState (#22), clearance ruleset value-comparison (#24 +regression test), always-dirty fix via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5) | ✅ Complete |
+| Individual fixes | Remove Aircraft from Canvas: Delete/Backspace key + Edit → Delete Selected, undoable single/multi (#26) | ✅ Complete |
 | 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🟢 What Works Today
@@ -134,6 +135,7 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **About dialog** — Help → About ARLD... shows version, build date, copyright, and a "View Licenses..." button that displays NOTICES.txt in a scrollable dialog
 - **NOTICES.txt generation** — `cmake --build --target generate_notices` writes NOTICES.txt with attribution text for all third-party dependencies
 - **User manual** — Help → User Manual... (F1 / Cmd+?) opens a resizable non-modal dialog with the full 661-line user manual rendered from Markdown; covers all 28 user workflows; embedded as a Qt resource so it is available in packaged builds
+- **Remove aircraft** — select one or more aircraft and press Delete/Backspace, or use Edit → Delete Selected (greyed when nothing is selected); fully undoable as a single step (single aircraft) or macro (multi-select)
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 

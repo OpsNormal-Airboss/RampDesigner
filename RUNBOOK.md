@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes. Re-fixed: dock resize/violations panel (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24 +1 regression test), always-dirty title-bar via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. 110/110 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Re-fixed: dock resize/violations panel (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24 +1 regression test), always-dirty title-bar via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, undoable (#26). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -212,6 +212,7 @@ cat LICENSES.txt
 | Left-click drag (empty area) | Rubber-band lasso multi-select |
 | Shift+click aircraft | Add/remove from selection |
 | Drag selected aircraft | Move entire selection group (one undoable command) |
+| `Delete` / `Backspace` | Delete selected aircraft (undoable) |
 | Escape | Clear current selection |
 
 ### Boundary Drawing Workflow
@@ -732,6 +733,20 @@ After "Load Satellite Image..." loads the file, a modal dialog prompts for the i
 
 #### User Manual (#5)
 `docs/USER_MANUAL.md` — 661-line manual covering all 28 user workflows (WT-01 through WT-28), organized into Getting Started, Building the Layout, Versions and History, Exporting, and Advanced Features. Embedded as a Qt resource (`arld/app/user_manual.qrc` → `:/help/user_manual.md`). `Help → User Manual...` (F1) opens a non-modal `QDialog` with `QTextBrowser` rendering Markdown. `qt.qpa.backingstore` DPR mismatch noise suppressed via `QLoggingCategory::setFilterRules` in `main.cpp`.
+
+#### Remove Aircraft from Canvas (#26)
+
+`RampScene::deleteSelected()` collects all currently-selected `AircraftItem*` items and pushes `DeleteAircraftCmd` onto the undo stack. A single aircraft produces one command ("Delete Aircraft"); multiple selected aircraft are wrapped in a macro ("Delete N Aircraft") so undo/redo operates on the group atomically.
+
+`DeleteAircraftCmd` uses the same visibility-toggle pattern as `PlaceCmd`:
+- `execute()` → `item->setVisible(false)` + deselect
+- `undo()` → `item->setVisible(true)`
+
+Hidden aircraft are already excluded from `toProjectData()` and clearance evaluation, so no further changes were required.
+
+**Entry points:**
+- `RampView::keyPressEvent` — `Qt::Key_Delete` / `Qt::Key_Backspace`
+- `MainWindow` Edit menu — **Delete Selected** (`QKeySequence::Delete`), greyed when selection is empty; enabled/disabled via `QGraphicsScene::selectionChanged`
 
 ---
 
