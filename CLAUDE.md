@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-4 complete. MacroCommand + `UndoStack::beginMacro`/`endMacro`; snap-heading and arrow-key nudge batch undo; macOS dock violation badge (AppBadge); lazy SVG silhouette loading on project open; LibraryUpdateChecker `downloadCompleted` signal + `LibraryPanel::reloadLibrary()`; satellite tile georeferencing via Web Mercator GSD (`setGeoreference`). 103/103 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** Phase 2, Sprint 2-5 complete. Scale bar variants (imperial/metric/dual) in PNG and PDF exporters; LICENSES.txt with SPDX identifiers. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -69,7 +69,7 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 2-2 | Named snapshots; change-delta view; minimap panel; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
 | 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog; perf benchmarks | ✅ Complete |
 | 2-4 | UAT event 1 bug fixes; snap-heading/nudge batch undo; violation badge; lazy SVG load; auto-update reload; satellite GSD | ✅ Complete |
-| 2-5 | ??? | ⬜ Up next |
+| 2-5 | Scale bar variants (imperial/metric/dual) in PNG+PDF; LICENSES.txt; UAT P1/P2 bug triage | ✅ Complete |
 
 ## 🔧 Tech Stack
 
@@ -223,12 +223,12 @@ RampView    : QGraphicsView
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — script, foreignObject, XXE/DOCTYPE, on* attrs, javascript: href, clean passthrough, multiline |
 | `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — 16-vertex, radius, empty when unset, rear centre, PT-17, gear-extended vs retracted |
 | `arld/tests/test_pdf_exporter.cpp` | 10 + 1 bench | PdfExporter creates/%PDF magic/non-empty/violations/landscape/paper-sizes/CMYK; ViolationReportExporter CSV header/rows/override/empty |
-| `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
+| `arld/tests/test_png_exporter.cpp` | 12 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; ScaleBarMode ImperialOnly/MetricOnly/Dual; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
 | `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
 | `arld/tests/test_versioning.cpp` | 9 | LayoutVersion round-trip; schema_version 3 written; v2→empty versions; LayoutDiffer added/removed/moved/unchanged; BoundaryImporter GeoJSON/KML/invalid; UndoStack history/goToIndex |
 | `arld/tests/test_security.cpp` | 4 | JSON depth > 32 rejected; depth ≤ 32 not depth-rejected; minimal valid loads; arrival/departure round-trip; LabelMode round-trip |
 | `arld/tests/test_perf.cpp` | 2 bench | bench_library_load 150 entries; bench_project_open_200ac |
-| **Total** | **103 + 6 bench** | |
+| **Total** | **106 + 6 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

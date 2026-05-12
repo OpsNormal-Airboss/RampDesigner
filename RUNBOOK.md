@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2, Sprint 2-4 complete. MacroCommand + `UndoStack::beginMacro`/`endMacro`; snap-heading and arrow-key nudge (1 ft / Shift=5 ft) with batch undo; macOS dock violation badge (`AppBadge`); lazy SVG silhouette loading on project open; `LibraryUpdateChecker::downloadCompleted` signal + `LibraryPanel::reloadLibrary()`; `SatelliteUnderlayItem::setGeoreference` Web Mercator GSD with lat/lon/zoom dialog inputs. 103/103 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 2, Sprint 2-5 complete. Scale bar variants (imperial/metric/dual) in PNG and PDF exporters; `ExportOptions::ScaleBarMode` enum; embedded 5×7 bitmap font in PngExporter for scale bar labels; LICENSES.txt with SPDX identifiers for all third-party dependencies; 3 new scale bar Catch2 tests. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -142,9 +142,9 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
 | `arld/tests/test_tail_swing.cpp` | 6 | tailSwingPolygon — empty for no-radius entry; 16-vertex poly for PT-17; center near tail; radius matches; gear-extended envelope > gear-retracted; rear extension ≥ minTurnRadiusFt |
 | `arld/tests/test_pdf_exporter.cpp` | 10 | PdfExporter creates file; file non-empty; starts with %PDF; paper sizes correct; CMYK conversion; ViolationReportExporter CSV header + rows |
-| `arld/tests/test_png_exporter.cpp` | 9 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
+| `arld/tests/test_png_exporter.cpp` | 12 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; ScaleBarMode ImperialOnly/MetricOnly/Dual; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
 | `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty-project; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
-| **Total** | **84 + 4 bench** | |
+| **Total** | **106 + 6 bench** | |
 
 ---
 
@@ -596,6 +596,45 @@ cmake --build --preset win-release --target package
 | 2-5-8 | Performance benchmark full suite on all 3 platforms; commit results as release artifacts | 5 |
 | 2-5-9 | Scale bar variants: imperial only, metric only, dual; user selects per export | 3 |
 | 2-5-10 | Update NOTICES.txt; prepare draft LICENSES.txt for Phase 3 open-source audit | 5 |
+
+#### Sprint 2-5 · Month 10–11, Wk 1–2 · ✅ Complete
+
+---
+
+## 🗒️ Sprint 2-5 Features (Scale Bar Variants, LICENSES.txt)
+
+### Scale Bar Mode (ExportOptions::ScaleBarMode)
+
+PNG and PDF exports now support three scale bar modes via `ExportOptions::scaleBarMode`:
+
+| Mode | Label shown | Bar width |
+|------|-------------|-----------|
+| `ImperialOnly` (default) | `100 ft` | Chosen to be ~¼ image width in ft |
+| `MetricOnly` | `30 m` | Chosen to be ~¼ image width in m |
+| `Dual` | `100 ft / 30 m` | Imperial bar, metric equivalent shown |
+
+The bar distance is chosen from a set of "nice" candidates (10, 25, 50, 100, 250, 500, 1000, 2500, 5000 ft / 5, 10, 25, 50, 100, 250, 500, 1000 m) — whichever is closest to ¼ of the image or page width.
+
+**PNG exporter:** text labels rendered via an embedded 5×7 pixel bitmap font (characters: 0–9, `f`, `t`, `m`, `/`, space, `.`). Scale factor 2× on images ≥ 800 px wide.
+
+**PDF exporter:** text rendered via libharu `HPDF_Page_TextOut` using the loaded font. Bar placed at `kTitleBlockH + 24 pt` (just above the title block line).
+
+```cpp
+// Example: export PNG with metric scale bar
+arld::export_::ExportOptions opts;
+opts.showScaleBar  = true;
+opts.scaleBarMode  = arld::export_::ExportOptions::ScaleBarMode::MetricOnly;
+arld::export_::PngExporter{}.exportLayout(data, "/tmp/layout.png", opts);
+```
+
+### LICENSES.txt
+
+`LICENSES.txt` (project root) lists all third-party components with SPDX identifiers in a tabular format. Used by Legal for the Phase 3 open-source audit. Update when adding a new dependency:
+1. Add the entry to `LICENSES.txt`.
+2. Also add it to `NOTICES.txt` with the full attribution text.
+3. Update the `DEPENDENCY_LICENSES` dict in `scripts/check-licenses.py`.
+
+---
 
 #### Sprint 2-6 · Month 11–12, Wk 3–4 · 44 pts
 **Goal:** Security review; open-source license audit; Phase 2 hardening

@@ -226,3 +226,45 @@ TEST_CASE("JpegExporter dimension cap fires for huge layout", "[jpeg]") {
 
     fs::remove(outPath);
 }
+
+TEST_CASE("PngExporter ScaleBarMode ImperialOnly renders without error", "[png]") {
+    const std::string out = (fs::temp_directory_path() / "arld_scalebar_ft.png").string();
+    fs::remove(out);
+    arld::export_::PngExporter exporter;
+    auto data = makeSampleProject();
+    arld::export_::ExportOptions opts;
+    opts.showScaleBar = true;
+    opts.scaleBarMode = arld::export_::ExportOptions::ScaleBarMode::ImperialOnly;
+    REQUIRE_NOTHROW(exporter.exportLayout(data, out, opts));
+    CHECK(fs::exists(out));
+    CHECK(fs::file_size(out) > 0);
+    fs::remove(out);
+}
+
+TEST_CASE("PngExporter ScaleBarMode MetricOnly renders without error", "[png]") {
+    const std::string out = (fs::temp_directory_path() / "arld_scalebar_m.png").string();
+    fs::remove(out);
+    arld::export_::PngExporter exporter;
+    auto data = makeSampleProject();
+    arld::export_::ExportOptions opts;
+    opts.showScaleBar = true;
+    opts.scaleBarMode = arld::export_::ExportOptions::ScaleBarMode::MetricOnly;
+    REQUIRE_NOTHROW(exporter.exportLayout(data, out, opts));
+    CHECK(fs::exists(out));
+    CHECK(fs::file_size(out) > 0);
+    fs::remove(out);
+}
+
+TEST_CASE("PngExporter ScaleBarMode Dual renders without error", "[png]") {
+    const std::string out = (fs::temp_directory_path() / "arld_scalebar_dual.png").string();
+    fs::remove(out);
+    arld::export_::PngExporter exporter;
+    auto data = makeSampleProject();
+    arld::export_::ExportOptions opts;
+    opts.showScaleBar = true;
+    opts.scaleBarMode = arld::export_::ExportOptions::ScaleBarMode::Dual;
+    REQUIRE_NOTHROW(exporter.exportLayout(data, out, opts));
+    CHECK(fs::exists(out));
+    CHECK(fs::file_size(out) > 0);
+    fs::remove(out);
+}

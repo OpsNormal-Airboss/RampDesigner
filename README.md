@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 2 — Sprint 4/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%204%2F6-00CC00)](./RUNBOOK.md)
+  [![Phase 2 — Sprint 5/6](https://img.shields.io/badge/phase-2%20%E2%80%94%20Sprint%205%2F6-00CC00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -29,7 +29,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |-------|-------------|--------|
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
 | **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **✅ Complete — All 6 sprints done** |
-| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 3/6** |
+| **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **🔄 In Progress — Sprint 5/6** |
 | 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
@@ -61,8 +61,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 2-1 | 150-aircraft library; batch export; SVG named layers; multi-select; AircraftManifestExporter CSV | ✅ Complete |
 | 2-2 | Named snapshots; change-delta view; minimap; geo-tile streaming; undo history panel; KML/GeoJSON import; tag-triggered release CI | ✅ Complete |
 | 2-3 | LOD rendering; arrival/departure times; Hot Ramp no-smoking overlay; label toggle; locale inputs; CVD fills; JSON depth limit; LibraryUpdateChecker; NOTICES.txt; About dialog | ✅ Complete |
-| 2-4 | UAT event 1; bug fixes; snap-to-runway and group move polish | ⬜ Not started |
-| 2-5 | UAT events 2 & 3; export quality review with print vendors | ⬜ Not started |
+| 2-4 | UAT event 1 bug fixes; snap-heading/nudge batch undo; violation badge; lazy SVG; satellite GSD | ✅ Complete |
+| 2-5 | Scale bar variants (imperial/metric/dual) in PDF and PNG; LICENSES.txt; UAT P1/P2 triage | ✅ Complete |
 | 2-6 | Security review; open-source license audit; Phase 2 hardening | ⬜ Not started |
 
 ## 🟢 What Works Today
@@ -86,7 +86,8 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Display-type zone rendering** — Taxi-Only shows a narrow corridor shape; Military Static uses a thick red dashed border; Ramp Show uses a thick amber DashDot boundary
 - **CVD accessibility** — clearance zone fills use hatch patterns (diagonal/cross-hatch/horizontal lines) in addition to color, supporting color-vision-deficient users
 - **PDF export** — File → Export PDF exports to Letter, Tabloid, ANSI C/D/E/E1 in portrait or landscape; title block with show name, date, venue, version, export date, and QR code (SHA-256); display type legend; optional violations report page
-- **PNG export** — File → Export PNG produces a raster diagram at any DPI preset (72/96/150/300/600); pure-C++ scanline rasterizer; white background; max 16384 px per side
+- **PNG export** — File → Export PNG produces a raster diagram at any DPI preset (72/96/150/300/600); pure-C++ scanline rasterizer; white background; max 16384 px per side; scale bar mode selectable: imperial only, metric only, or dual (both units)
+- **PDF scale bar** — scale bar rendered in the lower-left of the layout area with the selected unit mode (imperial/metric/dual)
 - **JPEG export** — File → Export JPEG produces a compressed raster at quality 1–100; max 32767 px per side (warns to stderr if capped); no additional dependencies beyond vendored stb_image_write.h
 - **Batch export** — File → Export All Formats exports SVG, PDF, PNG, and JPEG in one action using last-saved settings; any per-format failure is reported without aborting the remaining formats
 - **Aircraft manifest CSV** — File → Export Aircraft Manifest CSV produces a spreadsheet of all placed aircraft with placement ID, tail number, owner, fuel type, hazmat flag, display type, and position
@@ -166,7 +167,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 93 Catch2 tests (+ 4 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, `test_batch_exporter.cpp`, and `test_versioning.cpp`.
+Current test suite: 106 Catch2 tests (+ 6 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, `test_batch_exporter.cpp`, `test_versioning.cpp`, `test_security.cpp`, and `test_perf.cpp`.
 
 ## 📋 Documentation
 

@@ -10,6 +10,7 @@ struct ExportOptions {
     // PDF paper size (ignored by SVG/PNG/JPEG exporters)
     enum class PaperSize { Letter, Tabloid, ANSI_C, ANSI_D, ANSI_E, ANSI_E1 };
     enum class Orientation { Portrait, Landscape };
+    enum class ScaleBarMode { ImperialOnly, MetricOnly, Dual };
 
     PaperSize   paperSize   = PaperSize::ANSI_D;
     Orientation orientation = Orientation::Landscape;
@@ -28,6 +29,7 @@ struct ExportOptions {
 
     // Draw a scale bar indicator on PNG output
     bool showScaleBar = true;
+    ScaleBarMode scaleBarMode = ScaleBarMode::ImperialOnly;
 
     // Violations report (used by both PdfExporter and ViolationReportExporter)
     bool includeViolations = false;

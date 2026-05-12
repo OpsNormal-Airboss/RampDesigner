@@ -81,6 +81,69 @@ static std::vector<std::pair<float, float>> rotatedRect(
     return verts;
 }
 
+// ---- Embedded 5x7 bitmap font (ASCII subset) --------------------------------
+static const uint8_t* fontGlyph(char c) {
+    static const uint8_t G[][7] = {
+        /* ' ' */ {0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+        /* '.' */ {0x00,0x00,0x00,0x00,0x00,0x60,0x00},
+        /* '/' */ {0x08,0x10,0x10,0x20,0x20,0x40,0x40},
+        /* '0' */ {0x70,0x88,0x98,0xA8,0xC8,0x88,0x70},
+        /* '1' */ {0x20,0x60,0x20,0x20,0x20,0x20,0x70},
+        /* '2' */ {0x70,0x88,0x08,0x30,0x40,0x80,0xF8},
+        /* '3' */ {0x70,0x88,0x08,0x30,0x08,0x88,0x70},
+        /* '4' */ {0x10,0x30,0x50,0x90,0xF8,0x10,0x10},
+        /* '5' */ {0xF8,0x80,0xF0,0x08,0x08,0x88,0x70},
+        /* '6' */ {0x38,0x40,0x80,0xF0,0x88,0x88,0x70},
+        /* '7' */ {0xF8,0x08,0x10,0x20,0x20,0x40,0x40},
+        /* '8' */ {0x70,0x88,0x88,0x70,0x88,0x88,0x70},
+        /* '9' */ {0x70,0x88,0x88,0x78,0x08,0x10,0x60},
+        /* 'f' */ {0x18,0x20,0x70,0x20,0x20,0x20,0x20},
+        /* 'm' */ {0x00,0x00,0xD8,0xA8,0xA8,0xA8,0xA8},
+        /* 't' */ {0x20,0x20,0x70,0x20,0x20,0x20,0x18},
+    };
+    switch(c) {
+        case ' ': return G[0];
+        case '.': return G[1];
+        case '/': return G[2];
+        case '0': return G[3];
+        case '1': return G[4];
+        case '2': return G[5];
+        case '3': return G[6];
+        case '4': return G[7];
+        case '5': return G[8];
+        case '6': return G[9];
+        case '7': return G[10];
+        case '8': return G[11];
+        case '9': return G[12];
+        case 'f': return G[13];
+        case 'm': return G[14];
+        case 't': return G[15];
+        default:  return G[0];
+    }
+}
+
+static void drawLabel(PixBuffer& buf, int W, int H, int x, int y,
+                      const std::string& text, Pixel color, int scale = 1) {
+    int cx = x;
+    for (char c : text) {
+        const uint8_t* glyph = fontGlyph(c);
+        for (int row = 0; row < 7; ++row) {
+            for (int col = 0; col < 5; ++col) {
+                if (glyph[row] & (0x80 >> col)) {
+                    for (int sy = 0; sy < scale; ++sy)
+                        for (int sx = 0; sx < scale; ++sx) {
+                            int px = cx + col * scale + sx;
+                            int py = y  + row * scale + sy;
+                            if (px >= 0 && px < W && py >= 0 && py < H)
+                                buf[(size_t)py * W + px] = color;
+                        }
+                }
+            }
+        }
+        cx += 6 * scale;
+    }
+}
+
 } // anonymous namespace
 
 // ---------------------------------------------------------------------------
@@ -182,46 +245,81 @@ void PngExporter::exportLayout(const arld::core::ProjectData& data,
     // ------------------------------------------------------------------
     // 6. Draw scale bar if requested
     // ------------------------------------------------------------------
-    if (options.showScaleBar && width > 40 && height > 20) {
-        // Scale bar = 100 ft wide in pixels, capped at width/3
-        const int barWidthPx = std::min(static_cast<int>(100.0 * pixPerFt),
-                                        width / 3);
-        if (barWidthPx >= 4) {
-            const int margin = 20;
-            const int barHeight = 4;
-            const int tickHeight = 10;
-            const int barY = height - margin - tickHeight;
-            const int barX = margin;
+    if (options.showScaleBar && width > 60 && height > 30) {
+        const int targetBarPx = width / 4;
+
+        int barFt = 0;
+        int barPx = 0;
+        std::string label;
+
+        if (options.scaleBarMode == ExportOptions::ScaleBarMode::MetricOnly) {
+            static const int kMCandidates[] = {5, 10, 25, 50, 100, 250, 500, 1000, 2500};
+            int bestM = kMCandidates[0];
+            double bestDiff = DBL_MAX;
+            for (int m : kMCandidates) {
+                double px = (m / 0.3048) * pixPerFt;
+                if (std::abs(px - targetBarPx) < bestDiff) {
+                    bestDiff = std::abs(px - targetBarPx);
+                    bestM = m;
+                }
+            }
+            barPx = static_cast<int>((bestM / 0.3048) * pixPerFt);
+            label = std::to_string(bestM) + " m";
+        } else {
+            static const int kFCandidates[] = {10, 25, 50, 100, 250, 500, 1000, 2500, 5000};
+            int bestFt = kFCandidates[0];
+            double bestDiff = DBL_MAX;
+            for (int ft : kFCandidates) {
+                double px = ft * pixPerFt;
+                if (std::abs(px - targetBarPx) < bestDiff) {
+                    bestDiff = std::abs(px - targetBarPx);
+                    bestFt = ft;
+                }
+            }
+            barFt = bestFt;
+            barPx = static_cast<int>(barFt * pixPerFt);
+            if (options.scaleBarMode == ExportOptions::ScaleBarMode::Dual) {
+                int nearestM = static_cast<int>(std::round(barFt * 0.3048 / 10.0) * 10);
+                if (nearestM < 1) nearestM = 1;
+                label = std::to_string(barFt) + " ft / " + std::to_string(nearestM) + " m";
+            } else {
+                label = std::to_string(barFt) + " ft";
+            }
+        }
+
+        barPx = std::min(barPx, width / 3);
+        if (barPx >= 4) {
+            const int margin  = 20;
+            const int barH    = 4;
+            const int tickH   = 10;
+            const int barY    = height - margin - tickH;
+            const int barX    = margin;
+            const Pixel white = {0xFF,0xFF,0xFF,0xFF};
+            const Pixel black = {0x00,0x00,0x00,0xFF};
 
             auto setPixel = [&](int x, int y, Pixel px) {
-                if (x < 0 || x >= width || y < 0 || y >= height) return;
-                buf[(size_t)y * width + x] = px;
+                if (x >= 0 && x < width && y >= 0 && y < height)
+                    buf[(size_t)y * width + x] = px;
             };
 
-            const Pixel white  = {0xFF, 0xFF, 0xFF, 0xFF};
-            const Pixel black  = {0x00, 0x00, 0x00, 0xFF};
-
-            // White filled rectangle (bar body)
-            for (int y = barY; y < barY + barHeight; ++y)
-                for (int x = barX; x <= barX + barWidthPx; ++x)
+            for (int y = barY; y < barY + barH; ++y)
+                for (int x = barX; x <= barX + barPx; ++x)
                     setPixel(x, y, white);
-
-            // Black border on bar
-            for (int x = barX; x <= barX + barWidthPx; ++x) {
+            for (int x = barX; x <= barX + barPx; ++x) {
                 setPixel(x, barY,             black);
-                setPixel(x, barY + barHeight - 1, black);
+                setPixel(x, barY + barH - 1,  black);
             }
-            for (int y = barY; y < barY + barHeight; ++y) {
-                setPixel(barX,                y, black);
-                setPixel(barX + barWidthPx,   y, black);
+            for (int y = barY; y < barY + barH; ++y) {
+                setPixel(barX,         y, black);
+                setPixel(barX + barPx, y, black);
             }
-
-            // End ticks (vertical lines above/below the bar)
-            for (int y = barY - (tickHeight - barHeight) / 2;
-                 y < barY + tickHeight; ++y) {
-                setPixel(barX,              y, black);
-                setPixel(barX + barWidthPx, y, black);
+            for (int y = barY - (tickH - barH) / 2; y < barY + tickH; ++y) {
+                setPixel(barX,         y, black);
+                setPixel(barX + barPx, y, black);
             }
+            const int textScale = (width >= 800) ? 2 : 1;
+            const int textY = barY - (tickH - barH) / 2 - 7 * textScale - 2;
+            drawLabel(buf, width, height, barX, textY, label, black, textScale);
         }
     }
 

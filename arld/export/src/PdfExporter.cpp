@@ -423,6 +423,61 @@ static void exportWithLibharu(const arld::core::ProjectData& data,
     }
 
     // -----------------------------------------------------------------------
+    // Scale bar (lower-left of content area)
+    // -----------------------------------------------------------------------
+    if (options.showScaleBar && scale > 0.0 && font) {
+        static const int kCandidates[] = {10, 25, 50, 100, 250, 500, 1000, 2500, 5000};
+        const float targetBarPts = pw * 0.15f;
+
+        int barFt = kCandidates[0];
+        float bestDiff = FLT_MAX;
+        for (int c : kCandidates) {
+            float pts = static_cast<float>(c * scale);
+            float diff = std::abs(pts - targetBarPts);
+            if (diff < bestDiff) { bestDiff = diff; barFt = c; }
+        }
+
+        const float barPts  = static_cast<float>(barFt * scale);
+        const float sbX     = std::max(20.0f, offX);
+        const float sbY     = kTitleBlockH + 24.0f;
+        const float sbH     = 4.0f;
+        const float tickH   = 8.0f;
+        const float tickOff = (tickH - sbH) / 2.0f;
+
+        HPDF_Page_SetCMYKFill(page, 0.0f, 0.0f, 0.0f, 0.0f);
+        HPDF_Page_Rectangle(page, sbX, sbY, barPts, sbH);
+        HPDF_Page_Fill(page);
+
+        HPDF_Page_SetCMYKStroke(page, 0.0f, 0.0f, 0.0f, 1.0f);
+        HPDF_Page_SetLineWidth(page, 0.5f);
+        HPDF_Page_Rectangle(page, sbX, sbY, barPts, sbH);
+        HPDF_Page_Stroke(page);
+
+        HPDF_Page_MoveTo(page, sbX,           sbY - tickOff);
+        HPDF_Page_LineTo(page, sbX,           sbY + sbH + tickOff);
+        HPDF_Page_Stroke(page);
+        HPDF_Page_MoveTo(page, sbX + barPts,  sbY - tickOff);
+        HPDF_Page_LineTo(page, sbX + barPts,  sbY + sbH + tickOff);
+        HPDF_Page_Stroke(page);
+
+        std::string sbLabel;
+        if (options.scaleBarMode == ExportOptions::ScaleBarMode::MetricOnly) {
+            int nearestM = static_cast<int>(std::round(barFt * 0.3048 / 5.0) * 5);
+            if (nearestM < 1) nearestM = 1;
+            sbLabel = std::to_string(nearestM) + " m";
+        } else if (options.scaleBarMode == ExportOptions::ScaleBarMode::Dual) {
+            int nearestM = static_cast<int>(std::round(barFt * 0.3048 / 10.0) * 10);
+            if (nearestM < 1) nearestM = 1;
+            sbLabel = std::to_string(barFt) + " ft / " + std::to_string(nearestM) + " m";
+        } else {
+            sbLabel = std::to_string(barFt) + " ft";
+        }
+
+        HPDF_Page_SetCMYKFill(page, 0.0f, 0.0f, 0.0f, 1.0f);
+        drawText(page, font, 6.0f, sbX, sbY + sbH + tickOff + 2.0f, sbLabel);
+    }
+
+    // -----------------------------------------------------------------------
     // Title block (bottom kTitleBlockH pts)
     // -----------------------------------------------------------------------
     constexpr float kMargin = 6.0f;
