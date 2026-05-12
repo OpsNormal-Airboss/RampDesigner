@@ -71,6 +71,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 |--------|------|--------|
 | 3-1 | v1.0.0 version bump; opt-in telemetry (local only); GitHub Pages; USER_GUIDE.md; PR/CLA template | ✅ Complete |
 | 3-2 | UAT fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export PNG/JPEG (#20), dock resize (#21), satellite scale (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
+| 3-2 hotfixes | Re-fix: dock resize root cause + violations panel resize (#21), objectName for saveState (#22), clearance ruleset value-comparison (#24 +regression test), always-dirty fix via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5) | ✅ Complete |
 | 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🟢 What Works Today
@@ -132,6 +133,7 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **macOS dock violation badge** — the macOS dock tile shows the live violation count as a red badge via native ObjC integration
 - **About dialog** — Help → About ARLD... shows version, build date, copyright, and a "View Licenses..." button that displays NOTICES.txt in a scrollable dialog
 - **NOTICES.txt generation** — `cmake --build --target generate_notices` writes NOTICES.txt with attribution text for all third-party dependencies
+- **User manual** — Help → User Manual... (F1 / Cmd+?) opens a resizable non-modal dialog with the full 661-line user manual rendered from Markdown; covers all 28 user workflows; embedded as a Qt resource so it is available in packaged builds
 
 ## ✈️ Features (Phase 0–3 Desktop, full scope)
 
@@ -176,7 +178,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug --output-on-failure
 ```
 
-Current test suite: 106 Catch2 tests (+ 6 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, `test_batch_exporter.cpp`, `test_versioning.cpp`, `test_security.cpp`, and `test_perf.cpp`.
+Current test suite: 110 Catch2 tests (+ 6 benchmarks) across `test_smoke.cpp`, `test_undo.cpp`, `test_aircraft_library.cpp`, `test_clearance.cpp`, `test_project_file.cpp`, `test_unit_converter.cpp`, `test_schema_migration.cpp`, `test_svg_sanitizer.cpp`, `test_tail_swing.cpp`, `test_pdf_exporter.cpp`, `test_png_exporter.cpp`, `test_batch_exporter.cpp`, `test_versioning.cpp`, `test_security.cpp`, and `test_perf.cpp`.
 
 ## 📋 Documentation
 
@@ -188,6 +190,7 @@ Planning documents are in [`docs/`](./docs/):
 | `ARLD_Functional_Requirements_v1.0.docx` | Full functional requirements (MoSCoW prioritized) |
 | `ARLD_Technical_Requirements_v1.0.docx` | Engineering constraints, data schemas, build pipeline |
 | `ARLD_Project_Plan_v1.0.docx` | Sprint-by-sprint delivery schedule, all phases |
+| `USER_MANUAL.md` | 661-line manual covering all 28 user workflows; rendered in-app via Help → User Manual... |
 
 See [`RUNBOOK.md`](./RUNBOOK.md) for build, test, and operational procedures.
 

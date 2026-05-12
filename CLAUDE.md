@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 3, Sprint 3-2 complete. 9 UAT bug fixes: rotation handle Shift inverted (#17), QTableView stdout noise (#18), satellite persistence (#19), export PNG/JPEG menu (#20), dock resize (#21), satellite GSD dialog (#16), panel layout QSettings (#22), View→Panels toggles (#23), clearance ruleset persistence (#24). 109/109 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes. Fixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -78,6 +78,7 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 |--------|------|--------|
 | 3-1 | v1.0.0 version bump; TelemetryManager opt-in consent; GitHub Pages site; USER_GUIDE.md; PR/CLA template | ✅ Complete |
 | 3-2 | UAT bug fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export menu (#20), dock resize (#21), satellite GSD (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
+| 3-2 hotfixes | Re-fix dock resize (#21), objectName saveState (#22), clearance ruleset value-save (#24), always-dirty undo-stack fix (#25), TelemetryManager QObject exit crash (#8), User Manual (#5) | ✅ Complete |
 | 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🔧 Tech Stack
@@ -227,7 +228,7 @@ RampView    : QGraphicsView
 | `arld/tests/test_undo.cpp` | 13 | UndoStack behaviour; MacroCommand execute/undo order; beginMacro/endMacro single-step undo/redo |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopters, manifest, error cases |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — all 8 scenarios; bench_clearance_200 benchmark |
-| `arld/tests/test_project_file.cpp` | 11 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity; satellite path round-trip; custom clearance ruleset round-trip; FAA CoW default not written |
+| `arld/tests/test_project_file.cpp` | 12 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity; satellite path round-trip; custom clearance ruleset round-trip; FAA CoW default not written; tweaked faa_cow values persisted (#24) |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay Imperial/Metric, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — script, foreignObject, XXE/DOCTYPE, on* attrs, javascript: href, clean passthrough, multiline |
@@ -238,7 +239,7 @@ RampView    : QGraphicsView
 | `arld/tests/test_versioning.cpp` | 9 | LayoutVersion round-trip; schema_version 3 written; v2→empty versions; LayoutDiffer added/removed/moved/unchanged; BoundaryImporter GeoJSON/KML/invalid; UndoStack history/goToIndex |
 | `arld/tests/test_security.cpp` | 4 | JSON depth > 32 rejected; depth ≤ 32 not depth-rejected; minimal valid loads; arrival/departure round-trip; LabelMode round-trip |
 | `arld/tests/test_perf.cpp` | 2 bench | bench_library_load 150 entries; bench_project_open_200ac |
-| **Total** | **109 + 6 bench** | |
+| **Total** | **110 + 6 bench** | |
 
 Run performance benchmarks with `-R bench_` (tagged `[.bench]` so excluded from the default run):
 ```bash

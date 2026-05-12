@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete. 9 UAT fixes: rotation handle Shift inversion (#17), QTableView stdout noise (#18), satellite image persistence (#19), Export PNG/JPEG menu items (#20), dock resize handle (#21), satellite GSD dialog (#16), panel layout QSettings (#22), View→Panels toggle menu (#23), clearance ruleset persistence in .arld (#24). 109/109 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes. Re-fixed: dock resize/violations panel (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24 +1 regression test), always-dirty title-bar via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -136,7 +136,7 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_undo.cpp` | 7 | UndoStack push/undo/redo, 100-level limit, redo clearing, callbacks |
 | `arld/tests/test_aircraft_library.cpp` | 7 | AircraftLibraryParser — valid entries, optional fields, helicopter rotor, manifest ordering, error handling |
 | `arld/tests/test_clearance.cpp` | 8 + 1 bench | ClearanceEngine — 8 scenarios (separation, warbird, military, overlap, advisory, rotation, constants) + bench_clearance_200 |
-| `arld/tests/test_project_file.cpp` | 9 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity |
+| `arld/tests/test_project_file.cpp` | 12 | ProjectFile round-trip (15 aircraft), UUID v4 format, schema_version rejection, invalid JSON, boundary, SVG non-empty/content/empty-validity; tweaked faa_cow persisted (#24) |
 | `arld/tests/test_unit_converter.cpp` | 5 | UnitConverter — default system, toDisplay in both units, toFeet round-trip, suffix strings |
 | `arld/tests/test_schema_migration.cpp` | 6 | v1→v2 migration, bad schema version rejection, overrides round-trip, per-aircraft metadata |
 | `arld/tests/test_svg_sanitizer.cpp` | 7 | SvgSanitizer — strips `<script>`, `<foreignObject>`, XXE entities, `on*` attrs, `javascript:` hrefs; clean SVG passes unchanged |
@@ -144,7 +144,7 @@ Coverage target: ≥ 80% on `arld/core/` — enforced in CI.
 | `arld/tests/test_pdf_exporter.cpp` | 10 | PdfExporter creates file; file non-empty; starts with %PDF; paper sizes correct; CMYK conversion; ViolationReportExporter CSV header + rows |
 | `arld/tests/test_png_exporter.cpp` | 12 | PngExporter creates/non-empty/PNG magic/higher-DPI-larger; ScaleBarMode ImperialOnly/MetricOnly/Dual; JpegExporter creates/non-empty/JPEG magic/quality-compression/dimension-cap |
 | `arld/tests/test_batch_exporter.cpp` | 6 + 3 bench | BatchExporter creates 4 files/correct extensions; AircraftManifestExporter CSV header/rows/empty-project; SvgExporter inkscape:label layers; bench_export_svg/png/jpeg |
-| **Total** | **106 + 6 bench** | |
+| **Total** | **110 + 6 bench** | |
 
 ---
 
@@ -709,11 +709,29 @@ After "Load Satellite Image..." loads the file, a modal dialog prompts for the i
 #### Clearance ruleset persistence (issue #24)
 `ProjectData.clearanceRules` is a full `ClearanceRuleSet` struct. Serialized as `"clearance_ruleset"` object in JSON **only when non-default** (rulesetId ≠ "faa_cow"). Missing key on load → `ClearanceRuleSet::faaCoW()`. Active ruleset name shown in the right side of the status bar via `RampScene::ruleSetChanged` signal.
 
+**Post-sprint fix:** `ClearanceRuleDialog::ruleSet()` was always returning `rulesetId="faa_cow"` regardless of modified values; `ProjectFile::save()` was skipping the block when `rulesetId == "faa_cow"`. Fix: added `ClearanceRuleSet::sameValues()` for value-based comparison; save now writes the block whenever values differ from FAA CoW defaults. `ClearanceRuleDialog::ruleSet()` now derives `rulesetId`/`displayName` by comparing values to known templates.
+
 #### Panel layout (issues #22 / #23)
 `MainWindow::closeEvent()` calls `saveLayout()` → `QSettings` keys `windowGeometry` + `windowState`. Constructor calls `restoreLayout()` after all docks are created. View → Panels submenu exposes `toggleViewAction()` for all 6 dock widgets.
 
 #### Export PNG / JPEG (issue #20)
 `File → Export PNG...` and `File → Export JPEG...` call `PngExporter` / `JpegExporter` with default options. Both slots record a telemetry event (`ExportPng` / `ExportJpeg`).
+
+---
+
+### Post-Sprint 3-2 Hotfix Notes
+
+#### Dock resize and saveState (#21 / #22)
+`resizeDocks` was called in `setupPanels()` then overridden by `restoreLayout()`/`restoreState()` on every non-first launch. Fixed by moving both `resizeDocks` calls (right panel 260 px horizontal, violations panel 200 px vertical) into `restoreLayout()`'s `else`-branch so they apply only as first-launch defaults. `LibraryPanel` and the main toolbar were missing `setObjectName()` calls, causing `QMainWindow::saveState()` to silently skip them.
+
+#### Always-dirty title bar (#25)
+`QGraphicsScene::changed` fires for any visual update including clearance-zone recolouring 80 ms after every load. Removed the `changed → m_dirty` connection entirely. Dirty tracking now lives in the undo stack's `onChanged` callback, which is synchronous and fires only on genuine data mutations (push/undo/redo/clear). `m_suppressDirty` guards still prevent `clearScene()`/`loadProjectData()` from triggering the callback.
+
+#### TelemetryManager exit crash (#8)
+`TelemetryManager` was a `QObject` subclass stored as a Meyers static singleton. `~QObject()` ran after `QApplication` tore down the macOS platform layer, causing a segfault. Removed `QObject`/`Q_OBJECT`/`Q_ENUM` entirely; replaced `QMetaEnum::fromType<Event>()` with a `static const char* eventKey(Event)` switch and a `constexpr allEvents[]` array.
+
+#### User Manual (#5)
+`docs/USER_MANUAL.md` — 661-line manual covering all 28 user workflows (WT-01 through WT-28), organized into Getting Started, Building the Layout, Versions and History, Exporting, and Advanced Features. Embedded as a Qt resource (`arld/app/user_manual.qrc` → `:/help/user_manual.md`). `Help → User Manual...` (F1) opens a non-modal `QDialog` with `QTextBrowser` rendering Markdown. `qt.qpa.backingstore` DPR mismatch noise suppressed via `QLoggingCategory::setFilterRules` in `main.cpp`.
 
 ---
 
