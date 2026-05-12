@@ -80,16 +80,19 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     m_view->setRampScene(m_scene);
     setCentralWidget(m_view);
 
-    m_scene->undoStack().onChanged = [this] { updateUndoRedoActions(); };
-
-    // Mark scene dirty whenever it changes.  QGraphicsScene::changed is deferred
-    // (fires on next event-loop iteration), so m_suppressDirty guards against it
-    // firing after a load/clear has already reset m_dirty to false (issue #25).
-    connect(m_scene, &QGraphicsScene::changed, this, [this](const QList<QRectF>&) {
-        if (m_suppressDirty || m_dirty) return;
-        m_dirty = true;
-        updateWindowTitle();
-    });
+    // Track dirty state via the undo stack rather than QGraphicsScene::changed.
+    // The scene's changed signal also fires for computed visual updates (clearance
+    // zone recolouring) 80 ms after every load, making the title bar always show
+    // an asterisk after opening a project (issue #25).  The undo stack callback
+    // is synchronous and fires only on genuine data mutations (push/undo/redo/clear),
+    // so m_suppressDirty guards work without any deferred-signal timing tricks.
+    m_scene->undoStack().onChanged = [this] {
+        updateUndoRedoActions();
+        if (!m_suppressDirty && !m_dirty) {
+            m_dirty = true;
+            updateWindowTitle();
+        }
+    };
 
     setupMenuBar();
     setupToolBar();
@@ -614,11 +617,11 @@ void MainWindow::newProject() {
     }
     m_suppressDirty = true;
     m_scene->clearScene();
+    m_suppressDirty = false;
     m_currentFilePath.clear();
     m_projectMetadata = arld::core::ProjectMetadata{};
     m_dirty = false;
     updateWindowTitle();
-    QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
     updateUndoRedoActions();
     if (m_violationsPanel) m_violationsPanel->refresh({});
 }
@@ -647,6 +650,7 @@ void MainWindow::openProject() {
         };
         m_suppressDirty = true;
         m_scene->loadProjectData(data, lookup);
+        m_suppressDirty = false;
         m_projectMetadata = data.metadata;
         m_currentData = data;
         if (m_versionsPanel) m_versionsPanel->setProjectData(m_currentData);
@@ -654,7 +658,6 @@ void MainWindow::openProject() {
         m_currentFilePath = path;
         m_dirty = false;
         updateWindowTitle();
-        QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
         updateUndoRedoActions();
         addToRecentFiles(path);
         if (m_violationsPanel) m_violationsPanel->refresh(m_scene->lastViolations());
@@ -1362,11 +1365,11 @@ void MainWindow::updateRecentFilesMenu() {
                 };
                 m_suppressDirty = true;
                 m_scene->loadProjectData(data, lookup);
+                m_suppressDirty = false;
                 m_projectMetadata = data.metadata;
                 m_currentFilePath = path;
                 m_dirty = false;
                 updateWindowTitle();
-                QTimer::singleShot(0, this, [this] { m_suppressDirty = false; });
                 updateUndoRedoActions();
                 addToRecentFiles(path);
                 if (m_violationsPanel)
