@@ -34,6 +34,9 @@ public:
 
     void placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPointF scenePos);
 
+    /// Move all currently-selected aircraft by (dx, dy) feet as a single undoable step.
+    void nudgeSelected(double dx, double dy);
+
     // Called by RampView on every zoom change.
     void updateOverlay(double pixelsPerFt, QPointF scaleBarScenePos);
 

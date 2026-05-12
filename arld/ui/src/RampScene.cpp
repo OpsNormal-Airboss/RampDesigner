@@ -8,6 +8,7 @@
 #include <arld/core/Config.h>
 #include <arld/core/ClearanceEngine.h>
 #include <arld/core/ClearanceRuleSet.h>
+#include <arld/core/MacroCommand.h>
 #include <arld/core/ProjectFile.h>
 #include <QApplication>
 #include <QGraphicsRectItem>
@@ -468,11 +469,11 @@ void RampScene::loadProjectData(
             QString(":/library/silhouettes/%1")
                 .arg(QString::fromStdString(entry->silhouetteSvg));
 
-        auto* aircraft = new AircraftItem(*entry, svgPath);
+        // Create with lazy=true: SVG loads after loadProjectData returns (faster open).
+        auto* aircraft = new AircraftItem(*entry, svgPath, nullptr, true);
 
-        // Position: center_x/center_y are the scene-space center of the aircraft.
-        const QRectF br = aircraft->childrenBoundingRect();
-        const QPointF localCenter = br.center();
+        // Position using entry dimensions (viewBox is in feet, so center is known).
+        const QPointF localCenter(entry->wingspanFt / 2.0, entry->lengthFt / 2.0);
         aircraft->setPos(
             QPointF(static_cast<double>(pa.centerX), static_cast<double>(pa.centerY))
             - localCenter);
@@ -508,6 +509,8 @@ void RampScene::loadProjectData(
 
         addItem(aircraft);
         m_aircraft.push_back(aircraft);
+        // Schedule deferred SVG load (fires after loadProjectData returns).
+        aircraft->loadSvgDeferred(svgPath);
     }
 
     emit aircraftCountChanged(static_cast<int>(m_aircraft.size()));
@@ -602,6 +605,26 @@ void RampScene::setBoundary(const arld::core::RampBoundaryData& boundary) {
         m_boundaryItem->closePolygon();
         setEditMode(EditMode::Select);
     }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 2-4-4: Nudge selected aircraft
+// ---------------------------------------------------------------------------
+
+void RampScene::nudgeSelected(double dx, double dy) {
+    const auto sel = selectedItems();
+    if (sel.isEmpty()) return;
+
+    m_undoStack.beginMacro("Nudge Aircraft");
+    for (auto* sceneItem : sel) {
+        auto* ac = qgraphicsitem_cast<AircraftItem*>(sceneItem);
+        if (!ac) continue;
+        const QPointF from = ac->pos();
+        const QPointF to   = from + QPointF(dx, dy);
+        ac->setPos(to);
+        ac->commitMove(from, to);
+    }
+    m_undoStack.endMacro();
 }
 
 } // namespace arld::ui

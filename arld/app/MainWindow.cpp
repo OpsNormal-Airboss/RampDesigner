@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "AppBadge.h"
 #include <arld/ui/ClearanceRuleDialog.h>
 #include <arld/ui/LibraryPanel.h>
 #include <arld/ui/LibraryUpdateChecker.h>
@@ -28,6 +29,8 @@
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
 #include <QDir>
 #include <QDockWidget>
 #include <QFile>
@@ -493,6 +496,7 @@ void MainWindow::updateScaleLabel(double denominator) {
 }
 
 void MainWindow::updateViolationLabel(int count) {
+    AppBadge::setCount(count);
     if (count == 0) {
         m_violationLabel->setText(tr("✓ No clearance violations"));
         m_violationLabel->setStyleSheet("color: #00AA33; font-weight: bold;");
@@ -935,13 +939,33 @@ void MainWindow::showSatelliteTilesDialog() {
         "{lon},{lat},{zoom}/1280x720@2x?access_token={token}");
     const QString savedUrl = settings.value(QStringLiteral("mapboxTileUrl"), defaultUrl).toString();
 
-    auto* tokenEdit  = new QLineEdit(savedToken, &dlg);
+    auto* tokenEdit = new QLineEdit(savedToken, &dlg);
     tokenEdit->setEchoMode(QLineEdit::Password);
     tokenEdit->setPlaceholderText(tr("pk.eyJ1..."));
     layout->addRow(tr("Mapbox Access Token:"), tokenEdit);
 
     auto* urlEdit = new QLineEdit(savedUrl, &dlg);
     layout->addRow(tr("Tile URL Template:"), urlEdit);
+
+    // Latitude / longitude / zoom
+    auto* latSpin = new QDoubleSpinBox(&dlg);
+    latSpin->setRange(-90.0, 90.0);
+    latSpin->setDecimals(6);
+    latSpin->setSingleStep(0.001);
+    latSpin->setValue(settings.value(QStringLiteral("satLat"), 44.5).toDouble());
+    layout->addRow(tr("Latitude (°):"), latSpin);
+
+    auto* lonSpin = new QDoubleSpinBox(&dlg);
+    lonSpin->setRange(-180.0, 180.0);
+    lonSpin->setDecimals(6);
+    lonSpin->setSingleStep(0.001);
+    lonSpin->setValue(settings.value(QStringLiteral("satLon"), -89.0).toDouble());
+    layout->addRow(tr("Longitude (°):"), lonSpin);
+
+    auto* zoomSpin = new QSpinBox(&dlg);
+    zoomSpin->setRange(1, 22);
+    zoomSpin->setValue(settings.value(QStringLiteral("satZoom"), 15).toInt());
+    layout->addRow(tr("Zoom Level:"), zoomSpin);
 
     auto* opacitySlider = new QSlider(Qt::Horizontal, &dlg);
     opacitySlider->setMinimum(0);
@@ -962,20 +986,29 @@ void MainWindow::showSatelliteTilesDialog() {
     });
 
     connect(fetchBtn, &QPushButton::clicked, this, [&]() {
-        const QString token = tokenEdit->text().trimmed();
+        const QString token   = tokenEdit->text().trimmed();
+        const double  lat     = latSpin->value();
+        const double  lon     = lonSpin->value();
+        const int     zoom    = zoomSpin->value();
         QString url = urlEdit->text();
         url.replace(QStringLiteral("{token}"), token);
-        // Placeholder substitutions for lon/lat/zoom — user can edit the URL directly
-        url.replace(QStringLiteral("{lon}"),  QStringLiteral("-89.0"));
-        url.replace(QStringLiteral("{lat}"),  QStringLiteral("44.5"));
-        url.replace(QStringLiteral("{zoom}"), QStringLiteral("15"));
+        url.replace(QStringLiteral("{lat}"),  QString::number(lat, 'f', 6));
+        url.replace(QStringLiteral("{lon}"),  QString::number(lon, 'f', 6));
+        url.replace(QStringLiteral("{zoom}"), QString::number(zoom));
 
         // Save settings
         settings.setValue(QStringLiteral("mapboxToken"),   token);
         settings.setValue(QStringLiteral("mapboxTileUrl"), urlEdit->text());
+        settings.setValue(QStringLiteral("satLat"),  lat);
+        settings.setValue(QStringLiteral("satLon"),  lon);
+        settings.setValue(QStringLiteral("satZoom"), zoom);
 
-        if (m_scene->satelliteItem())
+        if (m_scene->satelliteItem()) {
+            // Detect @2x tile by presence of "@2x" in the URL
+            const bool highDpi = url.contains(QStringLiteral("@2x"));
+            m_scene->satelliteItem()->setGeoreference(lat, zoom, highDpi);
             m_scene->satelliteItem()->fetchTile(url);
+        }
     });
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close);
@@ -1106,6 +1139,15 @@ void MainWindow::showLibraryUpdateDialog() {
             &dlg, [progressBar](int current, int total) {
         progressBar->setMaximum(total);
         progressBar->setValue(current);
+    });
+    connect(checker, &arld::ui::LibraryUpdateChecker::downloadCompleted,
+            &dlg, [this, statusLabel, downloadBtn](const QStringList& downloaded) {
+        statusLabel->setText(tr("%1 entr%2 updated. Library reloaded.")
+            .arg(downloaded.size())
+            .arg(downloaded.size() == 1 ? "y" : "ies"));
+        downloadBtn->setEnabled(false);
+        if (m_libraryPanel)
+            m_libraryPanel->reloadLibrary();
     });
 
     connect(checkBtn, &QPushButton::clicked, &dlg, [checker, urlEdit] {

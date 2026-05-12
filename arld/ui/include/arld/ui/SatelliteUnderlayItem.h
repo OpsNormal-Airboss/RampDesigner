@@ -34,6 +34,14 @@ public:
     /// Set the render opacity (0.0 = invisible, 1.0 = fully opaque).
     void setOpacity(float opacity);
 
+    /// Configure georeferencing so the image is scaled to real-world feet.
+    /// @p latDeg     centre latitude of the tile (decimal degrees)
+    /// @p zoomLevel  Web Mercator zoom level (0–22)
+    /// @p highDpi    true for @2x tiles (512 px represents one 256-px tile step)
+    /// Must be called before or after loadImage()/fetchTile(); takes effect on
+    /// the next onImageReady() call (i.e., call before fetchTile).
+    void setGeoreference(double latDeg, int zoomLevel, bool highDpi = false);
+
     // QGraphicsItem interface
     QRectF boundingRect() const override;
     void   paint(QPainter* painter,
@@ -51,9 +59,10 @@ private slots:
 
 private:
     QImage  m_image;
-    float   m_opacity = 0.8f;
-    bool    m_loading = false;
-    QRectF  m_rect;   // scene-space bounding rect (pixels = feet for now)
+    float   m_opacity     = 0.8f;
+    bool    m_loading     = false;
+    double  m_feetPerPixel = 1.0;   // GSD: feet represented by one image pixel
+    QRectF  m_rect;                 // scene-space bounding rect in feet
     QFutureWatcher<QImage>   m_watcher;
     QNetworkAccessManager    m_nam;
     QNetworkReply*           m_reply = nullptr;

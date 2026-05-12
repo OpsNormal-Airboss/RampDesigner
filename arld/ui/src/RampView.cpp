@@ -91,6 +91,9 @@ void RampView::wheelEvent(QWheelEvent* event) {
 }
 
 void RampView::keyPressEvent(QKeyEvent* event) {
+    // Arrow-key nudge: 1 ft per press, 5 ft with Shift.
+    const bool shiftHeld = event->modifiers() & Qt::ShiftModifier;
+    const double step = shiftHeld ? 5.0 : 1.0;
     switch (event->key()) {
     case Qt::Key_Plus:
     case Qt::Key_Equal:
@@ -103,6 +106,18 @@ void RampView::keyPressEvent(QKeyEvent* event) {
         break;
     case Qt::Key_Escape:
         if (m_rampScene) m_rampScene->clearSelection();
+        break;
+    case Qt::Key_Up:
+        if (m_rampScene) { m_rampScene->nudgeSelected(0.0, -step); event->accept(); return; }
+        break;
+    case Qt::Key_Down:
+        if (m_rampScene) { m_rampScene->nudgeSelected(0.0,  step); event->accept(); return; }
+        break;
+    case Qt::Key_Left:
+        if (m_rampScene) { m_rampScene->nudgeSelected(-step, 0.0); event->accept(); return; }
+        break;
+    case Qt::Key_Right:
+        if (m_rampScene) { m_rampScene->nudgeSelected( step, 0.0); event->accept(); return; }
         break;
     default:
         QGraphicsView::keyPressEvent(event);

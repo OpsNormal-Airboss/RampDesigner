@@ -16,9 +16,12 @@
 #include <QCursor>
 #include <QFont>
 #include <QMenu>
+#include <QObject>
 #include <QPolygonF>
 #include <QPen>
 #include <QBrush>
+#include <QTimer>
+#include <QtConcurrent/QtConcurrent>
 #include <cmath>
 
 namespace arld::ui {
@@ -76,7 +79,8 @@ private:
 // ---------------------------------------------------------------------------
 AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
                            const QString& svgResourcePath,
-                           QGraphicsItem* parent)
+                           QGraphicsItem* parent,
+                           bool lazy)
     : QGraphicsItemGroup(parent)
     , m_entry(entry)
     , m_displayType(entry.defaultDisplayType)
@@ -84,17 +88,22 @@ AircraftItem::AircraftItem(const arld::core::AircraftLibraryEntry& entry,
     setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
     setCursor(Qt::SizeAllCursor);
 
-    // SVG silhouette scaled so 1 scene unit = 1 foot.
-    m_svgItem = new QGraphicsSvgItem(svgResourcePath, this);
-    const QSizeF svgSize = m_svgItem->boundingRect().size();
-    if (svgSize.width() > 0 && m_entry.wingspanFt > 0) {
-        const double scaleF = m_entry.wingspanFt / svgSize.width();
-        m_svgItem->setScale(scaleF);
+    // SVG silhouette — 1 scene unit = 1 foot (viewBox is in feet, so scaleF = 1.0).
+    m_svgItem = new QGraphicsSvgItem(this);
+    if (!lazy) {
+        m_svgItem->setSharedRenderer(new QSvgRenderer(svgResourcePath, m_svgItem));
+        const QSizeF svgSize = m_svgItem->boundingRect().size();
+        if (svgSize.width() > 0 && m_entry.wingspanFt > 0)
+            m_svgItem->setScale(m_entry.wingspanFt / svgSize.width());
     }
 
-    // Record local centre before adding non-content children.
-    const QRectF br = childrenBoundingRect();
-    m_localCenter = br.center();
+    // Record local centre. When lazy the SVG isn't loaded yet, so derive from
+    // entry dimensions (viewBox is always in feet, so center = wingspan/2, length/2).
+    if (!lazy && !m_svgItem->boundingRect().isEmpty()) {
+        m_localCenter = childrenBoundingRect().center();
+    } else {
+        m_localCenter = QPointF(m_entry.wingspanFt / 2.0, m_entry.lengthFt / 2.0);
+    }
     setTransformOriginPoint(m_localCenter);
 
     // LOD placeholder rect (hidden by default; shown when simplified).
@@ -565,6 +574,41 @@ void AircraftItem::finishRotation(double fromDeg, double toDeg) {
 
 void AircraftItem::commitRotation(double fromDeg, double toDeg) {
     finishRotation(fromDeg, toDeg);
+}
+
+void AircraftItem::loadSvgDeferred(const QString& svgResourcePath) {
+    // Defer SVG loading to after the current call stack unwinds (after
+    // loadProjectData returns). This lets the project open instantly with LOD
+    // rects visible; SVGs then appear in the next event-loop iteration.
+    setLodSimplified(true);
+    const QString path = svgResourcePath;
+    auto* self = this;
+    QTimer::singleShot(0, qApp, [self, path]() {
+        if (!self->m_svgItem) return;
+        auto* renderer = new QSvgRenderer(path, self->m_svgItem);
+        if (!renderer->isValid()) { delete renderer; return; }
+        self->m_svgItem->setSharedRenderer(renderer);
+        const QSizeF sz = self->m_svgItem->boundingRect().size();
+        if (sz.width() > 0 && self->m_entry.wingspanFt > 0)
+            self->m_svgItem->setScale(self->m_entry.wingspanFt / sz.width());
+        self->setLodSimplified(false);
+        if (self->scene()) self->scene()->update(self->sceneBoundingRect());
+    });
+}
+
+void AircraftItem::commitMove(QPointF from, QPointF to) {
+    if (!onCommandReady) return;
+    struct AlreadyExecuted : arld::core::ICommand {
+        std::unique_ptr<arld::core::ICommand> inner;
+        bool done = false;
+        explicit AlreadyExecuted(std::unique_ptr<arld::core::ICommand> c)
+            : inner(std::move(c)) {}
+        void execute() override { if (done) inner->execute(); done = true; }
+        void undo()    override { inner->undo(); }
+        std::string describe() const override { return inner->describe(); }
+    };
+    onCommandReady(std::make_unique<AlreadyExecuted>(
+        std::make_unique<MoveAircraftCommand>(this, from, to)));
 }
 
 } // namespace arld::ui

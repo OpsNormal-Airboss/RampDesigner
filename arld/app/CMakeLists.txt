@@ -1,9 +1,17 @@
 find_package(Qt6 6.7 REQUIRED COMPONENTS Core Concurrent Widgets Svg SvgWidgets)
 
+if(APPLE)
+    set(BADGE_SRC AppBadge_mac.mm)
+else()
+    set(BADGE_SRC AppBadge_stub.cpp)
+endif()
+
 qt_add_executable(arld
     main.cpp
     MainWindow.cpp
     MainWindow.h
+    AppBadge.h
+    ${BADGE_SRC}
 )
 
 target_link_libraries(arld

@@ -119,10 +119,11 @@ void LibraryUpdateChecker::downloadUpdates(const QStringList& ids, const QString
         return;
     }
 
-    m_pendingIds = ids;
-    m_baseUrl    = baseUrl;
-    m_total      = ids.size();
-    m_completed  = 0;
+    m_pendingIds    = ids;
+    m_baseUrl       = baseUrl;
+    m_total         = ids.size();
+    m_completed     = 0;
+    m_downloadedIds.clear();
 
     // Kick off the first download
     onEntryReply(); // processes queue via chain
@@ -157,7 +158,11 @@ void LibraryUpdateChecker::downloadUpdates(const QStringList& ids, const QString
             QFile outFile(dataDir + QStringLiteral("/") + id + QStringLiteral(".json"));
             if (outFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 outFile.write(entryData);
+                m_downloadedIds.append(id);
             }
+
+            if (m_completed == m_total)
+                emit downloadCompleted(m_downloadedIds);
         });
     }
     m_pendingIds.clear();

@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QUrl>
 #include <QtConcurrent/QtConcurrent>
+#include <cmath>
 
 namespace arld::ui {
 
@@ -35,6 +36,15 @@ void SatelliteUnderlayItem::setOpacity(float opacity) {
     update();
 }
 
+void SatelliteUnderlayItem::setGeoreference(double latDeg, int zoomLevel, bool highDpi) {
+    // Web Mercator GSD: metres per pixel at zoom 0 = 156543.03392 m/px at the equator
+    // Scaled by cos(lat) for latitude, divided by 2^zoom for tile level.
+    const double metersPerPixel = 156543.03392
+        * std::cos(latDeg * M_PI / 180.0)
+        / std::pow(2.0, static_cast<double>(zoomLevel));
+    m_feetPerPixel = metersPerPixel / 0.3048 / (highDpi ? 2.0 : 1.0);
+}
+
 QRectF SatelliteUnderlayItem::boundingRect() const {
     return m_rect;
 }
@@ -64,10 +74,9 @@ void SatelliteUnderlayItem::onImageReady() {
     if (!img.isNull()) {
         prepareGeometryChange();
         m_image = img;
-        // 1 pixel = 1 foot (user can reposition/scale manually for now)
-        m_rect  = QRectF(0.0, 0.0,
-                         static_cast<double>(img.width()),
-                         static_cast<double>(img.height()));
+        const double w = img.width()  * m_feetPerPixel;
+        const double h = img.height() * m_feetPerPixel;
+        m_rect = QRectF(-w / 2.0, -h / 2.0, w, h);
     }
 
     update();

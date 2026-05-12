@@ -1,5 +1,6 @@
 #include <arld/ui/PropertiesPanel.h>
 #include <arld/ui/AircraftItem.h>
+#include <arld/ui/RampScene.h>
 #include <arld/core/AircraftLibraryEntry.h>
 #include <QCheckBox>
 #include <QComboBox>
@@ -242,9 +243,11 @@ void PropertiesPanel::onSnapHeading() {
     if (!m_current->scene()) return;
 
     const int heading = m_headingEdit->value();
-
-    // Apply the heading to every selected AircraftItem in the scene.
     const auto selected = m_current->scene()->selectedItems();
+
+    auto* rampScene = qobject_cast<RampScene*>(m_current->scene());
+    if (rampScene) rampScene->undoStack().beginMacro("Snap Heading");
+
     for (auto* sceneItem : selected) {
         auto* ac = qgraphicsitem_cast<AircraftItem*>(sceneItem);
         if (!ac) continue;
@@ -254,6 +257,8 @@ void PropertiesPanel::onSnapHeading() {
         ac->setRotation(toDeg);
         ac->commitRotation(fromDeg, toDeg);
     }
+
+    if (rampScene) rampScene->undoStack().endMacro();
 }
 
 } // namespace arld::ui

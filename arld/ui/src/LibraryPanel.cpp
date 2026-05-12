@@ -192,14 +192,26 @@ LibraryPanel::LibraryPanel(QWidget* parent)
 }
 
 void LibraryPanel::loadLibrary() {
-    // --- Bundled library ---
+    const QString updateDir =
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+        + QStringLiteral("/library");
+
+    // --- Bundled library (prefer downloaded update if present) ---
     QFile manifest(":/library/library_manifest.json");
     if (manifest.open(QIODevice::ReadOnly)) {
         const auto ids = arld::core::AircraftLibraryParser::parseManifest(
             manifest.readAll().toStdString());
 
         for (const auto& id : ids) {
-            QFile f(QString(":/library/%1.json").arg(QString::fromStdString(id)));
+            // Prefer downloaded update over QRC version.
+            const QString updatedPath =
+                updateDir + QStringLiteral("/") + QString::fromStdString(id)
+                + QStringLiteral(".json");
+            QString srcPath = QFile::exists(updatedPath)
+                ? updatedPath
+                : QString(":/library/%1.json").arg(QString::fromStdString(id));
+
+            QFile f(srcPath);
             if (!f.open(QIODevice::ReadOnly)) continue;
             try {
                 auto entry = arld::core::AircraftLibraryParser::parseEntry(
@@ -232,6 +244,11 @@ void LibraryPanel::loadLibrary() {
     }
 
     rebuildList();
+}
+
+void LibraryPanel::reloadLibrary() {
+    m_entries.clear();
+    loadLibrary();
 }
 
 void LibraryPanel::rebuildList() {

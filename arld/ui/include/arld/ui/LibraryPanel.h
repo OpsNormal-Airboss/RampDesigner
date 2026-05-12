@@ -23,6 +23,10 @@ public:
     // Returns the entry for the given aircraft id, or nullptr if not found.
     const arld::core::AircraftLibraryEntry* entryById(const std::string& id) const;
 
+public slots:
+    /// Reload all library entries from QRC + user data directory and rebuild the list.
+    void reloadLibrary();
+
 private slots:
     void onFilterChanged();
     void onAddCustomAircraft();

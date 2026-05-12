@@ -23,6 +23,8 @@ signals:
     void upToDate();
     void checkFailed(const QString& error);
     void downloadProgress(int current, int total);
+    /// Emitted when all requested entry downloads have completed (some may have failed).
+    void downloadCompleted(QStringList downloadedIds);
 
 public slots:
     /// Download the given entry IDs from baseUrl/{id}.json into the user data directory.
@@ -36,6 +38,7 @@ private slots:
 private:
     QNetworkAccessManager* m_nam;
     QStringList            m_pendingIds;
+    QStringList            m_downloadedIds;
     int                    m_total      = 0;
     int                    m_completed  = 0;
     QString                m_baseUrl;

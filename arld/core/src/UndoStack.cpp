@@ -8,6 +8,12 @@ UndoStack::UndoStack(int maxDepth) : m_maxDepth(maxDepth) {
 }
 
 void UndoStack::push(std::unique_ptr<ICommand> cmd) {
+    if (m_pendingMacro) {
+        cmd->execute();
+        m_pendingMacro->add(std::move(cmd));
+        return;
+    }
+
     // Truncate redo history.
     if (m_currentIndex < static_cast<int>(m_stack.size()) - 1)
         m_stack.erase(m_stack.begin() + m_currentIndex + 1, m_stack.end());
@@ -17,6 +23,32 @@ void UndoStack::push(std::unique_ptr<ICommand> cmd) {
     m_currentIndex = static_cast<int>(m_stack.size()) - 1;
 
     // Enforce depth limit by dropping the oldest command.
+    if (static_cast<int>(m_stack.size()) > m_maxDepth) {
+        m_stack.erase(m_stack.begin());
+        --m_currentIndex;
+    }
+
+    if (onChanged) onChanged();
+}
+
+void UndoStack::beginMacro(const std::string& description) {
+    if (m_pendingMacro) return; // nested — ignore
+    m_pendingMacro = std::make_unique<MacroCommand>(description);
+}
+
+void UndoStack::endMacro() {
+    if (!m_pendingMacro) return;
+    auto macro = std::move(m_pendingMacro); // clears m_pendingMacro
+    if (macro->empty()) return;             // nothing collected — discard
+
+    // Truncate redo history.
+    if (m_currentIndex < static_cast<int>(m_stack.size()) - 1)
+        m_stack.erase(m_stack.begin() + m_currentIndex + 1, m_stack.end());
+
+    // Sub-commands were already executed inside push(); skip re-execution.
+    m_stack.push_back(std::move(macro));
+    m_currentIndex = static_cast<int>(m_stack.size()) - 1;
+
     if (static_cast<int>(m_stack.size()) > m_maxDepth) {
         m_stack.erase(m_stack.begin());
         --m_currentIndex;

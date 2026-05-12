@@ -2,6 +2,7 @@
 #include <arld/core/AircraftLibraryEntry.h>
 #include <arld/core/ClearanceEngine.h>
 #include <arld/core/ProjectFile.h>
+#include <QFutureWatcher>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItemGroup>
 #include <QGraphicsPolygonItem>
@@ -23,7 +24,8 @@ class AircraftItem : public QGraphicsItemGroup {
 public:
     AircraftItem(const arld::core::AircraftLibraryEntry& entry,
                  const QString& svgResourcePath,
-                 QGraphicsItem* parent = nullptr);
+                 QGraphicsItem* parent = nullptr,
+                 bool lazy = false);
 
     const arld::core::AircraftLibraryEntry& entry() const { return m_entry; }
 
@@ -51,6 +53,9 @@ public:
     /// fromDeg is the previous rotation; the item should already be at toDeg.
     void commitRotation(double fromDeg, double toDeg);
 
+    /// Push a move undo command. The item must already be at @p to.
+    void commitMove(QPointF from, QPointF to);
+
     // Per-aircraft metadata (Sprint 1-2-5 / 1-2-7)
     const std::string& tailNumber() const { return m_tailNumber; }
     void setTailNumber(const std::string& s);
@@ -76,6 +81,10 @@ public:
     // LOD simplified rendering (Sprint 2-3-2)
     void setLodSimplified(bool simplified);
     bool isLodSimplified() const { return m_lodSimplified; }
+
+    /// Defer SVG loading to a background thread (Sprint 2-4-7).
+    /// Shows the LOD rect immediately; swaps to SVG renderer when loaded.
+    void loadSvgDeferred(const QString& svgResourcePath);
 
     // Label mode (Sprint 2-3-4)
     using LabelMode = arld::core::PlacedAircraft::LabelMode;
