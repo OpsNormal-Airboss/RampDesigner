@@ -45,6 +45,21 @@ void SatelliteUnderlayItem::setGeoreference(double latDeg, int zoomLevel, bool h
     m_feetPerPixel = metersPerPixel / 0.3048 / (highDpi ? 2.0 : 1.0);
 }
 
+void SatelliteUnderlayItem::clear() {
+    if (m_reply) {
+        m_reply->abort();
+        m_reply->deleteLater();
+        m_reply = nullptr;
+    }
+    m_loading      = false;
+    m_feetPerPixel = 1.0;
+    m_tempFile.reset();
+    prepareGeometryChange();
+    m_image = QImage{};
+    m_rect  = QRectF{};
+    update();
+}
+
 QRectF SatelliteUnderlayItem::boundingRect() const {
     return m_rect;
 }

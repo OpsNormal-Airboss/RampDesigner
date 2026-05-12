@@ -42,6 +42,10 @@ public:
     /// the next onImageReady() call (i.e., call before fetchTile).
     void setGeoreference(double latDeg, int zoomLevel, bool highDpi = false);
 
+    /// Reset the underlay to empty — clears image, rect, and aborts any in-progress fetch.
+    /// Called by RampScene::clearScene() when starting a new project.
+    void clear();
+
     // QGraphicsItem interface
     QRectF boundingRect() const override;
     void   paint(QPainter* painter,

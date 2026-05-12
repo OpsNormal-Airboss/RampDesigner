@@ -388,6 +388,9 @@ void RampScene::clearScene() {
     // Clear undo history.
     m_undoStack.clear();
 
+    // Clear satellite underlay image and abort any in-progress fetch.
+    if (m_satelliteItem) m_satelliteItem->clear();
+
     // Always return to Select mode so that after new/open/snapshot-switch the user
     // is never left in DrawBoundary mode where every click adds a vertex instead of
     // moving an existing handle.

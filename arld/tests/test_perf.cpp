@@ -19,7 +19,7 @@ static std::string makeAircraftJson(int idx) {
   "display_name": "Test Aircraft )" << idx << R"(",
   "manufacturer": "Test Co",
   "model": "T-)" << idx << R"(",
-  "category": "general_aviation",
+  "category": "GENERAL_AVIATION",
   "wingspan_ft": 35.0,
   "length_ft": 28.0,
   "tail_height_ft": 9.0,

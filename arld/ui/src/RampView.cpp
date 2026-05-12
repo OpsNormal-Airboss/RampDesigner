@@ -26,6 +26,8 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
     setFocusPolicy(Qt::StrongFocus);
     setBackgroundBrush(QColor(220, 225, 230));
     setAcceptDrops(true);
+    setAccessibleName(tr("Ramp Design Canvas"));
+    setAccessibleDescription(tr("Interactive canvas for placing and positioning aircraft. Drag from the Library panel to place. Arrow keys nudge selected aircraft."));
 }
 
 void RampView::setRampScene(RampScene* scene) {

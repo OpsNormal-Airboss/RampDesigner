@@ -344,6 +344,7 @@ void MainWindow::updateUndoRedoActions() {
 void MainWindow::setupLibraryPanel() {
     m_libraryPanel = new LibraryPanel(this);
     addDockWidget(Qt::LeftDockWidgetArea, m_libraryPanel);
+    m_libraryPanel->setAccessibleName(tr("Aircraft Library panel"));
 
     connect(m_view, &RampView::aircraftDropped,
             this, [this](const QString& id, QPointF scenePos) {
@@ -356,6 +357,7 @@ void MainWindow::setupPanels() {
     // Properties panel (right dock)
     m_propertiesPanel = new PropertiesPanel(this);
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesPanel);
+    m_propertiesPanel->setAccessibleName(tr("Aircraft Properties panel"));
 
     // Wire selection changes to properties panel
     connect(m_scene, &QGraphicsScene::selectionChanged, this, [this] {
@@ -381,6 +383,7 @@ void MainWindow::setupPanels() {
     // Violations panel (bottom dock)
     m_violationsPanel = new ViolationsPanel(m_scene, m_view, this);
     addDockWidget(Qt::BottomDockWidgetArea, m_violationsPanel);
+    m_violationsPanel->setAccessibleName(tr("Clearance Violations panel"));
 
     connect(m_scene, &RampScene::violationsChanged, this, [this] {
         m_violationsPanel->refresh(m_scene->lastViolations());
