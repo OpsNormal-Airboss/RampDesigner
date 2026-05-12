@@ -38,3 +38,17 @@ set_target_properties(arld PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
     WIN32_EXECUTABLE TRUE
 )
+
+# Install the .app bundle (macOS) or executable (other platforms)
+install(TARGETS arld
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Bundle Qt frameworks and plugins into the installed .app for distribution
+qt_generate_deploy_app_script(
+    TARGET arld
+    OUTPUT_SCRIPT _deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${_deploy_script})
