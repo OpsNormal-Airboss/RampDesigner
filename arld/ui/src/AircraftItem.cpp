@@ -264,12 +264,6 @@ QVariant AircraftItem::itemChange(GraphicsItemChange change, const QVariant& val
         if (m_rotationHandle)
             m_rotationHandle->setVisible(value.toBool());
     }
-    if (change == ItemRotationHasChanged && m_rotationHandle) {
-        const double rad = value.toDouble() * M_PI / 180.0;
-        m_rotationHandle->setPos(
-            m_localCenter.x() + 15.0 * std::sin(rad),
-            m_localCenter.y() - 15.0 * std::cos(rad));
-    }
     return QGraphicsItemGroup::itemChange(change, value);
 }
 
@@ -278,12 +272,14 @@ void AircraftItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         && m_rotationHandle && m_rotationHandle->isVisible()) {
         auto* view = qobject_cast<QGraphicsView*>(
             event->widget() ? event->widget()->parent() : nullptr);
+        if (!view && scene() && !scene()->views().isEmpty())
+            view = scene()->views().first();
         if (view) {
             const QPoint handleVP = view->mapFromScene(mapToScene(m_rotationHandle->pos()));
             const QPoint clickVP  = view->mapFromScene(event->scenePos());
             const int dx = clickVP.x() - handleVP.x();
             const int dy = clickVP.y() - handleVP.y();
-            if (dx*dx + dy*dy <= 36) {  // 6-pixel hit radius
+            if (dx*dx + dy*dy <= 100) {  // 10-pixel hit radius
                 m_rotating = true;
                 m_rotateStartAngle = rotation();
                 event->accept();
@@ -313,8 +309,6 @@ void AircraftItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         const bool snap45 = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
         if (snap45)
             angle = std::round(angle / 45.0) * 45.0;
-        else
-            angle = std::round(angle);
         setRotation(angle);
         event->accept();
         return;
