@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../../CompanyTrademarks/Branding/GreenDotAirboss1Line.svg" alt="OpsNormal Airboss" width="320"/>
+  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss" width="320"/>
 </div>
 
 ---
@@ -882,7 +882,7 @@ Hidden aircraft are already excluded from `toProjectData()` and clearance evalua
 ---
 
 <div align="center">
-  <img src="../../CompanyTrademarks/Branding/GreenDot.svg" alt="OpsNormal Airboss" width="36"/>
+  <img src="http://opsnormalairboss.com/sites/default/files/GreenDotSingleLine.png" alt="OpsNormal Airboss" width="320"/>
   <br/>
   <sub><em>Start Small. Stay Safe. Fly the Show.</em></sub>
 </div>
