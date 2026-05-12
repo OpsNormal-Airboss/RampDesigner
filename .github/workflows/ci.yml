@@ -31,13 +31,14 @@ jobs:
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
           sudo apt-get install -y ninja-build gcc-13 g++-13 \
-            libgl1-mesa-dev libglu1-mesa-dev
+            libgl1-mesa-dev libglu1-mesa-dev \
+            autoconf automake libtool
           echo "CC=gcc-13"  >> "$GITHUB_ENV"
           echo "CXX=g++-13" >> "$GITHUB_ENV"
 
       - name: Install Ninja (macOS)
         if: runner.os == 'macOS'
-        run: brew install ninja
+        run: brew install ninja autoconf automake libtool
 
       # Qt 6.7 installed via pre-built binaries for CI performance.
       # qtsvg / qtsvgwidgets are included in the Qt 6.7 base desktop install
@@ -91,13 +92,14 @@ jobs:
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
           sudo apt-get install -y ninja-build gcc-13 g++-13 \
-            libgl1-mesa-dev libglu1-mesa-dev
+            libgl1-mesa-dev libglu1-mesa-dev \
+            autoconf automake libtool
           echo "CC=gcc-13"  >> "$GITHUB_ENV"
           echo "CXX=g++-13" >> "$GITHUB_ENV"
 
       - name: Install Ninja (macOS)
         if: runner.os == 'macOS'
-        run: brew install ninja
+        run: brew install ninja autoconf automake libtool
 
       - name: Install Qt 6.7
         uses: jurplel/install-qt-action@v4
@@ -159,7 +161,8 @@ jobs:
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
           sudo apt-get install -y ninja-build gcc-13 g++-13 clang clang-tidy \
-            libgl1-mesa-dev libglu1-mesa-dev
+            libgl1-mesa-dev libglu1-mesa-dev \
+            autoconf automake libtool
           echo "CC=gcc-13"  >> "$GITHUB_ENV"
           echo "CXX=g++-13" >> "$GITHUB_ENV"
 

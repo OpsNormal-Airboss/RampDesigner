@@ -10,7 +10,7 @@ namespace arld::core {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-static double toRad(double deg) { return deg * M_PI / 180.0; }
+static double toRad(double deg) { return deg * std::numbers::pi / 180.0; }
 
 // Build a rotated axis-aligned rectangle centred at (cx, cy).
 // halfW and halfH are the half-dimensions of the expanded rectangle.
