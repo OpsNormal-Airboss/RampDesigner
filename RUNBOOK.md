@@ -411,16 +411,56 @@ When `schema_version` is incremented:
 
 ## 📦 Packaging and Release (Phase 1+)
 
+### macOS — DragNDrop .dmg
+
+The macOS package is a DragNDrop `.dmg` containing a self-contained `arld.app` bundle with all Qt frameworks embedded via `macdeployqt` (`qt_generate_deploy_app_script` in `arld/app/CMakeLists.txt`).
+
+**First-time configure** (also required after any CMakeLists change):
+
 ```bash
-# macOS — CPack .dmg
-cmake --build --preset mac-release --target package
-
-# Linux — CPack .AppImage + .deb
-cmake --build --preset linux-release --target package
-
-# Windows — CPack .msi (requires WiX Toolset)
-cmake --build --preset win-release --target package
+cmake --preset mac-release
 ```
+
+**Build and package** (subsequent runs):
+
+```bash
+cmake --build build/mac-release
+cd build/mac-release && cpack -G DragNDrop
+```
+
+Output: `build/mac-release/ARLD-1.0.0-Darwin.dmg` (~34 MB)
+
+The `.dmg` contains:
+- `arld.app` — fully self-contained bundle (no Qt installation required on the target machine)
+- `Applications` alias for drag-to-install
+
+`macdeployqt` will print harmless `ERROR: Cannot resolve rpath` lines for `QtPdf` and `QtVirtualKeyboard` — these optional Qt modules are not installed in the Homebrew Qt build and are not used by ARLD. The package is complete and correct despite these messages.
+
+### Linux — .deb
+
+```bash
+cmake --preset linux-release
+cmake --build --preset linux-release
+cd build/linux-release && cpack -G DEB
+```
+
+### Windows — .msi (requires WiX Toolset)
+
+```bash
+cmake --preset win-release
+cmake --build --preset win-release
+cd build/win-release && cpack -G NSIS
+```
+
+### Tag-triggered CI packaging
+
+Push a version tag to trigger automated packaging on all three platforms via GitHub Actions:
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The `package` CI job builds and runs `cpack` on each platform; the `release` job attaches all installers to a draft GitHub Release.
 
 ---
 
