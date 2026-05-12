@@ -1,6 +1,5 @@
 #include "TelemetryManager.h"
 #include <QMessageBox>
-#include <QMetaEnum>
 #include <QPushButton>
 #include <QSettings>
 #include <QStringList>
@@ -12,24 +11,39 @@ TelemetryManager& TelemetryManager::instance() {
     return s;
 }
 
+const char* TelemetryManager::eventKey(Event e) {
+    switch (e) {
+        case Event::Launch:       return "Launch";
+        case Event::ProjectSave:  return "ProjectSave";
+        case Event::ProjectOpen:  return "ProjectOpen";
+        case Event::ExportSvg:    return "ExportSvg";
+        case Event::ExportPdf:    return "ExportPdf";
+        case Event::ExportPng:    return "ExportPng";
+        case Event::ExportJpeg:   return "ExportJpeg";
+        case Event::ExportBatch:  return "ExportBatch";
+    }
+    return "Unknown";
+}
+
 void TelemetryManager::checkConsent(QWidget* parent) {
     QSettings s(QStringLiteral("OpsNormal"), QStringLiteral("ARLD"));
     if (s.value(QStringLiteral("telemetry/askedAlready"), false).toBool())
         return;
 
     QMessageBox dlg(parent);
-    dlg.setWindowTitle(tr("Help Improve ARLD"));
-    dlg.setText(tr("Would you like to send anonymous usage statistics to help "
-                   "improve ARLD?\n\nNo personal data, file contents, or network "
-                   "connections are involved — usage counts are stored locally "
-                   "only. You can change this setting in Help → Preferences."));
+    dlg.setWindowTitle(QStringLiteral("Help Improve ARLD"));
+    dlg.setText(QStringLiteral(
+        "Would you like to send anonymous usage statistics to help "
+        "improve ARLD?\n\nNo personal data, file contents, or network "
+        "connections are involved — usage counts are stored locally "
+        "only. You can change this setting in Help → Preferences."));
     dlg.setIcon(QMessageBox::Question);
 
-    QPushButton* yesBtn   = dlg.addButton(tr("Yes, help improve ARLD"),
+    QPushButton* yesBtn   = dlg.addButton(QStringLiteral("Yes, help improve ARLD"),
                                            QMessageBox::AcceptRole);
-    QPushButton* noBtn    = dlg.addButton(tr("No thanks"),
+    QPushButton* noBtn    = dlg.addButton(QStringLiteral("No thanks"),
                                            QMessageBox::RejectRole);
-    /*QPushButton* laterBtn =*/ dlg.addButton(tr("Ask me later"),
+    /*QPushButton* laterBtn =*/ dlg.addButton(QStringLiteral("Ask me later"),
                                            QMessageBox::NoRole);
     dlg.setDefaultButton(yesBtn);
 
@@ -54,25 +68,28 @@ bool TelemetryManager::isConsented() const {
 void TelemetryManager::record(Event e) {
     if (!isConsented()) return;
     QSettings s(QStringLiteral("OpsNormal"), QStringLiteral("ARLD"));
-    const QString key = QStringLiteral("telemetry/events/")
-                        + QMetaEnum::fromType<Event>().valueToKey(static_cast<int>(e));
+    const QString key = QStringLiteral("telemetry/events/") + QLatin1StringView(eventKey(e));
     s.setValue(key, s.value(key, 0).toInt() + 1);
 }
 
 QString TelemetryManager::stats() const {
     if (!isConsented())
-        return tr("Usage statistics: not collecting (opt-in disabled).");
+        return QStringLiteral("Usage statistics: not collecting (opt-in disabled).");
     QSettings s(QStringLiteral("OpsNormal"), QStringLiteral("ARLD"));
-    const auto meta = QMetaEnum::fromType<Event>();
+    static constexpr Event allEvents[] = {
+        Event::Launch, Event::ProjectSave, Event::ProjectOpen,
+        Event::ExportSvg, Event::ExportPdf, Event::ExportPng,
+        Event::ExportJpeg, Event::ExportBatch
+    };
     QStringList lines;
-    for (int i = 0; i < meta.keyCount(); ++i) {
-        const QString key = QStringLiteral("telemetry/events/") + meta.key(i);
+    for (Event e : allEvents) {
+        const QString key = QStringLiteral("telemetry/events/") + QLatin1StringView(eventKey(e));
         const int count = s.value(key, 0).toInt();
         if (count > 0)
-            lines << QStringLiteral("%1: %2").arg(meta.key(i)).arg(count);
+            lines << QStringLiteral("%1: %2").arg(QLatin1StringView(eventKey(e))).arg(count);
     }
     return lines.isEmpty()
-        ? tr("No events recorded yet.")
+        ? QStringLiteral("No events recorded yet.")
         : lines.join(QStringLiteral("\n"));
 }
 

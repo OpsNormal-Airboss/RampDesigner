@@ -1,16 +1,15 @@
 #pragma once
-#include <QObject>
 #include <QString>
 #include <QWidget>
 
 namespace arld::app {
 
-class TelemetryManager : public QObject {
-    Q_OBJECT
+// Not a QObject — static QObject singletons crash on macOS during exit because
+// ~QObject() runs after QApplication tears down the platform layer (issue #8).
+class TelemetryManager {
 public:
     enum class Event { Launch, ProjectSave, ProjectOpen,
                        ExportSvg, ExportPdf, ExportPng, ExportJpeg, ExportBatch };
-    Q_ENUM(Event)
 
     static TelemetryManager& instance();
 
@@ -28,6 +27,8 @@ public:
 
 private:
     TelemetryManager() = default;
+
+    static const char* eventKey(Event e);
 };
 
 } // namespace arld::app
