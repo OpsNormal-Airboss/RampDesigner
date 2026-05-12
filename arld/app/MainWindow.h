@@ -104,7 +104,8 @@ private:
     QString  m_autoSavePath;
 
     QString m_currentFilePath;
-    bool    m_dirty = false;
+    bool    m_dirty         = false;
+    bool    m_suppressDirty = false; // suppresses changed-signal during load/clear
 
     // Project metadata (show-specific fields stored in MainWindow, not RampScene).
     arld::core::ProjectMetadata m_projectMetadata;

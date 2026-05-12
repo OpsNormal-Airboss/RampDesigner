@@ -82,12 +82,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
     m_scene->undoStack().onChanged = [this] { updateUndoRedoActions(); };
 
-    // Mark scene dirty whenever it changes.
+    // Mark scene dirty whenever it changes.  QGraphicsScene::changed is deferred
+    // (fires on next event-loop iteration), so m_suppressDirty guards against it
+    // firing after a load/clear has already reset m_dirty to false (issue #25).
     connect(m_scene, &QGraphicsScene::changed, this, [this](const QList<QRectF>&) {
-        if (!m_dirty) {
-            m_dirty = true;
-            updateWindowTitle();
-        }
+        if (m_suppressDirty || m_dirty) return;
+        m_dirty = true;
+        updateWindowTitle();
     });
 
     setupMenuBar();
@@ -611,7 +612,9 @@ void MainWindow::newProject() {
             QMessageBox::Cancel);
         if (btn != QMessageBox::Discard) return;
     }
+    m_suppressDirty = true;
     m_scene->clearScene();
+    m_suppressDirty = false;
     m_currentFilePath.clear();
     m_projectMetadata = arld::core::ProjectMetadata{};
     m_dirty = false;
@@ -642,7 +645,9 @@ void MainWindow::openProject() {
         auto lookup = [this](const std::string& id) -> const arld::core::AircraftLibraryEntry* {
             return m_libraryPanel->entryById(id);
         };
+        m_suppressDirty = true;
         m_scene->loadProjectData(data, lookup);
+        m_suppressDirty = false;
         m_projectMetadata = data.metadata;
         m_currentData = data;
         if (m_versionsPanel) m_versionsPanel->setProjectData(m_currentData);
@@ -1355,7 +1360,9 @@ void MainWindow::updateRecentFilesMenu() {
                     -> const arld::core::AircraftLibraryEntry* {
                     return m_libraryPanel->entryById(id);
                 };
+                m_suppressDirty = true;
                 m_scene->loadProjectData(data, lookup);
+                m_suppressDirty = false;
                 m_projectMetadata = data.metadata;
                 m_currentFilePath = path;
                 m_dirty = false;
