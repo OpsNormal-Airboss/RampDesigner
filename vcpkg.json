@@ -3,6 +3,7 @@
   "name": "arld",
   "version": "0.1.0",
   "description": "Airshow Ramp Layout Designer",
+  "builtin-baseline": "d50d6b47d71ace49a1eb9c4a88c0044c981ee551",
   "dependencies": [
     "cgal",
     "nlohmann-json",
