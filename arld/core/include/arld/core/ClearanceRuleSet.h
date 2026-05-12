@@ -17,6 +17,17 @@ struct ClearanceRuleSet {
 
     static ClearanceRuleSet faaCoW();    // FAA Certificate of Waiver defaults
     static ClearanceRuleSet icas();      // ICAS Safety Standard
+
+    // Value equality (ignores rulesetId/displayName — used to detect saves needed).
+    bool sameValues(const ClearanceRuleSet& o) const {
+        return staticDisplayWingtipFt   == o.staticDisplayWingtipFt
+            && warbirdPropArcBonusFt    == o.warbirdPropArcBonusFt
+            && taxiOnlyCorridorFt       == o.taxiOnlyCorridorFt
+            && militaryStaticStandoffFt == o.militaryStaticStandoffFt
+            && hotRampStandoffFt        == o.hotRampStandoffFt
+            && mediaPhotoPlatformFt     == o.mediaPhotoPlatformFt
+            && rampShowCrowdLineFt      == o.rampShowCrowdLineFt;
+    }
 };
 
 } // namespace arld::core

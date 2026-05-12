@@ -197,9 +197,11 @@ void ProjectFile::save(const std::string& path, const ProjectData& data) {
         };
     }
 
-    // Clearance ruleset (omit when it is the FAA CoW default to save space)
+    // Clearance ruleset (omit only when values are identical to FAA CoW defaults).
+    // ID comparison alone is insufficient: a user-tweaked ruleset keeps rulesetId
+    // "faa_cow" from the dialog and would be silently dropped (issue #24).
     const auto defaultRules = arld::core::ClearanceRuleSet::faaCoW();
-    if (data.clearanceRules.rulesetId != defaultRules.rulesetId) {
+    if (!data.clearanceRules.sameValues(defaultRules)) {
         j["clearance_ruleset"] = {
             {"ruleset_id",                  data.clearanceRules.rulesetId},
             {"display_name",                data.clearanceRules.displayName},

@@ -82,6 +82,22 @@ arld::core::ClearanceRuleSet ClearanceRuleDialog::ruleSet() const {
     rs.hotRampStandoffFt        = static_cast<float>(m_hotRamp->value());
     rs.mediaPhotoPlatformFt     = static_cast<float>(m_mediaPlatform->value());
     rs.rampShowCrowdLineFt      = static_cast<float>(m_rampShow->value());
+
+    // Assign the correct rulesetId/displayName so ProjectFile saves correctly
+    // and the status bar shows the right label.  Without this fix the struct
+    // always returns with the default "faa_cow" ID regardless of what was typed.
+    const auto faa  = arld::core::ClearanceRuleSet::faaCoW();
+    const auto icas = arld::core::ClearanceRuleSet::icas();
+    if (rs.sameValues(faa)) {
+        rs.rulesetId   = faa.rulesetId;
+        rs.displayName = faa.displayName;
+    } else if (rs.sameValues(icas)) {
+        rs.rulesetId   = icas.rulesetId;
+        rs.displayName = icas.displayName;
+    } else {
+        rs.rulesetId   = "custom";
+        rs.displayName = "Custom";
+    }
     return rs;
 }
 

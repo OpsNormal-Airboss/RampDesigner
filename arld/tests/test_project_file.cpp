@@ -327,6 +327,20 @@ TEST_CASE("ProjectFile: faa_cow rules not written when default", "[project_file]
     std::filesystem::remove(path);
 }
 
+TEST_CASE("ProjectFile: tweaked faa_cow values are persisted (issue #24)", "[project_file]") {
+    // The original bug: ClearanceRuleDialog always returned rulesetId="faa_cow" so
+    // the save logic's ID comparison skipped writing modified values entirely.
+    arld::core::ProjectData data;
+    data.clearanceRules = arld::core::ClearanceRuleSet::faaCoW();
+    data.clearanceRules.staticDisplayWingtipFt = 40.0f; // tweaked from default 25 ft
+    // rulesetId is still "faa_cow" — the exact scenario that was broken
+    const std::string path = (std::filesystem::temp_directory_path() / "arld_tweaked_faa.arld").string();
+    arld::core::ProjectFile::save(path, data);
+    const auto loaded = arld::core::ProjectFile::load(path);
+    REQUIRE(loaded.clearanceRules.staticDisplayWingtipFt == Catch::Approx(40.0f));
+    std::filesystem::remove(path);
+}
+
 TEST_CASE("SvgExporter: empty layout produces valid SVG", "[svg_exporter]") {
     arld::core::ProjectData data;
     data.metadata.title       = "Empty";
