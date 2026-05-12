@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
 #include <cmath>
+#include <numbers>
 
 namespace arld::ui {
 
@@ -305,7 +306,7 @@ void AircraftItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         const QPointF center = mapToScene(m_localCenter);
         const double dx = event->scenePos().x() - center.x();
         const double dy = event->scenePos().y() - center.y();
-        double angle = std::atan2(dx, -dy) * 180.0 / M_PI;
+        double angle = std::atan2(dx, -dy) * 180.0 / std::numbers::pi;
         const bool snap45 = QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier;
         if (snap45)
             angle = std::round(angle / 45.0) * 45.0;

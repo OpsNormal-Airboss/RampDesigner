@@ -14,6 +14,7 @@
 #include <cfloat>
 #include <cmath>
 #include <cstdint>
+#include <numbers>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -395,7 +396,7 @@ static void exportWithLibharu(const arld::core::ProjectData& data,
         HPDF_Page_GSave(page);
         HPDF_Page_Concat(page, 1.0f, 0.0f, 0.0f, 1.0f, cx, cy);
         // PDF rotation is counter-clockwise in radians; Qt is CW in degrees.
-        float rad = -angle * static_cast<float>(M_PI) / 180.0f;
+        float rad = -angle * static_cast<float>(std::numbers::pi) / 180.0f;
         HPDF_Page_Concat(page,
             std::cos(rad), std::sin(rad),
             -std::sin(rad), std::cos(rad),

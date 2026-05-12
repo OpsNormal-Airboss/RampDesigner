@@ -5,6 +5,7 @@
 #include <QUrl>
 #include <QtConcurrent/QtConcurrent>
 #include <cmath>
+#include <numbers>
 
 namespace arld::ui {
 
@@ -51,7 +52,7 @@ void SatelliteUnderlayItem::setGeoreference(double latDeg, int zoomLevel, bool h
     // Web Mercator GSD: metres per pixel at zoom 0 = 156543.03392 m/px at the equator
     // Scaled by cos(lat) for latitude, divided by 2^zoom for tile level.
     const double metersPerPixel = 156543.03392
-        * std::cos(latDeg * M_PI / 180.0)
+        * std::cos(latDeg * std::numbers::pi / 180.0)
         / std::pow(2.0, static_cast<double>(zoomLevel));
     m_feetPerPixel = metersPerPixel / 0.3048 / (highDpi ? 2.0 : 1.0);
 }

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <numbers>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -31,7 +32,7 @@ static RampBoundaryData projectToScene(const std::vector<std::pair<double,double
     const double n = static_cast<double>(lonLats.size());
     const double centLon = sumLon / n;
     const double centLat = sumLat / n;
-    const double cosLat  = std::cos(centLat * M_PI / 180.0);
+    const double cosLat  = std::cos(centLat * std::numbers::pi / 180.0);
 
     RampBoundaryData boundary;
     boundary.closed = true;
