@@ -1,7 +1,7 @@
 #pragma once
 
 // Application version string (Sprint 2-3-9)
-#define ARLD_VERSION_STRING "2.3.0"
+#define ARLD_VERSION_STRING "1.0.0"
 
 namespace arld::core {
 

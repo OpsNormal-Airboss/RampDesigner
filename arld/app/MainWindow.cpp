@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "AppBadge.h"
+#include "TelemetryManager.h"
 #include <arld/ui/ClearanceRuleDialog.h>
 #include <arld/ui/LibraryPanel.h>
 #include <arld/ui/LibraryUpdateChecker.h>
@@ -576,6 +577,7 @@ void MainWindow::openProject() {
         tr("ARLD Project Files (*.arld);;All Files (*)"));
     if (path.isEmpty()) return;
 
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ProjectOpen);
     try {
         auto data = arld::core::ProjectFile::load(path.toStdString());
 
@@ -604,6 +606,7 @@ void MainWindow::saveProject() {
         saveProjectAs();
         return;
     }
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ProjectSave);
     try {
         auto data = m_scene->toProjectData();
         data.metadata = m_projectMetadata;
@@ -635,6 +638,7 @@ void MainWindow::saveProjectAs() {
 }
 
 void MainWindow::exportSvg() {
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ExportSvg);
     const QString path = QFileDialog::getSaveFileName(
         this, tr("Export SVG"), QString(),
         tr("SVG Files (*.svg);;All Files (*)"));
@@ -652,6 +656,7 @@ void MainWindow::exportSvg() {
 }
 
 void MainWindow::exportPdf() {
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ExportPdf);
     // --- Paper size / orientation dialog ---
     QDialog dlg(this);
     dlg.setWindowTitle(tr("Export PDF"));
@@ -844,6 +849,7 @@ void MainWindow::addToRecentFiles(const QString& path) {
 }
 
 void MainWindow::exportAll() {
+    arld::app::TelemetryManager::instance().record(arld::app::TelemetryManager::Event::ExportBatch);
     // Strip any extension from the suggested path
     QString suggested = m_currentFilePath;
     if (!suggested.isEmpty()) {
@@ -1048,6 +1054,12 @@ void MainWindow::showAboutDialog() {
         QStringLiteral("© 2026 OpsNormal Airboss"), &dlg);
     copyrightLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(copyrightLabel);
+
+    auto* statsLabel = new QLabel(
+        arld::app::TelemetryManager::instance().stats(), &dlg);
+    statsLabel->setAlignment(Qt::AlignCenter);
+    statsLabel->setWordWrap(true);
+    layout->addWidget(statsLabel);
 
     auto* licensesBtn = new QPushButton(tr("View Licenses..."), &dlg);
     layout->addWidget(licensesBtn);

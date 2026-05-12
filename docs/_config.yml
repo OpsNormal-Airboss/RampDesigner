@@ -1,0 +1,5 @@
+theme: minima
+title: "ARLD — Airshow Ramp Layout Designer"
+description: "Safety-critical airshow ramp layout designer with FAA CoW clearance enforcement."
+baseurl: "/RampDesigner"
+url: "https://opsnormal-airboss.github.io"

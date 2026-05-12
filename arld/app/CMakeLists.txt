@@ -11,6 +11,8 @@ qt_add_executable(arld
     MainWindow.cpp
     MainWindow.h
     AppBadge.h
+    TelemetryManager.h
+    TelemetryManager.cpp
     ${BADGE_SRC}
 )
 
@@ -30,6 +32,6 @@ set_target_properties(arld PROPERTIES
     MACOSX_BUNDLE TRUE
     MACOSX_BUNDLE_BUNDLE_NAME "ARLD"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.opsnormal.arld"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
     WIN32_EXECUTABLE TRUE
 )
