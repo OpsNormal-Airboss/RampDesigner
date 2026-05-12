@@ -72,6 +72,7 @@ private:
     // Sprint 2-3 slots
     void showAboutDialog();
     void showLibraryUpdateDialog();
+    void showUserManual();
 
     void saveLayout();
     void restoreLayout();

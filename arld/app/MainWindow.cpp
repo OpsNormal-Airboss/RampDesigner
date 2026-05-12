@@ -291,6 +291,9 @@ void MainWindow::setupMenuBar() {
 
     // ---- Help menu ----
     auto* helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(tr("User &Manual..."), this, &MainWindow::showUserManual,
+                        QKeySequence::HelpContents);
+    helpMenu->addSeparator();
     helpMenu->addAction(tr("Check for Library &Updates..."), this,
                         &MainWindow::showLibraryUpdateDialog);
     helpMenu->addSeparator();
@@ -1166,6 +1169,36 @@ void MainWindow::showSatelliteTilesDialog() {
     layout->addRow(buttons);
 
     dlg.exec();
+}
+
+// ---------------------------------------------------------------------------
+// User Manual dialog (issue #5)
+// ---------------------------------------------------------------------------
+void MainWindow::showUserManual() {
+    QDialog* dlg = new QDialog(this);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->setWindowTitle(tr("ARLD User Manual"));
+    dlg->resize(820, 680);
+
+    auto* layout = new QVBoxLayout(dlg);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    auto* browser = new QTextBrowser(dlg);
+    browser->setOpenExternalLinks(true);
+    browser->setReadOnly(true);
+
+    QFile f(QStringLiteral(":/help/user_manual.md"));
+    if (f.open(QIODevice::ReadOnly | QIODevice::Text))
+        browser->setMarkdown(QString::fromUtf8(f.readAll()));
+    else
+        browser->setPlainText(tr("User manual could not be loaded."));
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close, dlg);
+    connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::close);
+
+    layout->addWidget(browser);
+    layout->addWidget(buttons);
+    dlg->show();
 }
 
 // ---------------------------------------------------------------------------

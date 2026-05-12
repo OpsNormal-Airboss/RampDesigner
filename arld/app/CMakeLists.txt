@@ -14,7 +14,10 @@ qt_add_executable(arld
     TelemetryManager.h
     TelemetryManager.cpp
     ${BADGE_SRC}
+    user_manual.qrc
 )
+
+set_target_properties(arld PROPERTIES AUTORCC ON)
 
 target_link_libraries(arld
     PRIVATE
