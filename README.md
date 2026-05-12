@@ -70,7 +70,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | Sprint | Goal | Status |
 |--------|------|--------|
 | 3-1 | v1.0.0 version bump; opt-in telemetry (local only); GitHub Pages; USER_GUIDE.md; PR/CLA template | ✅ Complete |
-| 3-2 | ??? | ⬜ Up next |
+| 3-2 | UAT fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export PNG/JPEG (#20), dock resize (#21), satellite scale (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
+| 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🟢 What Works Today
 

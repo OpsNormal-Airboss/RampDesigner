@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 3, Sprint 3-1 complete. Version 1.0.0 shipped; `TelemetryManager` opt-in consent dialog (local QSettings, no network); GitHub Pages site (`docs/index.md`); `docs/USER_GUIDE.md`; `.github/PULL_REQUEST_TEMPLATE.md` with CLA checkbox. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete. 9 UAT fixes: rotation handle Shift inversion (#17), QTableView stdout noise (#18), satellite image persistence (#19), Export PNG/JPEG menu items (#20), dock resize handle (#21), satellite GSD dialog (#16), panel layout QSettings (#22), View→Panels toggle menu (#23), clearance ruleset persistence in .arld (#24). 109/109 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -693,8 +693,32 @@ The `docs/` folder is configured for GitHub Pages with Jekyll minima theme. `doc
 | 3-1-7 | Monitor GitHub Issues for v1.0 launch bugs; hotfix any P1 within 48 hours | 5 |
 | 3-1-8 | Steering committee presentation: Phase 3 launch metrics, NPS, adoption counts, Phase 4 readiness | 4 |
 
-#### Sprint 3-2 · Month 13–14, Wk 3–4 · 38 pts
-**Goal:** Commercial license tier; ICAS marketplace; adoption monitoring
+---
+
+### Sprint 3-2 Runbook Notes
+
+#### Rotation handle (issue #17)
+No-Shift drag = 1° precision; Shift = 45° snap. Previously inverted.
+
+#### Satellite image persistence (issue #19)
+`ProjectData.satelliteImagePath` (absolute path string) and `satelliteGsdFeetPerPixel` are serialized to `.arld` as `"satellite_image": {"path": "...", "gsd_feet_per_px": N}`. On open, `RampScene::loadProjectData()` checks `QFile::exists()` before reloading — a missing file produces a status bar warning rather than an error dialog.
+
+#### Satellite scale dialog (issue #16)
+After "Load Satellite Image..." loads the file, a modal dialog prompts for the image's scale bar dimensions (pixels + feet). Computes `feetPerPixel = ft / px` and calls `SatelliteUnderlayItem::setFeetPerPixel()`. The user may dismiss the dialog (Cancel) to keep default 1 px = 1 ft.
+
+#### Clearance ruleset persistence (issue #24)
+`ProjectData.clearanceRules` is a full `ClearanceRuleSet` struct. Serialized as `"clearance_ruleset"` object in JSON **only when non-default** (rulesetId ≠ "faa_cow"). Missing key on load → `ClearanceRuleSet::faaCoW()`. Active ruleset name shown in the right side of the status bar via `RampScene::ruleSetChanged` signal.
+
+#### Panel layout (issues #22 / #23)
+`MainWindow::closeEvent()` calls `saveLayout()` → `QSettings` keys `windowGeometry` + `windowState`. Constructor calls `restoreLayout()` after all docks are created. View → Panels submenu exposes `toggleViewAction()` for all 6 dock widgets.
+
+#### Export PNG / JPEG (issue #20)
+`File → Export PNG...` and `File → Export JPEG...` call `PngExporter` / `JpegExporter` with default options. Both slots record a telemetry event (`ExportPng` / `ExportJpeg`).
+
+---
+
+#### Sprint 3-2 · Month 13, Wk 3–4 · 38 pts
+**Goal:** UAT bug fixes and UI polish (issues #16-24)
 
 | # | Story | Pts |
 |---|-------|-----|
