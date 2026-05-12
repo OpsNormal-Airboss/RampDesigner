@@ -6,7 +6,7 @@
 
   [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
   [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](./LICENSE)
-  [![Phase 2 — Complete](https://img.shields.io/badge/phase-2%20%E2%80%94%20Complete-00CC00)](./RUNBOOK.md)
+  [![Phase 3 — In Progress](https://img.shields.io/badge/phase-3%20%E2%80%94%20In%20Progress-DDAA00)](./RUNBOOK.md)
   [![C++20](https://img.shields.io/badge/C%2B%2B-20-1A1610.svg)](https://isocpp.org/)
   [![Qt 6.7](https://img.shields.io/badge/Qt-6.7%20LGPL-1A1610.svg)](https://www.qt.io/)
 </div>
@@ -30,7 +30,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
 | **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **✅ Complete — All 6 sprints done** |
 | **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **✅ Complete — All 6 sprints done** |
-| 3 | Public v1.0 desktop release, open-source community edition | ⬜ Not started |
+| **3** | **Public v1.0 desktop release, open-source community edition** | **🟡 Sprint 3-1 complete** |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
 ### Phase 0 Sprint Progress — ✅ Complete
@@ -64,6 +64,13 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 2-4 | UAT event 1 bug fixes; snap-heading/nudge batch undo; violation badge; lazy SVG; satellite GSD | ✅ Complete |
 | 2-5 | Scale bar variants (imperial/metric/dual) in PDF and PNG; LICENSES.txt; UAT P1/P2 triage | ✅ Complete |
 | 2-6 | Security review; license audit; satellite clear fix; accessibility; Phase 2 hardening | ✅ Complete |
+
+### Phase 3 Sprint Progress
+
+| Sprint | Goal | Status |
+|--------|------|--------|
+| 3-1 | v1.0.0 version bump; opt-in telemetry (local only); GitHub Pages; USER_GUIDE.md; PR/CLA template | ✅ Complete |
+| 3-2 | ??? | ⬜ Up next |
 
 ## 🟢 What Works Today
 
@@ -105,6 +112,7 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 - **Violation status bar** — shows live count of clearance violations across all placed aircraft
 - **FAA CoW clearance rules** — per-display-type separation requirements enforced: Static Display (25 ft), Warbird/Heritage (prop arc + 35 ft), Military Static (50 ft), Hot Ramp (100 ft), Ramp Show (200 ft), Media Platform (15 ft)
 - **Project save/load** — File → Save / Open persist the full layout (aircraft placement, rotation, boundary) to `.arld` JSON files; File → New prompts to discard unsaved changes
+- **Opt-in usage telemetry** — on first launch a consent dialog asks permission to count local events (saves, opens, exports); no network calls; counters stored in `QSettings` and visible in Help → About; consent can be declined or deferred
 - **SVG export** — File → Export SVG produces a scaled diagram with the ramp boundary, all aircraft (colored by display type), and labels
 - **Metric/Imperial toggle** — View → Show in Metric switches all distance displays between feet and metres without data loss
 - **Auto-save** — layout is auto-saved every 60 seconds; crash recovery dialog offered on next launch if previous session ended unexpectedly

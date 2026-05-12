@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 2, Sprint 2-6 complete. `SatelliteUnderlayItem::clear()` (issue #15 fix); `RampView` accessible name/description; dock panel accessible names; `GENERAL_AVIATION` benchmark fix; `SECURITY_REVIEW.md`; `PHASE3_GATE.md`; `CHANGELOG.md`. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** Phase 3, Sprint 3-1 complete. Version 1.0.0; `TelemetryManager` opt-in consent + local QSettings event counting; GitHub Pages landing page (`docs/index.md`); `docs/USER_GUIDE.md`; `.github/PULL_REQUEST_TEMPLATE.md` with CLA checkbox. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## 📋 Post-Sprint Documentation
 
@@ -72,6 +72,13 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 2-5 | Scale bar variants (imperial/metric/dual) in PNG+PDF; LICENSES.txt; UAT P1/P2 bug triage | ✅ Complete |
 | 2-6 | Security review; license audit; satellite clear fix (#15); benchmark fix; accessibility | ✅ Complete |
 
+## 🟢 Sprint Log (Phase 3)
+
+| Sprint | Goal | Status |
+|--------|------|--------|
+| 3-1 | v1.0.0 version bump; TelemetryManager opt-in consent; GitHub Pages site; USER_GUIDE.md; PR/CLA template | ✅ Complete |
+| 3-2 | ??? | ⬜ Up next |
+
 ## 🔧 Tech Stack
 
 **Phases 0–3 (Desktop)**
@@ -106,7 +113,8 @@ Layer 2 — arld/export/    SVG, PDF, PNG, JPEG exporters (strategy pattern via 
 Layer 3 — arld/ui/        Qt canvas widget, toolbar, panels, undo/redo stack.
                            Depends on core/ and export/.
 
-Layer 4 — arld/app/       Entry point, session management, auto-save scheduler.
+Layer 4 — arld/app/       Entry point, session management, auto-save scheduler,
+                           TelemetryManager (opt-in local event counting).
                            Depends on all lower layers.
 ```
 

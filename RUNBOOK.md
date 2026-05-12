@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 2 complete (all 6 sprints). Sprint 2-6: `SatelliteUnderlayItem::clear()` (issue #15 fix — satellite image now clears on New Project); `RampView` accessible name/description; dock panel accessible names; `GENERAL_AVIATION` benchmark data fix; `SECURITY_REVIEW.md`, `PHASE3_GATE.md`, `CHANGELOG.md`. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** Phase 3, Sprint 3-1 complete. Version 1.0.0 shipped; `TelemetryManager` opt-in consent dialog (local QSettings, no network); GitHub Pages site (`docs/index.md`); `docs/USER_GUIDE.md`; `.github/PULL_REQUEST_TEMPLATE.md` with CLA checkbox. 106/106 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -653,6 +653,31 @@ arld::export_::PngExporter{}.exportLayout(data, "/tmp/layout.png", opts);
 ---
 
 ### Phase 3 — Desktop Launch (Months 13–14)
+
+---
+
+### Sprint 3-1 Runbook Notes
+
+#### TelemetryManager
+
+`arld/app/TelemetryManager` is a `QObject` singleton that counts local usage events (no network calls).
+
+- **Consent dialog** shown once at first launch (800 ms after `show()` via `QTimer::singleShot`). Three buttons: "Yes, help improve ARLD" / "No thanks" / "Ask me later". Consent stored in `QSettings("OpsNormal","ARLD")` key `telemetry/consented` (bool) and `telemetry/askedAlready` (bool).
+- **`record(Event)`** — no-op if not consented; increments `telemetry/events/<EnumKeyName>`.
+- **`stats()`** — returns a multi-line string for the About dialog.
+- Events: `Launch`, `ProjectSave`, `ProjectOpen`, `ExportSvg`, `ExportPdf`, `ExportPng`, `ExportJpeg`, `ExportBatch`.
+
+To reset consent during testing: delete the `OpsNormal/ARLD` QSettings domain (macOS: `defaults delete com.opsnormal.arld`).
+
+#### GitHub Pages
+
+The `docs/` folder is configured for GitHub Pages with Jekyll minima theme. `docs/index.md` is the landing page; `docs/_config.yml` sets `baseurl: "/RampDesigner"`. Enable via repo Settings → Pages → Source: `main` branch `/docs` folder.
+
+#### PR Template
+
+`.github/PULL_REQUEST_TEMPLATE.md` includes a CLA affirmation checkbox. Contributors must check it for their PR to be mergeable (enforced via branch protection rules — configure under repo Settings → Branches).
+
+---
 
 #### Sprint 3-1 · Month 13, Wk 1–2 · 40 pts
 **Goal:** Public v1.0 release on all platforms; GitHub community edition launch
