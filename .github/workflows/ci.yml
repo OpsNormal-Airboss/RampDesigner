@@ -123,10 +123,11 @@ jobs:
         with:
           name: arld-${{ matrix.os }}-${{ github.ref_name }}
           path: |
-            build/*/arld-*.dmg
-            build/*/arld-*.AppImage
-            build/*/arld-*.deb
-            build/*/arld-*.msi
+            build/**/*.dmg
+            build/**/*.AppImage
+            build/**/*.deb
+            build/**/*.exe
+            build/**/*.msi
 
   release:
     needs: package
