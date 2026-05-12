@@ -171,6 +171,17 @@ void MainWindow::setupMenuBar() {
         m_scene->undoStack().redo();
     }, QKeySequence::Redo);
 
+    editMenu->addSeparator();
+    m_deleteAction = editMenu->addAction(tr("&Delete Selected"), this, [this] {
+        m_scene->deleteSelected();
+    }, QKeySequence::Delete);
+    m_deleteAction->setEnabled(false);
+
+    connect(m_scene, &RampScene::selectionChanged, this, [this] {
+        if (m_deleteAction)
+            m_deleteAction->setEnabled(!m_scene->selectedItems().isEmpty());
+    });
+
     // ---- Draw menu ----
     auto* drawMenu = menuBar()->addMenu(tr("&Draw"));
     m_drawBoundaryAction = drawMenu->addAction(tr("Draw &Boundary"), this, [this] {

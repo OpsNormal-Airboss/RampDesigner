@@ -92,6 +92,7 @@ private:
     arld::core::ProjectData m_currentData;
     QAction* m_undoAction          = nullptr;
     QAction* m_redoAction          = nullptr;
+    QAction* m_deleteAction        = nullptr;
     QAction* m_drawBoundaryAction  = nullptr;
     QAction* m_metricAction        = nullptr;
     QLabel*  m_scaleLabel          = nullptr;

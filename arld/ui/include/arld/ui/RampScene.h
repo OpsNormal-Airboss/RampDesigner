@@ -34,6 +34,9 @@ public:
 
     void placeAircraft(const arld::core::AircraftLibraryEntry& entry, QPointF scenePos);
 
+    /// Delete all currently-selected aircraft as a single undoable step.
+    void deleteSelected();
+
     /// Move all currently-selected aircraft by (dx, dy) feet as a single undoable step.
     void nudgeSelected(double dx, double dy);
 

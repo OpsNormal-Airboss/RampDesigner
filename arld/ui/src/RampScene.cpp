@@ -37,6 +37,16 @@ private:
     QPointF m_point;
 };
 
+class DeleteAircraftCmd : public arld::core::ICommand {
+public:
+    explicit DeleteAircraftCmd(AircraftItem* item) : m_item(item) {}
+    void execute() override { m_item->setVisible(false); m_item->setSelected(false); }
+    void undo()    override { m_item->setVisible(true); }
+    std::string describe() const override { return "Delete Aircraft"; }
+private:
+    AircraftItem* m_item;
+};
+
 /// Used for undoable group moves of multiple aircraft.
 class GroupMoveCommand : public arld::core::ICommand {
 public:
@@ -632,6 +642,28 @@ void RampScene::setBoundary(const arld::core::RampBoundaryData& boundary) {
     if (boundary.closed && m_boundaryItem->pointCount() >= 3) {
         m_boundaryItem->closePolygon();
         setEditMode(EditMode::Select);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Delete selected aircraft (issue #26)
+// ---------------------------------------------------------------------------
+
+void RampScene::deleteSelected() {
+    QList<AircraftItem*> targets;
+    for (auto* gi : selectedItems()) {
+        if (auto* ac = qgraphicsitem_cast<AircraftItem*>(gi))
+            targets.push_back(ac);
+    }
+    if (targets.isEmpty()) return;
+
+    if (targets.size() == 1) {
+        m_undoStack.push(std::make_unique<DeleteAircraftCmd>(targets.first()));
+    } else {
+        m_undoStack.beginMacro("Delete " + std::to_string(targets.size()) + " Aircraft");
+        for (auto* ac : targets)
+            m_undoStack.push(std::make_unique<DeleteAircraftCmd>(ac));
+        m_undoStack.endMacro();
     }
 }
 

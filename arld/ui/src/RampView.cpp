@@ -106,6 +106,10 @@ void RampView::keyPressEvent(QKeyEvent* event) {
         setTransformationAnchor(AnchorViewCenter);
         setScaleDenominator(m_scaleDenominator * 1.25);
         break;
+    case Qt::Key_Delete:
+    case Qt::Key_Backspace:
+        if (m_rampScene) { m_rampScene->deleteSelected(); event->accept(); return; }
+        break;
     case Qt::Key_Escape:
         if (m_rampScene) m_rampScene->clearSelection();
         break;
