@@ -15,7 +15,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Testing & Verification
 - Always run the full test suite after code changes and report pass count (e.g., '109/109 passing') before committing.
-- For SQL/migration work, verify table/column names against the actual schema before writing queries; do not assume MariaDB syntax works on MySQL 8.
+- For SQL/migration work, run `SHOW CREATE TABLE` for each table you'll touch and `SELECT VERSION()` to confirm engine before writing any query or migration. Do not assume MariaDB syntax works on MySQL 8.
+- Use window functions (`ROW_NUMBER`) over correlated subqueries when ranking.
 - For environment-dependent config (cookies, HTTPS, secrets), detect runtime conditions dynamically rather than tying behavior to APP_ENV alone.
 
 ## Sprint Workflow
