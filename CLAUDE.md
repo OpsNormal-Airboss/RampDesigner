@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Sprint Workflow
 - When asked to 'complete the next sprint', read the sprint plan file first, implement all deliverables, run tests, update docs, commit per logical chunk, and push.
 - Close referenced GitHub issues in commit messages using `Closes #N`.
+- Complete one sprint only per session. After implementation + tests + docs + commit + push, stop and summarize what's next so the user can start a fresh session for the following sprint.
 
 ## 📋 Post-Sprint Documentation
 
