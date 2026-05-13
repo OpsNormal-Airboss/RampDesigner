@@ -8,6 +8,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Hotfixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, fully undoable (#26). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
+## Git Workflow
+- After completing any sprint/feature/fix, automatically: update CLAUDE.md, README.md, and RUNBOOK.md to reflect changes, then commit and push.
+- Use descriptive commit messages referencing sprint number or issue number.
+- If `git push` fails due to SSH passphrase, surface the exact command for the user to run manually rather than retrying.
+
+## Testing & Verification
+- Always run the full test suite after code changes and report pass count (e.g., '109/109 passing') before committing.
+- For SQL/migration work, verify table/column names against the actual schema before writing queries; do not assume MariaDB syntax works on MySQL 8.
+- For environment-dependent config (cookies, HTTPS, secrets), detect runtime conditions dynamically rather than tying behavior to APP_ENV alone.
+
+## Sprint Workflow
+- When asked to 'complete the next sprint', read the sprint plan file first, implement all deliverables, run tests, update docs, commit per logical chunk, and push.
+- Close referenced GitHub issues in commit messages using `Closes #N`.
+
 ## 📋 Post-Sprint Documentation
 
 After completing each sprint, update the following files to reflect the current state of the project:
