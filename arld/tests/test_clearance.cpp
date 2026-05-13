@@ -29,9 +29,9 @@ static AircraftState makeState(const std::string& id,
 }
 
 // ---------------------------------------------------------------------------
-// Scenario 1: Two aircraft well separated — no violation
+// Scenario 1: Two aircraft well separated - no violation
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 1: Well-separated static-display aircraft — no violation",
+TEST_CASE("Scenario 1: Well-separated static-display aircraft - no violation",
           "[clearance]") {
     // P-51D wingspan ~37 ft; place aircraft 500 ft apart.
     const auto a = makeState("a", 0.0f,   0.0f,   37.0f, 32.0f);
@@ -42,9 +42,9 @@ TEST_CASE("Scenario 1: Well-separated static-display aircraft — no violation",
 }
 
 // ---------------------------------------------------------------------------
-// Scenario 2: Two static-display aircraft too close — violation
+// Scenario 2: Two static-display aircraft too close - violation
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 2: Static-display aircraft closer than 25 ft gap — violation",
+TEST_CASE("Scenario 2: Static-display aircraft closer than 25 ft gap - violation",
           "[clearance]") {
     // Required gap = 25 ft. Place aircraft 10 ft apart hull-to-hull.
     // Each has 37 ft wingspan → each hull extends 18.5 ft from centre.
@@ -63,7 +63,7 @@ TEST_CASE("Scenario 2: Static-display aircraft closer than 25 ft gap — violati
 // ---------------------------------------------------------------------------
 // Scenario 3: Warbird-heritage aircraft violating prop-arc clearance
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 3: Warbird with prop arc — violation when inside prop arc zone",
+TEST_CASE("Scenario 3: Warbird with prop arc - violation when inside prop arc zone",
           "[clearance]") {
     // P-51D: wingspan 37 ft, prop arc ~8 ft radius.
     // Required = propArc + kWarbirdPropArcAddition + kStaticDisplayWingtip
@@ -89,7 +89,7 @@ TEST_CASE("Scenario 3: Warbird with prop arc — violation when inside prop arc 
 // ---------------------------------------------------------------------------
 // Scenario 4: Military-static standoff violation
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 4: Military-static aircraft inside 50 ft standoff — violation",
+TEST_CASE("Scenario 4: Military-static aircraft inside 50 ft standoff - violation",
           "[clearance]") {
     // Required gap = 50 ft.
     // F-16 wingspan ~31 ft. Place them 20 ft hull-to-hull.
@@ -108,9 +108,9 @@ TEST_CASE("Scenario 4: Military-static aircraft inside 50 ft standoff — violat
 }
 
 // ---------------------------------------------------------------------------
-// Scenario 5: Physical overlap between two large aircraft — violation
+// Scenario 5: Physical overlap between two large aircraft - violation
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 5: Overlapping aircraft footprints — violation", "[clearance]") {
+TEST_CASE("Scenario 5: Overlapping aircraft footprints - violation", "[clearance]") {
     // C-17: wingspan 170 ft, length 174 ft. Place at same position.
     const auto a = makeState("a", 0.0f, 0.0f,   170.0f, 174.0f);
     const auto b = makeState("b", 20.0f, 0.0f,  170.0f, 174.0f);
@@ -123,9 +123,9 @@ TEST_CASE("Scenario 5: Overlapping aircraft footprints — violation", "[clearan
 }
 
 // ---------------------------------------------------------------------------
-// Scenario 6: Advisory zone — within 20 % buffer above required gap
+// Scenario 6: Advisory zone - within 20 % buffer above required gap
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 6: Aircraft in advisory zone — advisory severity", "[clearance]") {
+TEST_CASE("Scenario 6: Aircraft in advisory zone - advisory severity", "[clearance]") {
     // Required gap = 25 ft. Place at 28 ft hull-to-hull (within 25 * 1.2 = 30 ft buffer).
     // Centres: 28 + 18.5 + 18.5 = 65 ft.
     const auto a = makeState("a",  0.0f, 0.0f, 37.0f, 32.0f);
@@ -139,7 +139,7 @@ TEST_CASE("Scenario 6: Aircraft in advisory zone — advisory severity", "[clear
 // ---------------------------------------------------------------------------
 // Scenario 7: Rotated aircraft clearance check
 // ---------------------------------------------------------------------------
-TEST_CASE("Scenario 7: Rotated aircraft clearance — violation detected", "[clearance]") {
+TEST_CASE("Scenario 7: Rotated aircraft clearance - violation detected", "[clearance]") {
     // Rotate both aircraft 45 degrees. Their footprints are diamond-shaped
     // in scene space. Place close enough to still violate.
     const auto a = makeState("a",  0.0f, 0.0f, 37.0f, 32.0f,

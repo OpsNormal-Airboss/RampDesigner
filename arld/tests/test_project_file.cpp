@@ -52,7 +52,7 @@ TEST_CASE("ProjectFile: generateUuid produces valid UUID v4 format", "[project_f
     REQUIRE(uuids.size() == 20u);
 }
 
-TEST_CASE("ProjectFile: save and load round-trip preserves all data — 15 aircraft", "[project_file]") {
+TEST_CASE("ProjectFile: save and load round-trip preserves all data - 15 aircraft", "[project_file]") {
     using namespace arld::core;
 
     // Build a ProjectData with 15 aircraft covering all display types + varied positions.
@@ -334,7 +334,7 @@ TEST_CASE("ProjectFile: tweaked faa_cow values are persisted (issue #24)", "[pro
     arld::core::ProjectData data;
     data.clearanceRules = arld::core::ClearanceRuleSet::faaCoW();
     data.clearanceRules.staticDisplayWingtipFt = 40.0f; // tweaked from default 25 ft
-    // rulesetId is still "faa_cow" — the exact scenario that was broken
+    // rulesetId is still "faa_cow" - the exact scenario that was broken
     const std::string path = (std::filesystem::temp_directory_path() / "arld_tweaked_faa.arld").string();
     arld::core::ProjectFile::save(path, data);
     const auto loaded = arld::core::ProjectFile::load(path);
