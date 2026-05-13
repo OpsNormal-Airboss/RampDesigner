@@ -39,6 +39,14 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install ninja autoconf autoconf-archive automake libtool
 
+      # Set up MSVC developer environment on Windows so CMake/Ninja use cl.exe
+      # rather than the MinGW g++ that appears earlier on the default PATH.
+      # vcpkg's x64-windows triplet produces MSVC-compatible .lib files and
+      # must be linked with MSVC, not MinGW.
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       # Qt 6.7 installed via pre-built binaries for CI performance.
       # qtsvg / qtsvgwidgets are included in the Qt 6.7 base desktop install
       # and must NOT be listed as extra modules — aqt will error if they are.
@@ -98,6 +106,10 @@ jobs:
       - name: Install Ninja (macOS)
         if: runner.os == 'macOS'
         run: brew install ninja autoconf autoconf-archive automake libtool
+
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Install Qt 6.7
         uses: jurplel/install-qt-action@v4
