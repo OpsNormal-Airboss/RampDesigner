@@ -162,6 +162,7 @@ TEST_CASE("AircraftManifestExporter creates CSV with header", "[manifest]") {
     CHECK(firstLine.find("Placement ID") != std::string::npos);
     CHECK(firstLine.find("Tail Number")  != std::string::npos);
     CHECK(firstLine.find("Display Type") != std::string::npos);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -180,6 +181,7 @@ TEST_CASE("AircraftManifestExporter CSV has one row per aircraft", "[manifest]")
     while (std::getline(f, line)) ++lineCount;
     // 1 header + 2 aircraft = 3 lines
     CHECK(lineCount == 3);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -203,6 +205,7 @@ TEST_CASE("SvgExporter output contains inkscape:label", "[svg][layers]") {
     CHECK(content.find("Ramp Boundary") != std::string::npos);
     CHECK(content.find("id=\"aircraft\"") != std::string::npos);
     CHECK(content.find("id=\"annotations\"") != std::string::npos);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -220,6 +223,7 @@ TEST_CASE("AircraftManifestExporter empty project writes only header", "[manifes
     std::string line;
     while (std::getline(f, line)) ++lineCount;
     CHECK(lineCount == 1); // only header
+    f.close();
 
     fs::remove(outPath);
 }

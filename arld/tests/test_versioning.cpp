@@ -102,6 +102,7 @@ TEST_CASE("ProjectFile save with versions writes schema_version 3", "[versioning
     std::string content((std::istreambuf_iterator<char>(ifs)),
                          std::istreambuf_iterator<char>());
     CHECK(content.find("\"schema_version\": 3") != std::string::npos);
+    ifs.close();
 
     // Also verify it loads cleanly
     ProjectData loaded;

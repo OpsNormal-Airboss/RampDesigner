@@ -101,6 +101,7 @@ TEST_CASE("PdfExporter output starts with %PDF magic bytes", "[pdf]") {
     char magic[5] = {};
     f.read(magic, 4);
     CHECK(std::string(magic, 4) == "%PDF");
+    f.close();
 
     fs::remove(outPath);
 }
@@ -180,6 +181,7 @@ TEST_CASE("ViolationReportExporter CSV contains Severity header", "[csv]") {
     std::string firstLine;
     std::getline(f, firstLine);
     CHECK(firstLine.find("Severity") != std::string::npos);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -205,6 +207,7 @@ TEST_CASE("ViolationReportExporter CSV has correct row count", "[csv]") {
     while (std::getline(f, line)) ++lineCount;
     // 1 header + 2 violation rows = 3
     CHECK(lineCount == 3);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -227,6 +230,7 @@ TEST_CASE("ViolationReportExporter CSV with override appends justification", "[c
     std::string content((std::istreambuf_iterator<char>(f)),
                          std::istreambuf_iterator<char>());
     CHECK(content.find("Approved by safety officer") != std::string::npos);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -243,6 +247,7 @@ TEST_CASE("ViolationReportExporter empty violations writes only header", "[csv]"
     std::string line;
     while (std::getline(f, line)) ++lineCount;
     CHECK(lineCount == 1); // only header
+    f.close();
 
     fs::remove(outPath);
 }

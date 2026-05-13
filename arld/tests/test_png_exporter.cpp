@@ -93,6 +93,7 @@ TEST_CASE("PngExporter output starts with PNG magic bytes", "[png]") {
     CHECK(magic[1] == 'P');
     CHECK(magic[2] == 'N');
     CHECK(magic[3] == 'G');
+    f.close();
 
     fs::remove(outPath);
 }
@@ -166,6 +167,7 @@ TEST_CASE("JpegExporter output starts with JPEG magic bytes", "[jpeg]") {
     f.read(reinterpret_cast<char*>(magic), 2);
     CHECK(magic[0] == 0xFF);
     CHECK(magic[1] == 0xD8);
+    f.close();
 
     fs::remove(outPath);
 }
@@ -223,6 +225,7 @@ TEST_CASE("JpegExporter dimension cap fires for huge layout", "[jpeg]") {
     f.read(reinterpret_cast<char*>(magic), 2);
     CHECK(magic[0] == 0xFF);
     CHECK(magic[1] == 0xD8);
+    f.close();
 
     fs::remove(outPath);
 }

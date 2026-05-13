@@ -324,6 +324,7 @@ TEST_CASE("ProjectFile: faa_cow rules not written when default", "[project_file]
     std::ifstream f(path);
     std::string content((std::istreambuf_iterator<char>(f)), {});
     REQUIRE(content.find("clearance_ruleset") == std::string::npos);
+    f.close();
     std::filesystem::remove(path);
 }
 
