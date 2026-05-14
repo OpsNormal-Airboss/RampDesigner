@@ -139,11 +139,11 @@ jobs:
         with:
           name: arld-${{ matrix.os }}-${{ github.ref_name }}
           path: |
-            build/**/*.dmg
-            build/**/*.AppImage
-            build/**/*.deb
-            build/**/*.exe
-            build/**/*.msi
+            build/**/ARLD-*.dmg
+            build/**/ARLD-*.AppImage
+            build/**/ARLD-*.deb
+            build/**/ARLD-*.exe
+            build/**/ARLD-*.msi
 
   release:
     needs: package
