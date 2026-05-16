@@ -10,17 +10,40 @@
 
 ### Qt Installation
 
+Qt 6.7 LGPL is required. The system Qt packages on Ubuntu 22.04 (`apt-get install qt6-base-dev`) ship Qt 6.4, which is too old — the binary will fail at runtime with `version 'Qt_6.7' not found`. Use one of the methods below for each platform.
+
+**macOS** — Homebrew (tracks Qt 6.7+):
+
 ```bash
-# macOS
-brew install qt@6
-
-# Ubuntu 22.04
-sudo apt-get install qt6-base-dev qt6-svg-dev
-
-# Windows — use aqtinstall or the Qt online installer
-pip install aqtinstall
-aqt install-qt windows desktop 6.7.3 win64_msvc2022_64
+brew install qt
+export Qt6_DIR=$(brew --prefix qt)/lib/cmake/Qt6   # add to ~/.zshrc
 ```
+
+**Linux (Ubuntu 22.04 LTS)** — aqtinstall (do **not** use `apt-get install qt6-base-dev`):
+
+```bash
+pip3 install aqtinstall
+aqt install-qt linux desktop 6.7.3 gcc_64 -O ~/Qt
+```
+
+Add the following to `~/.bashrc` (or `~/.zshrc`) so the build and the runtime both find Qt 6.7:
+
+```bash
+export Qt6_DIR=~/Qt/6.7.3/gcc_64/lib/cmake/Qt6
+export LD_LIBRARY_PATH=~/Qt/6.7.3/gcc_64/lib
+export QT_PLUGIN_PATH=~/Qt/6.7.3/gcc_64/plugins
+```
+
+Alternatively use the [Qt Online Installer](https://www.qt.io/download-qt-installer) — select Desktop → gcc 64-bit → Qt 6.7.x.
+
+**Windows** — aqtinstall or the Qt Online Installer:
+
+```bash
+pip install aqtinstall
+aqt install-qt windows desktop 6.7.3 win64_msvc2022_64 -O C:\Qt
+```
+
+Then pass `-DQt6_DIR=C:\Qt\6.7.3\msvc2022_64\lib\cmake\Qt6` to CMake, or set it as a system environment variable.
 
 ## Building
 

@@ -154,7 +154,10 @@ The application compiles and runs on macOS, Linux, and Windows. The CI pipeline 
 
 - **CMake** 3.28+
 - **vcpkg** — set `VCPKG_ROOT` to your vcpkg installation directory
-- **Qt 6.7** (LGPL) — install separately; see platform notes in [CONTRIBUTING.md](./CONTRIBUTING.md)
+- **Qt 6.7 LGPL** — install via the platform-specific method below; see [CONTRIBUTING.md](./CONTRIBUTING.md) for full details
+  - **macOS:** `brew install qt` (Homebrew tracks Qt 6.7+)
+  - **Linux:** use `aqtinstall` — `apt-get install qt6-base-dev` on Ubuntu 22.04 installs Qt 6.4 and will not work
+  - **Windows:** use `aqtinstall` or the Qt Online Installer
 - **Ninja** build system
 - A C++20 compiler: Apple Clang 16+ (macOS), GCC 13+ (Linux), or MSVC 2022 (Windows)
 

@@ -61,18 +61,29 @@ cmake --build build/mac-debug
 
 ### First-Time Setup — Linux (Ubuntu 22.04)
 
+> **Qt version note:** `apt-get install qt6-base-dev` on Ubuntu 22.04 installs Qt 6.4, which is
+> too old. The binary will crash at startup with `version 'Qt_6.7' not found`. Use aqtinstall
+> (step 3 below) instead.
+
 ```bash
 # 1. Install system dependencies
 sudo apt-get update
-sudo apt-get install -y ninja-build gcc-13 g++-13 libgl1-mesa-dev libglu1-mesa-dev
+sudo apt-get install -y ninja-build gcc-13 g++-13 libgl1-mesa-dev libglu1-mesa-dev \
+    python3-pip libxcb-cursor0
 
 # 2. Install vcpkg and bootstrap
 git clone https://github.com/microsoft/vcpkg.git
 ./vcpkg/bootstrap-vcpkg.sh
 export VCPKG_ROOT=/path/to/vcpkg
 
-# 3. Qt 6.7 is installed by CI via jurplel/install-qt-action; for local dev use aqtinstall:
-#    pip install aqtinstall && aqt install-qt linux desktop 6.7.3
+# 3. Install Qt 6.7 via aqtinstall (do NOT use apt-get install qt6-base-dev)
+pip3 install aqtinstall
+aqt install-qt linux desktop 6.7.3 gcc_64 -O ~/Qt
+
+# Add these to ~/.bashrc for persistence:
+export Qt6_DIR=~/Qt/6.7.3/gcc_64/lib/cmake/Qt6
+export LD_LIBRARY_PATH=~/Qt/6.7.3/gcc_64/lib
+export QT_PLUGIN_PATH=~/Qt/6.7.3/gcc_64/plugins
 
 # 4. Install remaining C++ dependencies via vcpkg
 vcpkg install
@@ -87,12 +98,28 @@ cmake --build --preset linux-debug
 
 ### First-Time Setup — Windows
 
-```bash
-# 1. Install Visual Studio 2022 with C++ workload, CMake, and Ninja
-# 2. Install vcpkg: git clone https://github.com/microsoft/vcpkg.git && bootstrap-vcpkg.bat
-# 3. Install Qt 6.7 via Qt Installer or aqtinstall
-# 4. vcpkg install
-# 5. cmake --preset win-debug && cmake --build --preset win-debug
+```powershell
+# 1. Install Visual Studio 2022 with the "Desktop development with C++" workload (includes CMake + Ninja)
+
+# 2. Install vcpkg (from a Developer Command Prompt)
+git clone https://github.com/microsoft/vcpkg.git
+.\vcpkg\bootstrap-vcpkg.bat
+$env:VCPKG_ROOT = "C:\path\to\vcpkg"   # add to your user environment variables
+
+# 3. Install Qt 6.7 via aqtinstall (or use the Qt Online Installer and select Desktop → MSVC 2019 64-bit → Qt 6.7.x)
+pip install aqtinstall
+aqt install-qt windows desktop 6.7.3 win64_msvc2022_64 -O C:\Qt
+$env:Qt6_DIR = "C:\Qt\6.7.3\msvc2022_64\lib\cmake\Qt6"   # add to user environment variables
+
+# 4. Install C++ dependencies via vcpkg
+vcpkg install
+
+# 5. Configure and build (from Developer Command Prompt)
+cmake --preset win-debug
+cmake --build --preset win-debug
+
+# 6. Run the application
+.\build\win-debug\arld\app\arld.exe
 ```
 
 ### Clean Build
