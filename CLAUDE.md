@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Airshow Ramp Layout Designer (ARLD)** — a safety-critical C++ desktop application for designing, validating, and publishing aircraft parking layouts for static and flying airshows. It enforces FAA Certificate of Waiver (CoW) clearance rules in real time and exports print-quality diagrams.
 
-**Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Hotfixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, fully undoable (#26). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
+**Current status:** v1.0.1. Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Hotfixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24, +1 regression test), title-bar always-dirty via undo stack (#25), TelemetryManager QObject crash-on-exit (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, fully undoable (#26). Windows installer Start Menu shortcut + app icon (#27). Windows installer missing gmp-10.dll/hpdf.dll bundled via GET_RUNTIME_DEPENDENCIES (#28). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ## Git Workflow
 - After completing any sprint/feature/fix, automatically: update CLAUDE.md, README.md, and RUNBOOK.md to reflect changes, then commit and push.
@@ -89,6 +89,7 @@ Use `gh issue edit <number> --add-label "testing"` or the project board move com
 | 3-1 | v1.0.0 version bump; TelemetryManager opt-in consent; GitHub Pages site; USER_GUIDE.md; PR/CLA template | ✅ Complete |
 | 3-2 | UAT bug fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export menu (#20), dock resize (#21), satellite GSD (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
 | 3-2 hotfixes | Re-fix dock resize (#21), objectName saveState (#22), clearance ruleset value-save (#24), always-dirty undo-stack fix (#25), TelemetryManager QObject exit crash (#8), User Manual (#5) | ✅ Complete |
+| v1.0.1 patch | Windows Start Menu shortcut + app icon (#27); bundle gmp-10.dll/hpdf.dll in NSIS installer (#28) | ✅ Complete |
 | 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🔧 Tech Stack
