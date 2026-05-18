@@ -40,8 +40,18 @@ elseif(UNIX)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt6core6, libqt6widgets6, libqt6svg6")
 elseif(WIN32)
     set(CPACK_GENERATOR "NSIS")
-    set(CPACK_NSIS_DISPLAY_NAME "ARLD")
+    set(CPACK_NSIS_DISPLAY_NAME "Airshow Ramp Layout Designer")
     set(CPACK_NSIS_PACKAGE_NAME "ARLD")
+    set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+    set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/arld/app/arld.ico")
+    set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/arld/app/arld.ico")
+    # Start Menu shortcut: path relative to install prefix -> display name
+    set(CPACK_NSIS_MENU_LINKS
+        "bin/arld.exe" "Airshow Ramp Layout Designer"
+    )
+    # Offer to launch the app from the finish page
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "arld.exe")
 endif()
 
 include(CPack)
