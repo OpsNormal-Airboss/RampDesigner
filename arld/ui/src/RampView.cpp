@@ -4,6 +4,7 @@
 #include <arld/core/Config.h>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QFocusEvent>
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QMouseEvent>
@@ -27,7 +28,7 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
     setBackgroundBrush(QColor(220, 225, 230));
     setAcceptDrops(true);
     setAccessibleName(tr("Ramp Design Canvas"));
-    setAccessibleDescription(tr("Interactive canvas for placing and positioning aircraft. Drag from the Library panel to place. Arrow keys nudge selected aircraft."));
+    setAccessibleDescription(tr("Interactive canvas for placing and positioning aircraft. Drag from the Library panel to place. Arrow keys nudge selected aircraft. Hold Space and drag to pan."));
 }
 
 void RampView::setRampScene(RampScene* scene) {
@@ -103,6 +104,14 @@ void RampView::keyPressEvent(QKeyEvent* event) {
     const bool shiftHeld = event->modifiers() & Qt::ShiftModifier;
     const double step = shiftHeld ? 5.0 : 1.0;
     switch (event->key()) {
+    case Qt::Key_Space:
+        if (!event->isAutoRepeat() && !m_spaceDown) {
+            m_spaceDown = true;
+            if (!m_panning)
+                setCursor(Qt::OpenHandCursor);
+        }
+        event->accept();
+        return;
     case Qt::Key_Plus:
     case Qt::Key_Equal:
         setTransformationAnchor(AnchorViewCenter);
@@ -136,6 +145,26 @@ void RampView::keyPressEvent(QKeyEvent* event) {
     }
 }
 
+void RampView::keyReleaseEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+        m_spaceDown = false;
+        if (!m_panning)
+            setCursor(Qt::ArrowCursor);
+        event->accept();
+        return;
+    }
+    QGraphicsView::keyReleaseEvent(event);
+}
+
+void RampView::focusOutEvent(QFocusEvent* event) {
+    if (m_spaceDown) {
+        m_spaceDown = false;
+        if (!m_panning)
+            setCursor(Qt::ArrowCursor);
+    }
+    QGraphicsView::focusOutEvent(event);
+}
+
 void RampView::mousePressEvent(QMouseEvent* event) {
     // Middle-click → always pan.
     if (event->button() == Qt::MiddleButton) {
@@ -147,6 +176,15 @@ void RampView::mousePressEvent(QMouseEvent* event) {
     }
 
     if (event->button() == Qt::LeftButton) {
+        // Space held → pan instead of select/lasso.
+        if (m_spaceDown) {
+            m_panning = true;
+            m_lastPanPos = event->pos();
+            setCursor(Qt::ClosedHandCursor);
+            event->accept();
+            return;
+        }
+
         // Only items with selection/move capability count as "on item" — this
         // prevents GridOverlayItem and other passive scene decorations from
         // blocking rubber-band lasso when the user clicks on empty canvas.
@@ -200,7 +238,7 @@ void RampView::mouseMoveEvent(QMouseEvent* event) {
 void RampView::mouseReleaseEvent(QMouseEvent* event) {
     if (m_panning) {
         m_panning = false;
-        setCursor(Qt::ArrowCursor);
+        setCursor(m_spaceDown ? Qt::OpenHandCursor : Qt::ArrowCursor);
         event->accept();
         return;
     }

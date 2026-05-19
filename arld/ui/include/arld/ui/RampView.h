@@ -24,6 +24,8 @@ signals:
 protected:
     void wheelEvent(QWheelEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+    void focusOutEvent(QFocusEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
@@ -41,6 +43,7 @@ private:
     RampScene* m_rampScene = nullptr;
     double m_scaleDenominator = 1200.0;
     bool m_panning = false;
+    bool m_spaceDown = false;
     QPoint m_lastPanPos;
     QList<QGraphicsItem*> m_shiftSelectionSave; // items to preserve across Shift+lasso
 };
