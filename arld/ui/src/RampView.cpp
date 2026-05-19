@@ -33,7 +33,9 @@ RampView::RampView(QWidget* parent) : QGraphicsView(parent) {
 void RampView::setRampScene(RampScene* scene) {
     m_rampScene = scene;
     setScene(scene);
+    setTransformationAnchor(NoAnchor);
     applyScale();
+    setTransformationAnchor(AnchorUnderMouse);
     notifySceneOverlay();
 }
 
@@ -44,8 +46,7 @@ double RampView::pixelsPerFt() const {
 
 void RampView::applyScale() {
     const double ppf = pixelsPerFt();
-    resetTransform();
-    scale(ppf, ppf);
+    setTransform(QTransform::fromScale(ppf, ppf));
 }
 
 void RampView::notifySceneOverlay() {
@@ -83,13 +84,18 @@ void RampView::setScaleDenominator(double s) {
 // ---------------------------------------------------------------------------
 
 void RampView::wheelEvent(QWheelEvent* event) {
-    const int delta = event->angleDelta().y();
-    if (delta == 0) { event->ignore(); return; }
-
-    const double factor = (delta > 0) ? (1.0 / 1.15) : 1.15;
-    setTransformationAnchor(AnchorUnderMouse);
-    setScaleDenominator(m_scaleDenominator * factor);
-    event->accept();
+    if (event->modifiers() & Qt::ControlModifier) {
+        // Ctrl+scroll → zoom toward cursor
+        const int delta = event->angleDelta().y();
+        if (delta == 0) { event->ignore(); return; }
+        const double factor = (delta > 0) ? (1.0 / 1.15) : 1.15;
+        setTransformationAnchor(AnchorUnderMouse);
+        setScaleDenominator(m_scaleDenominator * factor);
+        event->accept();
+    } else {
+        // Bare scroll → pan the canvas via scroll bars
+        QGraphicsView::wheelEvent(event);
+    }
 }
 
 void RampView::keyPressEvent(QKeyEvent* event) {

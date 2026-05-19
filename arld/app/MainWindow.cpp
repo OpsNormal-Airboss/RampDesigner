@@ -136,6 +136,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
                     return m_libraryPanel->entryById(id);
                 };
                 m_scene->loadProjectData(data, lookup);
+                const QRectF ab = m_scene->itemsBoundingRect();
+                if (!ab.isNull()) m_view->centerOn(ab.center());
                 m_dirty = true;
                 updateWindowTitle();
                 updateUndoRedoActions();
@@ -487,6 +489,8 @@ void MainWindow::setupPanels() {
                 };
                 m_scene->clearDelta();
                 m_scene->loadProjectData(vdata, lookup);
+                const QRectF vb = m_scene->itemsBoundingRect();
+                if (!vb.isNull()) m_view->centerOn(vb.center());
                 m_dirty = true;
                 updateWindowTitle();
                 return;
@@ -665,6 +669,8 @@ void MainWindow::openProject() {
         m_suppressDirty = true;
         m_scene->loadProjectData(data, lookup);
         m_suppressDirty = false;
+        const QRectF ob = m_scene->itemsBoundingRect();
+        if (!ob.isNull()) m_view->centerOn(ob.center());
         m_projectMetadata = data.metadata;
         m_currentData = data;
         if (m_versionsPanel) m_versionsPanel->setProjectData(m_currentData);
@@ -1410,6 +1416,8 @@ void MainWindow::updateRecentFilesMenu() {
                 m_suppressDirty = true;
                 m_scene->loadProjectData(data, lookup);
                 m_suppressDirty = false;
+                const QRectF rb = m_scene->itemsBoundingRect();
+                if (!rb.isNull()) m_view->centerOn(rb.center());
                 m_projectMetadata = data.metadata;
                 m_currentFilePath = path;
                 m_dirty = false;
