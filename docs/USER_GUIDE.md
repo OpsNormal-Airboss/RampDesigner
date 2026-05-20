@@ -1,4 +1,4 @@
-# ARLD User Guide — v1.0.0
+# ARLD User Guide — v1.0.1
 
 ## Overview
 
@@ -32,8 +32,9 @@ Change display type via the **Properties** panel (right dock).
 
 | Action | Input |
 |--------|-------|
-| Pan | Left-click drag (empty area) or Middle-click drag |
-| Zoom | Scroll wheel · `+` / `-` keys |
+| Pan | Middle-click drag, or hold **Space** and left-drag |
+| Pan via scroll | Scroll wheel (trackpad swipe or mouse scroll) |
+| Zoom | `Ctrl` + scroll wheel · `+` / `-` keys |
 | Zoom to fit | `Ctrl+0` / `Cmd+0` |
 | Boundary draw mode | `B` |
 | Toggle grid | `G` |
@@ -41,6 +42,7 @@ Change display type via the **Properties** panel (right dock).
 | Undo | `Ctrl+Z` / `Cmd+Z` |
 | Redo | `Ctrl+Y` / `Cmd+Shift+Z` |
 | Nudge selected | Arrow keys (1 ft) · Shift+Arrow (5 ft) |
+| Delete selected aircraft | `Delete` / `Backspace` |
 | Multi-select lasso | Left-click drag on empty canvas |
 | Add to selection | Shift+click aircraft |
 | Deselect | Escape |
@@ -133,11 +135,13 @@ Projects are saved as `.arld` files — UTF-8 JSON with published schema (`arld/
 | `Ctrl/Cmd+Z` | Undo |
 | `Ctrl/Cmd+Y` / `Ctrl/Cmd+Shift+Z` | Redo |
 | `Ctrl/Cmd+0` | Fit to window |
+| Space (hold) | Enter pan mode (drag to pan) |
 | `B` | Boundary draw mode |
 | `G` | Toggle grid |
 | `M` | Toggle metric/imperial |
 | Arrow keys | Nudge selected aircraft 1 ft |
 | Shift+Arrow | Nudge selected aircraft 5 ft |
+| `Delete` / `Backspace` | Delete selected aircraft |
 | Escape | Deselect all |
 
 ## Frequently Asked Questions

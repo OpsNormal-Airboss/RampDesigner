@@ -10,13 +10,13 @@ title: ARLD — Airshow Ramp Layout Designer
 [![CI](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml/badge.svg)](https://github.com/OpsNormal-Airboss/RampDesigner/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-00CC00.svg)](../LICENSE)
 
-## Download v1.0.0
+## Download v1.0.1
 
 | Platform | Package |
 |----------|---------|
-| macOS 12+ | [ARLD-1.0.0.dmg](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.0) |
-| Ubuntu 22.04 | [arld-1.0.0.deb / .AppImage](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.0) |
-| Windows 10/11 | [ARLD-1.0.0.msi](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.0) |
+| macOS 12+ | [ARLD-1.0.1.dmg](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.1) |
+| Ubuntu 22.04 | [arld-1.0.1.deb / .AppImage](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.1) |
+| Windows 10/11 | [ARLD-1.0.1.msi](https://github.com/OpsNormal-Airboss/RampDesigner/releases/tag/v1.0.1) |
 
 ## Features
 

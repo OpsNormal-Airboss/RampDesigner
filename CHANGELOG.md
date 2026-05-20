@@ -2,6 +2,45 @@
 
 All notable changes to ARLD are documented here.
 
+## Phase 3 — Desktop Launch (Months 13–14)
+
+### Post-v1.0.1 individual fixes · 2026-05-19
+- feat: Space+drag to pan canvas — hold Space for open-hand pan mode, left-drag to pan, release to return to select mode (#30)
+- fix: Canvas scroll bars restored; bare scroll now pans the canvas; Ctrl+scroll zooms toward cursor (#29)
+- feat: `run.sh` launch script for macOS development builds
+
+### v1.0.1 patch · 2026-05-18
+- fix: Windows installer Start Menu shortcut and correct app icon (#27)
+- fix: Bundle gmp-10.dll and hpdf.dll in NSIS installer via `GET_RUNTIME_DEPENDENCIES` (#28)
+
+### Post-v1.0.0 hotfixes · 2026-05-17
+- feat: Remove Aircraft from Canvas — Delete/Backspace key + Edit → Delete Selected, fully undoable single and multi-select (#26)
+- fix: Dock resize root cause; violations panel resize; dock restore on non-first launch (#21)
+- fix: `setObjectName` on `LibraryPanel` and toolbar so `QMainWindow::saveState()` persists them (#22)
+- fix: clearance ruleset value-comparison — custom values now persist in `.arld` even when `rulesetId` matches "faa_cow" (#24, +1 regression test)
+- fix: Always-dirty title bar via `QGraphicsScene::changed`; dirty tracking moved to undo stack `onChanged` callback (#25)
+- fix: `TelemetryManager` static `QObject` segfault on exit; replaced with plain C++ singleton (#8)
+- docs: User Manual (`docs/USER_MANUAL.md`, 28 workflows); Help → User Manual... (F1) opens in-app (#5)
+- chore: Suppress `qt.qpa.backingstore` DPR mismatch noise via `QLoggingCategory::setFilterRules`
+
+### Sprint 3-2 · 2026-05-16
+- fix: Rotation handle precision inverted — Shift now snaps to 45°, no-Shift gives 1° precision (#17)
+- fix: `qt.qpa.backingstore` stdout noise suppressed (#18)
+- fix: Satellite image path persisted in `.arld`; warns via status bar if file missing on reload (#19)
+- fix: File → Export PNG and File → Export JPEG menu items wired to exporters (#20)
+- fix: Dock resize and panel layout — `resizeDocks` moved to first-launch defaults branch (#21)
+- fix: Panel re-open after close via View → Panels submenu (#23)
+- fix: Clearance ruleset values persist in `.arld` file (#24)
+- fix: Satellite GSD scale dialog shown after loading a local image (#16)
+
+### Sprint 3-1 · 2026-05-15
+- chore: Version bump to v1.0.0
+- feat: Opt-in usage telemetry — consent dialog on first launch; local event counters only; no network calls
+- docs: GitHub Pages site (`docs/index.md`, `docs/USER_GUIDE.md`)
+- feat: PR / CLA template (`.github/PULL_REQUEST_TEMPLATE.md`)
+
+---
+
 ## Phase 2 — Feature Complete (Months 7–12)
 
 ### Sprint 2-6 · 2026-05-12

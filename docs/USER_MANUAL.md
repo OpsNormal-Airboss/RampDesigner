@@ -1,6 +1,6 @@
 # Airshow Ramp Layout Designer — User Manual
 
-**Version 1.0.0**
+**Version 1.0.1**
 
 ARLD is a desktop application for designing aircraft parking layouts that comply with FAA Certificate of Waiver (CoW) clearance requirements. Every aircraft placed on the canvas carries a live clearance envelope; spacing violations are flagged in real time so you can correct problems before the layout leaves your desk.
 
@@ -71,8 +71,9 @@ If the application is offline, all features except satellite tile streaming and 
 
 | Action | Input |
 |--------|-------|
-| Pan the view | Left-click drag on empty canvas, or middle-click drag |
-| Zoom in/out | Scroll wheel |
+| Pan the view | Middle-click drag, or hold **Space** and left-drag |
+| Pan via scroll | Scroll wheel (trackpad swipe or mouse scroll) |
+| Zoom in/out | **Ctrl** + scroll wheel (anchored to cursor) |
 | Select an aircraft | Left-click on it |
 | Move an aircraft | Click and drag it |
 | Add aircraft to selection | Shift+click |
@@ -90,12 +91,15 @@ If the application is offline, all features except satellite tile streaming and 
 | `Ctrl/Cmd+Z` | Undo |
 | `Ctrl/Cmd+Y` or `Ctrl/Cmd+Shift+Z` | Redo |
 | `Ctrl/Cmd+0` | Fit entire scene to window |
-| `+` / `-` | Zoom in / zoom out |
+| `+` / `-` | Zoom in / zoom out (anchored to viewport centre) |
+| `Ctrl` + scroll | Zoom toward cursor |
+| Space (hold) | Enter pan mode — cursor becomes open hand; left-drag to pan |
 | `B` | Toggle boundary draw mode |
 | `G` | Toggle grid overlay |
 | `M` | Toggle metric/imperial display |
 | Arrow keys | Nudge selected aircraft 1 ft |
 | `Shift+Arrow` | Nudge selected aircraft 5 ft |
+| `Delete` / `Backspace` | Delete selected aircraft (undoable) |
 | `Escape` | Deselect all |
 
 ---

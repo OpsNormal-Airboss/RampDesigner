@@ -8,7 +8,7 @@
 
 Operational procedures for building, testing, and releasing the Airshow Ramp Layout Designer (ARLD).
 
-> Updated after each sprint. **Current status:** Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Re-fixed: dock resize/violations panel (#21), objectName for saveState (#22), clearance ruleset value-comparison save (#24 +1 regression test), always-dirty title-bar via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5), qt.qpa.backingstore stdout suppressed. Post-hotfix: Remove Aircraft from Canvas — Delete/Backspace + Edit → Delete Selected, undoable (#26). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
+> Updated after each sprint. **Current status:** v1.0.1 released. Phase 3, Sprint 3-2 complete + post-sprint hotfixes + individual issue fixes. Hotfixes: dock resize root cause (#21), objectName for saveState (#22), clearance ruleset value-save (#24 +regression test), always-dirty fix (#25), TelemetryManager QObject crash (#8), User Manual + Help menu (#5), qt.qpa.backingstore suppressed. Post-hotfix: Remove Aircraft (#26). v1.0.1: Windows Start Menu/icon (#27), bundle DLLs (#28). Post-v1.0.1: canvas scroll bars restored + Ctrl+scroll zoom (#29), Space+drag to pan (#30). 110/110 tests pass (+ benchmarks tagged `[.bench]`).
 
 ---
 
@@ -32,8 +32,11 @@ ARLD uses CMake 3.28 with vcpkg manifest mode. `CMakePresets.json` defines six p
 brew install cmake ninja qt@6 cgal
 
 # 2. Install vcpkg and bootstrap (if not already installed)
+# IMPORTANT: clone with full history — a shallow clone breaks CMake's vcpkg port checkout
 git clone https://github.com/microsoft/vcpkg.git
 ./vcpkg/bootstrap-vcpkg.sh
+# If you already have a shallow clone, unshallow it:
+#   git -C ~/vcpkg fetch --unshallow
 
 # 3. Set VCPKG_ROOT (add to ~/.zshrc for persistence)
 export VCPKG_ROOT=/path/to/vcpkg
@@ -222,14 +225,16 @@ cat LICENSES.txt
 
 ### Canvas Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
+| Key / Input | Action |
+|-------------|--------|
 | `B` | Toggle boundary draw mode |
 | `+` / `=` | Zoom in (anchored to viewport centre) |
 | `-` | Zoom out |
-| Scroll wheel | Zoom in/out (anchored to cursor) |
-| Left-click drag (empty area) | Pan |
-| Middle-click drag | Pan |
+| `Ctrl` + Scroll wheel | Zoom in/out toward cursor |
+| Scroll wheel (bare) | Pan the canvas via scroll bars |
+| Space (hold) | Enter pan mode — cursor changes to open hand |
+| Space + left-click drag | Pan the canvas (closed-hand cursor while dragging) |
+| Middle-click drag | Pan the canvas |
 | `Ctrl+Z` / `Cmd+Z` | Undo |
 | `Ctrl+Y` / `Cmd+Shift+Z` | Redo |
 | `Ctrl+0` / `Cmd+0` | Fit to Window (frames ramp with 50 ft margin) |
@@ -817,19 +822,49 @@ Hidden aircraft are already excluded from `toProjectData()` and clearance evalua
 
 ---
 
-#### Sprint 3-2 · Month 13, Wk 3–4 · 38 pts
+#### Sprint 3-2 · Month 13, Wk 3–4 · ✅ Complete
 **Goal:** UAT bug fixes and UI polish (issues #16-24)
+
+| # | Story | Status |
+|---|-------|--------|
+| 3-2-1 | Fix rotation handle precision (#17) | ✅ |
+| 3-2-2 | Suppress qt.qpa.backingstore noise (#18) | ✅ |
+| 3-2-3 | Satellite image path persistence (#19) | ✅ |
+| 3-2-4 | Export PNG/JPEG menu items (#20) | ✅ |
+| 3-2-5 | Dock resize and panel layout (#21, #22) | ✅ |
+| 3-2-6 | Panel re-open after close (#23) | ✅ |
+| 3-2-7 | Clearance ruleset persistence (#24) | ✅ |
+| 3-2-8 | Satellite GSD scale dialog (#16) | ✅ |
+
+#### Post-Sprint 3-2 Hotfixes + Individual Fixes · ✅ Complete
+
+| Fix | Issue | Status |
+|-----|-------|--------|
+| Dock resize root cause + violations panel resize | #21 | ✅ |
+| `setObjectName` for `saveState` | #22 | ✅ |
+| Clearance ruleset value-comparison + regression test | #24 | ✅ |
+| Always-dirty title bar via undo stack | #25 | ✅ |
+| TelemetryManager QObject exit crash | #8 | ✅ |
+| User Manual + Help menu item | #5 | ✅ |
+| Remove Aircraft (Delete/Backspace + Edit menu) | #26 | ✅ |
+| Windows Start Menu shortcut + app icon | #27 | ✅ |
+| Bundle gmp-10.dll/hpdf.dll in NSIS installer | #28 | ✅ |
+| Canvas scroll bars restored; Ctrl+scroll zoom | #29 | ✅ |
+| Space+drag to pan canvas | #30 | ✅ |
+
+#### Sprint 3-3 · Up Next
+**Goal:** Commercial license tier; ICAS marketplace; adoption monitoring
 
 | # | Story | Pts |
 |---|-------|-----|
-| 3-2-1 | Commercial license tier: key validation, feature unlock (priority support, volume exports) | 8 |
-| 3-2-2 | Commercial license distribution: Gumroad/Stripe payment link; key delivery by email | 5 |
-| 3-2-3 | Monitor adoption KPI: target 25 active events within 6 months; weekly reporting | 3 |
-| 3-2-4 | Phase 4 business case preparation materials: adoption metrics, NPS, cost estimate, steering committee deck | 5 |
-| 3-2-5 | Address top 5 community edition feature requests from GitHub Issues; v1.1.0 patch | 8 |
-| 3-2-6 | Phase 3 retrospective; update risk register; close Phase 0–3 budget actuals | 3 |
-| 3-2-7 | Begin Phase 4 team recruitment (web, cloud, TypeScript/React) pending approval | 3 |
-| 3-2-8 | 6-month post-launch KPI checkpoint: confirm adoption ≥ 25 events, NPS ≥ 40 for Phase 4 gate | 3 |
+| 3-3-1 | Commercial license tier: key validation, feature unlock (priority support, volume exports) | 8 |
+| 3-3-2 | Commercial license distribution: Gumroad/Stripe payment link; key delivery by email | 5 |
+| 3-3-3 | Monitor adoption KPI: target 25 active events within 6 months; weekly reporting | 3 |
+| 3-3-4 | Phase 4 business case preparation materials: adoption metrics, NPS, cost estimate, steering committee deck | 5 |
+| 3-3-5 | Address top 5 community edition feature requests from GitHub Issues; v1.1.0 patch | 8 |
+| 3-3-6 | Phase 3 retrospective; update risk register; close Phase 0–3 budget actuals | 3 |
+| 3-3-7 | Begin Phase 4 team recruitment (web, cloud, TypeScript/React) pending approval | 3 |
+| 3-3-8 | 6-month post-launch KPI checkpoint: confirm adoption ≥ 25 events, NPS ≥ 40 for Phase 4 gate | 3 |
 
 ---
 

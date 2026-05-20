@@ -30,7 +30,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | **0** | **C++ PoC** — 20 aircraft, clearance engine, SVG export, JSON save/load | **✅ Complete** |
 | **1** | **Production desktop, 75+ aircraft, all display types, satellite underlay** | **✅ Complete — All 6 sprints done** |
 | **2** | **150+ aircraft, full export suite, multi-select, batch export, UAT** | **✅ Complete — All 6 sprints done** |
-| **3** | **Public v1.0 desktop release, open-source community edition** | **🟡 Sprint 3-1 complete** |
+| **3** | **Public v1.0 desktop release, open-source community edition** | **✅ v1.0.1 released; Sprint 3-3 up next** |
 | 4 | SaaS platform (cloud-hosted) — pending steering committee approval | ⬜ Not started |
 
 ### Phase 0 Sprint Progress — ✅ Complete
@@ -73,6 +73,8 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 | 3-2 | UAT fixes: rotation (#17), stdout noise (#18), satellite persistence (#19), export PNG/JPEG (#20), dock resize (#21), satellite scale (#16), panel layout (#22), panel re-open (#23), clearance ruleset persistence (#24) | ✅ Complete |
 | 3-2 hotfixes | Re-fix: dock resize root cause + violations panel resize (#21), objectName for saveState (#22), clearance ruleset value-comparison (#24 +regression test), always-dirty fix via undo stack (#25), TelemetryManager static QObject exit crash (#8), User Manual + Help menu item (#5) | ✅ Complete |
 | Individual fixes | Remove Aircraft from Canvas: Delete/Backspace key + Edit → Delete Selected, undoable single/multi (#26) | ✅ Complete |
+| v1.0.1 patch | Windows Start Menu shortcut + app icon (#27); bundle gmp-10.dll/hpdf.dll in NSIS installer (#28) | ✅ Complete |
+| Post-v1.0.1 | Canvas scroll bars restored; Ctrl+scroll to zoom, bare scroll to pan (#29); Space+drag to pan canvas (#30) | ✅ Complete |
 | 3-3 | Commercial license tier; ICAS marketplace; adoption monitoring | ⬜ Up next |
 
 ## 🟢 What Works Today
@@ -80,7 +82,7 @@ ARLD provides a purpose-built visual design environment where every aircraft sil
 The application compiles and runs on macOS, Linux, and Windows. The CI pipeline is green on all three platforms.
 
 - **Qt window** with menu bar, toolbar (undo/redo), and status bar showing current scale
-- **Interactive canvas** — pan (left/middle click-drag), zoom (scroll wheel, `+`/`-` keys), scale range 1:200–1:5000
+- **Interactive canvas** — pan (middle-click drag, Space+drag, or scroll bars), zoom (Ctrl+scroll or `+`/`-` keys), scale range 1:200–1:5000
 - **Ramp boundary drawing** — press `B` to enter draw mode, click to add vertices, double-click to close
 - **Vertex editing** — drag any vertex handle to reshape the boundary in real time
 - **Snap-to-grid** — 5 ft grid by default; hold Shift to draw freehand
