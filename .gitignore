@@ -46,3 +46,6 @@ compile_commands.json
 moc_*.cpp
 ui_*.h
 qrc_*.cpp
+
+# Video files
+*.mp4
